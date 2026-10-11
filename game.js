@@ -3,7 +3,7 @@
 
   const SAVE_KEY = 'qianmo_v2';
   const SAVE_KEY_OLD = 'qianmo_v1';
-  const ASSET_V = '?v=5';
+  const ASSET_V = '?v=6';
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
 
@@ -59,7 +59,7 @@
     winter: { label: '存糧過冬', prefer: ['wheat', 'rice'], sellFoodKeep: 40, expandBias: 0.1 }
   };
   const SCENE_ART = {
-    farm:    { webp: 'assets/bg_village.webp', jpg: 'assets/bg_village.jpg', alt: '田莊' },
+    farm:    { webp: 'assets/bg_busy_farm.webp', jpg: 'assets/bg_busy_farm.webp', alt: '田莊' },
     village: { webp: 'assets/bg_village.webp', jpg: 'assets/bg_village.jpg', alt: '村落' },
     market:  { webp: 'assets/bg_capital.webp', jpg: 'assets/bg_capital.jpg', alt: '坊市' },
     clinic:  { webp: 'assets/bg_clinic.webp',  jpg: 'assets/bg_clinic.jpg',  alt: '藥廬' },
@@ -522,6 +522,7 @@
     if (m === 'village' && selectedNpc) {
       const n = NPCS.find((x) => x.id === selectedNpc);
       if (n) {
+        char.hidden = false;
         char.classList.add('npc', 'face-mode');
         img.src = faceUrl(npcFaceKey(n));
         img.alt = n.name;
@@ -530,6 +531,13 @@
         return;
       }
     }
+    // 田莊：唔擋 busy farm 場景同走動工人
+    if (m === 'farm') {
+      char.hidden = true;
+      if (np) np.textContent = (S && S.name) || '你';
+      return;
+    }
+    char.hidden = false;
     // 場景默認：主角全身（略小），非對話時不佔滿屏
     char.classList.remove('face-mode');
     img.src = 'assets/char_hero.webp?v=' + FACE_V;
@@ -631,19 +639,26 @@
         g.fillText('鎖', x + tw / 2, y + th / 2 + 4);
         return;
       }
-      // soil
+      // soil tile (compact control grid under scene)
+      const pad = 1.5;
       const grd = g.createLinearGradient(x, y, x, y + th);
-      grd.addColorStop(0, '#a1887f');
-      grd.addColorStop(1, '#6d4c41');
+      grd.addColorStop(0, '#8d6e63');
+      grd.addColorStop(0.55, '#6d4c41');
+      grd.addColorStop(1, '#4e342e');
       g.fillStyle = grd;
-      roundRect(g, x + 2, y + 2, tw - 4, th - 4, 7);
+      roundRect(g, x + pad, y + pad, tw - pad * 2, th - pad * 2, 5);
       g.fill();
-      g.strokeStyle = '#c9a227';
-      g.lineWidth = 1.5;
+      g.strokeStyle = 'rgba(201,163,90,.75)';
+      g.lineWidth = 1;
+      g.stroke();
+      // stone rim hint
+      g.strokeStyle = 'rgba(255,255,255,.12)';
+      g.lineWidth = 1;
+      roundRect(g, x + pad + 1, y + pad + 1, tw - pad * 2 - 2, th - pad * 2 - 2, 4);
       g.stroke();
       if (p.watered) {
-        g.fillStyle = 'rgba(100,180,255,.28)';
-        roundRect(g, x + 2, y + 2, tw - 4, th - 4, 7);
+        g.fillStyle = 'rgba(90,170,255,.30)';
+        roundRect(g, x + pad, y + pad, tw - pad * 2, th - pad * 2, 5);
         g.fill();
       }
       if (p.crop) {
@@ -651,23 +666,23 @@
         const ripe = p.grow >= crop.grow;
         const prog = Math.min(1, p.grow / crop.grow);
         g.fillStyle = ripe ? crop.ripe : crop.color;
-        const r = 4 + prog * 8;
+        const r = 3 + prog * 6;
         g.beginPath();
-        g.arc(x + tw / 2, y + th / 2 + 2, r, 0, Math.PI * 2);
+        g.arc(x + tw / 2, y + th / 2 + 1, r, 0, Math.PI * 2);
         g.fill();
         if (ripe) {
-          g.fillStyle = 'rgba(255,236,150,.7)';
+          g.fillStyle = 'rgba(255,236,150,.85)';
           g.beginPath();
-          g.arc(x + tw / 2 + 6, y + th / 2 - 6, 3, 0, Math.PI * 2);
+          g.arc(x + tw / 2 + 5, y + th / 2 - 5, 2.5, 0, Math.PI * 2);
           g.fill();
         }
-        g.fillStyle = '#fff8e1';
-        g.font = 'bold 10px sans-serif';
+        g.fillStyle = ripe ? '#fffde7' : 'rgba(255,248,225,.92)';
+        g.font = 'bold 9px sans-serif';
         g.textAlign = 'center';
-        g.fillText(crop.name, x + tw / 2, y + 12);
+        g.fillText(crop.name, x + tw / 2, y + 10);
       }
     });
-    if (window.QianWorkers) window.QianWorkers.drawOnFarmCanvas(g, W, H, S, COLS, ROWS);
+    // 工人只喺主場景圖上走，唔再畫入田格
     updateHandsHint();
   }
   function roundRect(g, x, y, w, h, r) {

@@ -3,7 +3,7 @@
   'use strict';
 
   const MAX = 12;
-  const ASSET_V = '5';
+  const ASSET_V = '6';
   const SPRITE_KEYS = {
     farm: ['farmer_m', 'farmer_f', 'farmer_m', 'farmer_f'],
     market: ['merchant', 'merchant', 'farmer_m', 'farmer_f'],
@@ -25,10 +25,16 @@
 
   const PATHS = {
     farm: [
-      [[0.08, 0.72], [0.22, 0.68], [0.38, 0.74], [0.55, 0.70], [0.72, 0.76], [0.88, 0.70], [0.72, 0.62], [0.45, 0.66], [0.22, 0.60]],
-      [[0.12, 0.58], [0.30, 0.55], [0.48, 0.58], [0.65, 0.52], [0.82, 0.56], [0.70, 0.64], [0.40, 0.60], [0.18, 0.64]],
-      [[0.18, 0.78], [0.35, 0.82], [0.55, 0.78], [0.75, 0.84], [0.90, 0.78], [0.60, 0.72], [0.35, 0.76]],
-      [[0.25, 0.48], [0.42, 0.52], [0.60, 0.48], [0.78, 0.50], [0.55, 0.56], [0.32, 0.54]]
+      /* 主路：屋前 → 水車 → 牛車 */
+      [[0.42, 0.42], [0.52, 0.50], [0.62, 0.58], [0.72, 0.68], [0.82, 0.78], [0.70, 0.72], [0.55, 0.60], [0.45, 0.50]],
+      /* 稻田區 */
+      [[0.12, 0.62], [0.22, 0.68], [0.32, 0.72], [0.28, 0.78], [0.18, 0.74], [0.14, 0.68]],
+      /* 菜園／籬笆 */
+      [[0.58, 0.48], [0.68, 0.52], [0.76, 0.48], [0.70, 0.58], [0.60, 0.54]],
+      /* 倉棚往田 */
+      [[0.22, 0.40], [0.30, 0.48], [0.38, 0.56], [0.28, 0.60], [0.18, 0.52]],
+      /* 河邊小徑 */
+      [[0.78, 0.42], [0.84, 0.52], [0.88, 0.62], [0.80, 0.70], [0.72, 0.58]]
     ],
     market: [
       [[0.10, 0.70], [0.30, 0.68], [0.50, 0.72], [0.70, 0.68], [0.88, 0.74], [0.65, 0.78], [0.40, 0.74], [0.20, 0.76]],
@@ -286,21 +292,15 @@
     ensure(S, mode);
     const sorted = agents.slice().sort((a, b) => a.y - b.y);
     // ~40 CSS px tall on a ~390 wide phone
-    const cssTall = Math.max(32, Math.min(48, 40 * (sz.cssW / 390)));
+    const base = (mode === 'farm') ? 44 : 40;
+    const cssTall = Math.max(32, Math.min(52, base * (sz.cssW / 390)));
     sorted.forEach((a) => {
       drawSprite(g, a.x * sz.w, a.y * sz.h, a, cssTall, sz.dpr);
     });
   }
 
-  function drawOnFarmCanvas(g, W, H, S, cols, rows) {
-    if (!S || !g) return;
-    ensureFarmMini(S, cols, rows);
-    const sorted = farmAgents.slice().sort((a, b) => a.y - b.y);
-    // farm canvas is often smaller; aim ~36px relative to canvas height
-    const cssTall = Math.max(28, Math.min(44, H * 0.11));
-    sorted.forEach((a) => {
-      drawSprite(g, a.x * W, a.y * H, a, cssTall, 1);
-    });
+  function drawOnFarmCanvas() {
+    /* 已棄用：工人唔再畫入田格 canvas */
   }
 
   function update(dt, S, mode, cols, rows) {
@@ -318,10 +318,7 @@
       agents = [];
       lastMode = mode;
     }
-    if (mode === 'farm') {
-      ensureFarmMini(S, cols || 6, rows || 4);
-      farmAgents.forEach((a) => stepFarmMini(a, dt, cols || 6, rows || 4, S.plots));
-    }
+    // 田莊工人只喺主場景 worker-layer 走，唔再綁田格格子
     return { drip, count: agents.length };
   }
 

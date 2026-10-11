@@ -338,8 +338,10 @@ input,textarea,select{font-family:inherit;}
 /* 行事面板內容 */
 .plot-card{
   border:1px solid rgba(201,163,90,.85);border-radius:12px;overflow:hidden;
-  background:#2a2118;margin-bottom:12px;box-shadow:0 4px 14px rgba(80,40,30,.12);
+  background:linear-gradient(180deg,#fffaf4,#f3e6d6);margin-bottom:10px;
+  box-shadow:0 3px 10px rgba(80,40,30,.1);
 }
+.plot-card-compact .plot-card-head{padding:6px 10px;}
 .plot-card-head{
   display:flex;justify-content:space-between;align-items:center;gap:8px;
   padding:8px 12px;background:linear-gradient(180deg,#fff8f0,#f0e0d0);
@@ -347,10 +349,21 @@ input,textarea,select{font-family:inherit;}
   border-bottom:1px solid rgba(201,163,90,.55);
 }
 .plot-card-hint{font-size:11px;color:var(--ink2);font-weight:500;}
-.plot-canvas-wrap{position:relative;background:#3a2e22;}
-.plot-bg{position:absolute;inset:0;opacity:.4;pointer-events:none;}
-.plot-bg img{width:100%;height:100%;object-fit:cover;}
-#farm{position:relative;z-index:1;width:100%;height:auto;display:block;touch-action:manipulation;}
+.plot-canvas-wrap{
+  position:relative;
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(139,110,80,.18), transparent 55%),
+    linear-gradient(180deg,#5d4636 0%,#3e2e24 100%);
+  padding:6px 8px 8px;
+}
+#farm{
+  position:relative;z-index:1;width:100%;height:auto;display:block;
+  touch-action:manipulation;border-radius:8px;
+  box-shadow:inset 0 0 0 1px rgba(201,163,90,.35);
+}
+/* 田莊：主畫面係 busy farm，工人喺圖上走；遮住大立繪 */
+.mode-farm .vn-char{display:none !important;}
+.mode-farm .worker-layer{z-index:4;}
 
 .directives{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .dir{
