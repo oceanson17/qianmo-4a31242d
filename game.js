@@ -1,9 +1,10 @@
 (() => {
   'use strict';
 
-  const SAVE_KEY = 'qianmo_v2';
-  const SAVE_KEY_OLD = 'qianmo_v1';
-  const ASSET_V = '?v=8';
+  const SAVE_KEY = 'qianmo_v3';
+  const SAVE_KEY_OLD = 'qianmo_v2';
+  const SAVE_KEY_OLDER = 'qianmo_v1';
+  const ASSET_V = '?v=9';
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
 
@@ -84,7 +85,7 @@
   const SCENE_ART = {
     farm:     { webp: 'assets/bg_busy_farm.webp', jpg: 'assets/bg_busy_farm.webp', alt: '田莊' },
     village:  { webp: 'assets/bg_village.webp', jpg: 'assets/bg_village.jpg', alt: '村落' },
-    market:   { webp: 'assets/bg_capital.webp', jpg: 'assets/bg_capital.jpg', alt: '坊市' },
+    market:   { webp: 'assets/bg_capital.webp', jpg: 'assets/bg_capital.jpg', alt: '市井' },
     clinic:   { webp: 'assets/bg_clinic.webp',  jpg: 'assets/bg_clinic.jpg',  alt: '藥廬' },
     drill:    { webp: 'assets/bg_fields.webp',  jpg: 'assets/bg_fields.webp', alt: '校場' },
     wild:     { webp: 'assets/bg_cliff.webp',   jpg: 'assets/bg_cliff.jpg',   alt: '山野' },
@@ -92,29 +93,47 @@
     swim:     { webp: 'assets/bg_swim.webp',    jpg: 'assets/bg_swim.jpg',    alt: '水塘' },
     moon:     { webp: 'assets/bg_moon.webp',    jpg: 'assets/bg_moon.jpg',    alt: '夜宴' },
     mine:     { webp: 'assets/bg_mine.webp',    jpg: 'assets/bg_mine.webp',   alt: '礦坑' },
-    post:     { webp: 'assets/bg_post.webp',    jpg: 'assets/bg_post.webp',   alt: '驛站' },
+    post:     { webp: 'assets/bg_post.webp',    jpg: 'assets/bg_post.webp',   alt: '驛道' },
     tavern:   { webp: 'assets/bg_tavern.webp',  jpg: 'assets/bg_tavern.webp', alt: '酒肆' },
     academy:  { webp: 'assets/bg_academy.webp', jpg: 'assets/bg_academy.webp',alt: '書塾' },
-    frontier: { webp: 'assets/bg_frontier.webp',jpg: 'assets/bg_frontier.webp',alt: '邊塞' }
+    frontier: { webp: 'assets/bg_frontier.webp',jpg: 'assets/bg_frontier.webp',alt: '邊關' },
+    xianyang: { webp: 'assets/bg_xianyang.webp', jpg: 'assets/bg_xianyang.webp', alt: '咸陽' },
+    palace:   { webp: 'assets/bg_palace.webp', jpg: 'assets/bg_palace.webp', alt: '宮城外' },
+    xiangbang:{ webp: 'assets/bg_xiangbang.webp', jpg: 'assets/bg_xiangbang.webp', alt: '相邦府' },
+    taihou:   { webp: 'assets/bg_taihou.webp', jpg: 'assets/bg_taihou.webp', alt: '太后宮外' },
+    guowei:   { webp: 'assets/bg_guowei.webp', jpg: 'assets/bg_guowei.webp', alt: '國尉府' },
+    keguan:   { webp: 'assets/bg_keguan.webp', jpg: 'assets/bg_keguan.webp', alt: '客館' },
+    guanshi:  { webp: 'assets/bg_guanshi.webp', jpg: 'assets/bg_guanshi.webp', alt: '關市' },
+    hejin:    { webp: 'assets/bg_hejin.webp', jpg: 'assets/bg_hejin.webp', alt: '河津' },
+    cimiao:   { webp: 'assets/bg_cimiao.webp', jpg: 'assets/bg_cimiao.webp', alt: '祠廟' },
+    ying:     { webp: 'assets/bg_ying.webp', jpg: 'assets/bg_ying.webp', alt: '軍營' }
   };
   const MODE_LABELS = {
-    farm: '田莊', village: '村落', market: '坊市', clinic: '藥廬', drill: '校場', wild: '山野',
+    farm: '田莊', village: '村落', market: '市井', clinic: '藥廬', drill: '校場', wild: '山野',
     garden: '園林', swim: '水塘', moon: '夜宴',
-    mine: '礦坑', post: '驛站', tavern: '酒肆', academy: '書塾', frontier: '邊塞'
+    mine: '礦坑', post: '驛道', tavern: '酒肆', academy: '書塾', frontier: '邊關',
+    xianyang: '咸陽', palace: '宮城外', xiangbang: '相邦府', taihou: '太后宮外',
+    guowei: '國尉府', keguan: '客館', guanshi: '關市', hejin: '河津', cimiao: '祠廟', ying: '軍營'
   };
-  const ALL_MODES = ['farm','village','market','clinic','drill','wild','garden','swim','moon','mine','post','tavern','academy','frontier'];
-  const WORK_MODES = ['farm','market','clinic','drill','wild','mine','frontier'];
+  const ALL_MODES = ['farm','village','market','clinic','drill','wild','garden','swim','moon','mine','post','tavern','academy','frontier',
+    'xianyang','palace','xiangbang','taihou','guowei','keguan','guanshi','hejin','cimiao','ying'];
+  const WORK_MODES = ['farm','market','clinic','drill','wild','mine','frontier','ying','guanshi','hejin'];
   const LEISURE_MODES = ['garden', 'swim', 'moon'];
+  const QIN_COURT_MODES = ['xianyang','palace','xiangbang','taihou','guowei','keguan','cimiao'];
   const TRAVEL_COST = {
     farm: 0, village: 2, market: 3, clinic: 2, drill: 3, wild: 4,
-    garden: 2, swim: 2, moon: 3, mine: 4, post: 3, tavern: 2, academy: 2, frontier: 5
+    garden: 2, swim: 2, moon: 3, mine: 4, post: 3, tavern: 2, academy: 2, frontier: 5,
+    xianyang: 4, palace: 5, xiangbang: 4, taihou: 5, guowei: 4, keguan: 3, guanshi: 3, hejin: 3, cimiao: 2, ying: 4
   };
   const SCENE_CAPS = {
     farm: '工人喺田莊圖上走動', village: '鄉鄰沿街往來', market: '商販走街串巷',
     clinic: '醫者採藥配劑', drill: '武卒校場演練', wild: '獵戶斥候穿林',
     garden: '遊人園中閒步', swim: '村童塘邊嬉水', moon: '賓客席間往來',
     mine: '礦工挑燈開掘', post: '驛卒快馬傳書', tavern: '酒客推杯換盞',
-    academy: '學子書塾誦讀', frontier: '戍卒邊牆巡邏'
+    academy: '學子書塾誦讀', frontier: '戍卒邊牆巡邏',
+    xianyang: '咸陽街巷車馬', palace: '宮牆外衛士巡戈', xiangbang: '門客進出相邦府',
+    taihou: '宮婢與私門往來', guowei: '吏卒傳令奔走', keguan: '賓客使節投宿',
+    guanshi: '關市賈人校秤', hejin: '津吏渡船往來', cimiao: '香客祠前祈禱', ying: '軍營操練換防'
   };
   const PERIODS = ['晨', '午', '暮', '夜'];
   let storyLines = [];
@@ -183,21 +202,20 @@
     { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
     { id: 'hire', name: '僱長工', desc: '田莊人手+1', gold: 0 }
   ];
-  const FACE_V = '8';
-  const NPCS = [
-    { id: 'he', name: '何伯', role: '里正', face: 'scholar', likes: ['rice', 'wheat'], giftBoost: 10,
-      lines: ['里中諸事，皆在我眼。', '春耕勿怠，秋穫有望。', '日令之單，速去坊市交來。'] },
-    { id: 'su', name: '蘇娘', role: '藥婆', face: 'doctor', likes: ['herb', 'flower'], giftBoost: 12,
-      lines: ['草藥貴在新鮮。', '你若傷了，來廬中坐坐。', '回春散一味，可解小恙。'] },
-    { id: 'zhao', name: '趙三郎', role: '行商', face: 'merchant', likes: ['flower', 'ore'], giftBoost: 11,
-      lines: ['坊市行情，朝夕不同。', '珍貨來得快，銀兩去得也快。', '與我交好，買賣可讓三分。'] },
-    { id: 'lin', name: '林嫂', role: '田戶', face: 'farmer_f', likes: ['veg', 'rice'], giftBoost: 9,
-      lines: ['田裏一雙手，勝似空談。', '孩子們都去幫你澆水了。', '收成好，心就安。'] },
-    { id: 'wu', name: '伍叔', role: '守望', face: 'soldier', likes: ['wheat', 'ore'], giftBoost: 10,
-      lines: ['校場刀槍，不可疏忽。', '山野有匪，入夜早歸。', '壯丁齊心，里中自安。'] },
-    { id: 'cheng', name: '成郎', role: '書生', face: 'farmer_m', likes: ['flower', 'wheat'], giftBoost: 8,
-      lines: ['讀得半卷，耕得半畝。', '名聲這東西，靠一行一行走。', '願聞君近日見聞。'] }
-  ];
+  const FACE_V = '9';
+  function allNpcs() {
+    if (window.QianWorld && window.QianWorld.CAST) return window.QianWorld.CAST;
+    return [];
+  }
+  function liveNpcs() {
+    const list = allNpcs();
+    if (!S || !window.QianWorld) return list;
+    return window.QianWorld.castForTalk(S);
+  }
+  // compat alias used throughout file
+  let NPCS = allNpcs();
+  function refreshNpcs() { NPCS = liveNpcs(); return NPCS; }
+
   const FACTION_FACE = { lu: 'merchant', qin: 'soldier', sai: 'scholar' };
   function faceUrl(key) {
     return 'assets/face_' + key + '.webp?v=' + FACE_V;
@@ -272,6 +290,7 @@
   }
   function dayStr() {
     if (!S) return '';
+    if (window.QianWorld) return window.QianWorld.dayLabel(S.day);
     const season = SEASONS[Math.floor((S.day - 1) / 28) % 4];
     const d = ((S.day - 1) % 28) + 1;
     return season + ' · 第' + d + '日';
@@ -303,10 +322,11 @@
       equipped[g.slot] = g.id;
     }
     const quest = Object.assign({ done: false, progress: 0 }, C.quest);
+    const cast = (window.QianWorld && window.QianWorld.CAST) || [];
     const st = {
-      v: 2,
+      v: 4,
       career: careerId,
-      name: '豆豆',
+      name: (window.__createDraft && window.__createDraft.name) || '旅人',
       day: 1,
       gold: C.gold,
       food: C.food,
@@ -320,7 +340,7 @@
       plotCount: 8 + (C.skills.farm || 0),
       auto: false,
       directive: 'grain',
-      npcs: NPCS.reduce((a, n) => { a[n.id] = { aff: C.id === 'scholar' ? 8 : 0, mem: [], talked: 0 }; return a; }, {}),
+      npcs: cast.reduce((a, n) => { a[n.id] = { aff: C.id === 'scholar' ? 8 : 0, mem: [], talked: 0 }; return a; }, {}),
       order: rollOrder(1),
       orderDone: false,
       gear,
@@ -340,14 +360,34 @@
       people: C.id === 'scholar' ? 14 : (C.id === 'healer' ? 12 : 8),
       factions: { lu: 0, qin: C.id === 'soldier' ? 6 : 0, sai: C.id === 'merchant' ? 4 : 0 },
       joined: null,
-      worldLine: '天下初定，邊野尚安。',
+      worldLine: '秦王政元年，少年王即位，呂不韋為相邦。',
       endings: [],
       seenEvents: {},
       dayActs: { farm: 0, sell: 0, gift: 0, heal: 0, fight: 0, trade: 0, order: 0 },
       factionQuest: null,
       pendingEvent: null,
-      hands: 0
+      hands: 0,
+      hero: {
+        name: (window.__createDraft && window.__createDraft.name) || '旅人',
+        gender: (window.__createDraft && window.__createDraft.gender) || 'x',
+        origin: (window.__createDraft && window.__createDraft.origin) || 'farm',
+        goal: (window.__createDraft && window.__createDraft.goal) || ''
+      },
+      worldMode: (window.__createDraft && window.__createDraft.worldMode) || 'history',
+      chronicle: [],
+      histFlags: {},
+      diverged: [],
+      seenChronicle: {},
+      eraYear: 1
     };
+    if (window.QianWorld) {
+      window.QianWorld.ensure(st);
+      window.QianWorld.applyOrigin(st, st.hero.origin);
+      st.name = st.hero.name;
+      st.worldLine = st.worldMode === 'free'
+        ? '高度自由世界：史實僅作背景，天下隨你與隨機推動。'
+        : '史實軌道：秦王政元年，少年王即位，呂不韋輔政。';
+    }
     if (window.QianFactions) window.QianFactions.ensure(st);
     return st;
   }
@@ -359,23 +399,6 @@
 
   function migrateSave(o) {
     if (!o) return null;
-    if (o.v === 2 || o.v === 3) {
-      if (o.hands == null) o.hands = 0;
-      if (o.mineFloor == null) o.mineFloor = 1;
-      if (o.frontFloor == null) o.frontFloor = 1;
-      if (o.frontBest == null) o.frontBest = 0;
-      if (o.fishSpot == null) o.fishSpot = 1;
-      if (!o.skills) o.skills = {};
-      if (o.skills.craft == null) o.skills.craft = 0;
-      if (!o.npcs) o.npcs = {};
-      NPCS.forEach(function (n) {
-        if (!o.npcs[n.id]) o.npcs[n.id] = { aff: 0, mem: [], talked: 0 };
-      });
-      if (!CAREERS[o.career]) o.career = 'farmer';
-      o.v = 3;
-      if (window.QianFactions) window.QianFactions.ensure(o);
-      return o;
-    }
     if (o.v === 1) {
       o.v = 2;
       o.fame = o.fame != null ? o.fame : Math.min(40, Math.floor((o.gold || 0) / 15) + Math.floor((o.soldGold || 0) / 30));
@@ -390,6 +413,31 @@
       o.pendingEvent = o.pendingEvent || null;
       o.flags = o.flags || {};
       if (o.hands == null) o.hands = 0;
+    }
+    if (o.v === 2 || o.v === 3 || o.v === 4) {
+      if (o.hands == null) o.hands = 0;
+      if (o.mineFloor == null) o.mineFloor = 1;
+      if (o.frontFloor == null) o.frontFloor = 1;
+      if (o.frontBest == null) o.frontBest = 0;
+      if (o.fishSpot == null) o.fishSpot = 1;
+      if (!o.skills) o.skills = {};
+      if (o.skills.craft == null) o.skills.craft = 0;
+      if (!o.npcs) o.npcs = {};
+      const cast = (window.QianWorld && window.QianWorld.CAST) || [];
+      cast.forEach(function (n) {
+        if (!o.npcs[n.id]) o.npcs[n.id] = { aff: 0, mem: [], talked: 0 };
+      });
+      if (!CAREERS[o.career]) o.career = 'farmer';
+      if (!o.hero) {
+        o.hero = { name: o.name || '旅人', gender: 'x', origin: 'farm', goal: '' };
+      }
+      if (!o.worldMode) o.worldMode = 'history';
+      if (!o.chronicle) o.chronicle = [];
+      if (!o.histFlags) o.histFlags = {};
+      if (!o.diverged) o.diverged = [];
+      if (!o.seenChronicle) o.seenChronicle = {};
+      o.v = 4;
+      if (window.QianWorld) window.QianWorld.ensure(o);
       if (window.QianFactions) window.QianFactions.ensure(o);
       return o;
     }
@@ -399,7 +447,7 @@
     if (!S) return;
     S.auto = autoOn;
     S.directive = directive;
-    S.v = 3;
+    S.v = 4;
     if (window.QianFactions) window.QianFactions.ensure(S);
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); toast('已存檔'); } catch (e) { toast('存檔失敗'); }
   }
@@ -407,7 +455,10 @@
     try {
       let o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
       if (!o) {
-        const old = JSON.parse(localStorage.getItem(SAVE_KEY_OLD) || 'null');
+        let old = JSON.parse(localStorage.getItem(SAVE_KEY_OLD) || 'null');
+        if (!old && typeof SAVE_KEY_OLDER !== 'undefined') {
+          old = JSON.parse(localStorage.getItem(SAVE_KEY_OLDER) || 'null');
+        }
         o = migrateSave(old);
         if (o) {
           try { localStorage.setItem(SAVE_KEY, JSON.stringify(o)); } catch (e) {}
@@ -419,15 +470,21 @@
       S = o;
       autoOn = !!S.auto;
       directive = S.directive || 'grain';
+      refreshNpcs();
       return true;
     } catch (e) { return false; }
   }
   function hasSave() {
     try {
       const o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
-      if (o && (o.v === 1 || o.v === 2 || o.v === 3)) return true;
+      if (o && (o.v === 1 || o.v === 2 || o.v === 3 || o.v === 4)) return true;
       const old = JSON.parse(localStorage.getItem(SAVE_KEY_OLD) || 'null');
-      return !!(old && old.v === 1);
+      if (old && (old.v === 1 || old.v === 2 || old.v === 3)) return true;
+      if (typeof SAVE_KEY_OLDER !== 'undefined') {
+        const older = JSON.parse(localStorage.getItem(SAVE_KEY_OLDER) || 'null');
+        return !!(older && older.v === 1);
+      }
+      return false;
     } catch (e) { return false; }
   }
 
@@ -465,7 +522,12 @@
     const st = stats();
     const season = SEASONS[seasonIdx()];
     $('hud-day').textContent = dayStr();
-    if ($('hDaySeal')) $('hDaySeal').textContent = season;
+    if ($('hDaySeal')) {
+      if (window.QianWorld) {
+        const y = window.QianWorld.yearNum(S.day);
+        $('hDaySeal').textContent = y <= 1 ? '政元' : ('政' + y);
+      } else $('hDaySeal').textContent = season;
+    }
     if ($('hPer')) $('hPer').textContent = PERIODS[S.day % 4];
     $('hud-gold').textContent = String(S.gold);
     $('hud-food').textContent = String(S.food);
@@ -516,7 +578,7 @@
     const caps = {
       farm: ['春光滿阡', '夏畦茂盛', '秋穫將至', '冬雪守田'],
       village: ['春光滿村', '夏日邨景', '秋色入村', '冬雪覆簷'],
-      market: ['京市晨喧', '夏日商影', '秋成買賣', '冬市炭香'],
+      market: ['咸陽市井', '夏日商影', '秋成買賣', '冬市炭香'],
       clinic: ['藥廬青煙', '夏草芬芳', '秋採山藥', '冬爐煎劑'],
       drill: ['校場塵起', '夏日練兵', '秋風習武', '冬日對樁'],
       wild: ['邊崖晨霧', '夏嶺虫鳴', '秋崖葉紅', '冬嶺寂寂'],
@@ -527,15 +589,25 @@
       post: ['驛道晨發', '夏日馬塵', '秋驛落葉', '冬驛炭暖'],
       tavern: ['酒旗初揚', '夏夜喧聲', '秋釀新熟', '冬爐對酌'],
       academy: ['書聲朗朗', '夏窗風涼', '秋燈夜讀', '冬硯凝墨'],
-      frontier: ['邊牆晨號', '夏塞塵黃', '秋關葉赤', '冬塞雪硬']
+      frontier: ['邊關晨號', '夏塞塵黃', '秋關葉赤', '冬塞雪硬'],
+      xianyang: ['咸陽晨鐘', '夏陌車塵', '秋市燈火', '冬城閉戶'],
+      palace: ['宮牆春柳', '夏殿影深', '秋禁門肅', '冬燎沉沉'],
+      xiangbang: ['相府春宴', '夏門客聚', '秋貨滿庫', '冬燭論計'],
+      taihou: ['宮外春寂', '夏簾影搖', '秋私門密', '冬炭香暖'],
+      guowei: ['尉府傳符', '夏甲光白', '秋令如風', '冬鼓沉沉'],
+      keguan: ['客館春雨', '夏夜清談', '秋使團至', '冬爐對酒'],
+      guanshi: ['關市開閘', '夏貨如山', '秋稅清冊', '冬市早歇'],
+      hejin: ['河津春漲', '夏渡船忙', '秋糧下水', '冬冰初合'],
+      cimiao: ['祠前香火', '夏樹陰涼', '秋賽社鼓', '冬雪覆階'],
+      ying: ['軍營曉角', '夏操滿場', '秋甲堆垛', '冬灶炊飯']
     };
     $('scene-caption').textContent = (caps[m] || caps.village)[seasonIdx()];
   }
 
   const MODE_BLURB = {
     farm: '田莊忙碌：圖上工人走動，下方田畦可種、澆、收、賣、擴田。',
-    village: '村落：交日令、與鄉鄰對白送禮；聲名漸起或有勢力來訪。',
-    market: '坊市：貨架買賣、製物、僱長工壯田莊。',
+    village: '村落：交日令、與鄉鄰／秦人對白送禮；聲名漸起或有勢力來訪。',
+    market: '市井：貨架買賣、製物、僱長工壯田莊。',
     clinic: '藥廬：採藥煉劑，可自服或義診增益民心。',
     drill: '校場：對練掉落裝備，練手與測 AUTO。',
     wild: '山野：入山打怪或採集，愈深愈險。',
@@ -543,19 +615,37 @@
     swim: '水塘：洗濯復體，選釣點試釣。',
     moon: '夜宴：銀夠則辦宴增名聲民心。',
     mine: '礦坑：開掘礦石，下層更險，偶遇礦妖。',
-    post: '驛站：歇腳復體、打聽消息、託書揚名。',
+    post: '驛道：歇腳復體、打聽消息、託書揚名。',
     tavern: '酒肆：沽酒聽談，或小賭運氣。',
-    academy: '書塾：讀卷論辯，提升文才與鄉鄰好感。',
-    frontier: '邊塞：強敵與佳掉落，需體力充足。'
+    academy: '書塾：讀卷論辯，讀韓非簡，提升文才。',
+    frontier: '邊關：強敵與佳掉落，需體力充足。',
+    xianyang: '咸陽：聽詔、投刺、觀市口風向。',
+    palace: '宮城外：覲見傳聞、衛士盤問、投書內廷。',
+    xiangbang: '相邦府：拜謁呂門、貨殖請託、門客清談。',
+    taihou: '太后宮外：進貢、打聽宮爭、慎言。',
+    guowei: '國尉府：報功、領差、習軍法。',
+    keguan: '客館：宴客、刺探六國、結賓客。',
+    guanshi: '關市：互市買賣、校秤納稅、邊貨。',
+    hejin: '河津：渡船、問水工、運糧。',
+    cimiao: '祠廟：祈福、賽祭、安民心。',
+    ying: '軍營：操練、領餉差、準備出征。'
   };
   function showMode(m) {
     mode = m;
     document.querySelectorAll('.mode-tab').forEach((t) => t.classList.toggle('active', t.dataset.mode === m));
     document.querySelectorAll('#map-pins .pin').forEach((p) => p.classList.toggle('cur', p.dataset.mode === m));
+    const isQinPanel = QIN_COURT_MODES.includes(m) || m === 'guanshi' || m === 'hejin' || m === 'ying';
     ALL_MODES.forEach((id) => {
       const el = $(id + '-panel');
-      if (el) el.hidden = id !== m;
+      if (!el) return;
+      // Qin 場景共用 qin-shared-panel，空殼 panel 維持隱藏
+      if (isQinPanel && (QIN_COURT_MODES.includes(id) || id === 'guanshi' || id === 'hejin' || id === 'ying')) {
+        el.hidden = true;
+      } else {
+        el.hidden = id !== m;
+      }
     });
+    if ($('qin-shared-panel')) $('qin-shared-panel').hidden = !isQinPanel;
     const plot = $('plot-card');
     if (plot) plot.style.display = m === 'farm' ? '' : 'none';
     const sheetAct = $('sheet-act');
@@ -571,17 +661,19 @@
     updateActScene(m);
     updatePortraitForMode(m);
     if ($('status-text') && MODE_BLURB[m]) $('status-text').textContent = MODE_BLURB[m];
+    refreshNpcs();
     if (m === 'farm') drawFarm();
     if (m === 'village') renderVillage();
     if (m === 'market') { renderShop(); renderCraft(); }
     if (m === 'clinic') { renderClinicInv(); renderCraft(); }
-    if (m === 'drill' || m === 'wild' || m === 'frontier' || m === 'mine') renderCombatPanel();
+    if (m === 'drill' || m === 'wild' || m === 'frontier' || m === 'mine' || m === 'ying') renderCombatPanel();
     if (LEISURE_MODES.includes(m)) renderLeisure(m);
     if (m === 'post') renderPost();
     if (m === 'tavern') renderTavern();
     if (m === 'academy') renderAcademy();
     if (m === 'swim') renderFishSpots();
     if (m === 'garden') renderGardenAff();
+    if (QIN_COURT_MODES.includes(m) || m === 'guanshi' || m === 'hejin' || m === 'ying') renderQinPanel(m);
     renderHUD();
     paintWorkers(true);
   }
@@ -909,14 +1001,18 @@
     openSheet('sheet-map');
   }
   function renderPplModal() {
+    if (!S) return;
+    refreshNpcs();
     const list = $('ppl-list');
     if (!list || !S) return;
     list.innerHTML = NPCS.map((n) => {
       const st = S.npcs[n.id] || { aff: 0 };
       const pct = Math.min(100, st.aff);
+      const where = n.meet ? (' · 常見於' + (MODE_LABELS[n.meet] || n.meet)) : '';
       return '<button type="button" class="villager-card' + (selectedNpc === n.id ? ' active' : '') + '" data-npc="' + n.id + '">' +
         '<div class="villager-row">' + faceThumbHtml(npcFaceKey(n), n.name) +
-        '<div class="villager-meta"><b>' + n.name + '</b> <span class="muted">' + n.role + '</span>' +
+        '<div class="villager-meta"><b>' + n.name + '</b> <span class="muted">' + n.role + where + '</span>' +
+        (n.bio ? '<div class="tiny muted">' + n.bio + '</div>' : '') +
         '<div class="aff-bar"><i style="width:' + pct + '%"></i></div>' +
         '<div class="aff-num">好感 ' + st.aff + '</div></div></div></button>';
     }).join('');
@@ -1141,6 +1237,11 @@
       pushStory('天下大勢：' + line, 'sys');
     }
     S.day++;
+    if (window.QianWorld) {
+      window.QianWorld.ensure(S);
+      const chron = window.QianWorld.tick(S, window.QianFactions || null);
+      if (chron) pushStory('〔天下動向〕' + chron, 'sys');
+    }
     S.orderDone = false;
     if ((S.day - 1) % 1 === 0) S.order = rollOrder(S.day);
     // light food drain
@@ -1149,6 +1250,7 @@
     const st = stats();
     S.hp = Math.min(st.maxHp, S.hp + 8);
     toast(dayStr());
+    refreshNpcs();
     checkQuest();
     drawFarm();
     renderVillage();
@@ -1224,25 +1326,32 @@
     saveQuiet();
   }
   function openWorldModal() {
-    if (!S || !window.QianFactions) return;
-    window.QianFactions.ensure(S);
-    window.QianFactions.recomputeFame(S);
-    const F = window.QianFactions.FACTIONS;
+    if (!S) return;
+    if (window.QianFactions) {
+      window.QianFactions.ensure(S);
+      window.QianFactions.recomputeFame(S);
+    }
+    if (window.QianWorld) window.QianWorld.ensure(S);
     const box = $('world-body');
     if (!box) return;
-    const joined = S.joined ? F[S.joined].full : '無（獨立耕織）';
-    box.innerHTML =
-      '<div class="quest-item"><strong>天下大勢</strong><p>' + escapeHtml(S.worldLine || '') + '</p></div>' +
-      '<div class="quest-item"><strong>財富名聲</strong><div class="aff-bar"><i style="width:' + S.fame + '%"></i></div><p>' + S.fame + '／100 · 銀' + S.gold + '</p></div>' +
-      '<div class="quest-item"><strong>民心</strong><div class="aff-bar"><i style="width:' + S.people + '%"></i></div><p>' + S.people + '／100</p></div>' +
-      '<div class="quest-item"><strong>歸屬</strong><p>' + escapeHtml(joined) + '</p></div>' +
-      Object.keys(F).map((k) => {
-        const f = F[k];
-        const v = Math.floor(S.factions[k] || 0);
-        return '<div class="quest-item"><strong>' + f.name + '</strong> <span class="muted">' + f.full + '</span>' +
-          '<div class="aff-bar"><i style="width:' + v + '%;background:' + f.color + '"></i></div>' +
-          '<p>影響力 ' + v + ' · ' + escapeHtml(f.desc) + '</p></div>';
-      }).join('');
+    let html = '';
+    if (window.QianWorld) html += window.QianWorld.worldModalHtml(S, escapeHtml);
+    if (window.QianFactions) {
+      const F = window.QianFactions.FACTIONS;
+      const joined = S.joined ? F[S.joined].full : '無（獨立耕織）';
+      html +=
+        '<div class="quest-item"><strong>財富名聲</strong><div class="aff-bar"><i style="width:' + S.fame + '%"></i></div><p>' + S.fame + '／100 · 銀' + S.gold + '</p></div>' +
+        '<div class="quest-item"><strong>民心</strong><div class="aff-bar"><i style="width:' + S.people + '%"></i></div><p>' + S.people + '／100</p></div>' +
+        '<div class="quest-item"><strong>歸屬</strong><p>' + escapeHtml(joined) + '</p></div>' +
+        Object.keys(F).map((k) => {
+          const f = F[k];
+          const v = Math.floor(S.factions[k] || 0);
+          return '<div class="quest-item"><strong>' + f.name + '</strong> <span class="muted">' + f.full + '</span>' +
+            '<div class="aff-bar"><i style="width:' + v + '%;background:' + f.color + '"></i></div>' +
+            '<p>影響力 ' + v + ' · ' + escapeHtml(f.desc) + '</p></div>';
+        }).join('');
+    }
+    box.innerHTML = html;
     $('modal-world').hidden = false;
   }
   function openEndingsModal() {
@@ -1261,7 +1370,7 @@
   }
   function saveQuiet() {
     if (!S) return;
-    S.auto = autoOn; S.directive = directive; S.v = 3;
+    S.auto = autoOn; S.directive = directive; S.v = 4;
     if (window.QianFactions) window.QianFactions.ensure(S);
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {}
   }
@@ -1307,6 +1416,7 @@
   /* ---- Village / NPC / Orders ---- */
   function renderVillage() {
     if (!S) return;
+    refreshNpcs();
     const board = $('order-board');
     if (S.orderDone) {
       board.innerHTML = '<strong>今日日令</strong><p>已交付，明日再來。</p>';
@@ -1318,9 +1428,11 @@
     list.innerHTML = NPCS.map((n) => {
       const st = S.npcs[n.id] || { aff: 0 };
       const sel = n.id === selectedNpc ? ' active' : '';
+      const where = n.meet ? (' · 常見於' + (MODE_LABELS[n.meet] || n.meet)) : '';
       return '<button type="button" class="villager-card' + sel + '" data-npc="' + n.id + '">' +
         '<div class="villager-row">' + faceThumbHtml(npcFaceKey(n), n.name) +
-        '<div class="villager-meta"><strong>' + n.name + '</strong> <span class="muted">' + n.role + '</span>' +
+        '<div class="villager-meta"><strong>' + n.name + '</strong> <span class="muted">' + n.role + where + '</span>' +
+        (n.bio ? '<div class="tiny muted">' + n.bio + '</div>' : '') +
         '<div class="aff-bar"><i style="width:' + Math.min(100, st.aff) + '%"></i></div>' +
         '<span class="aff-num">好感 ' + st.aff + '</span></div></div></button>';
     }).join('');
@@ -1460,6 +1572,9 @@
           mem: st.mem.slice(-4).join('；'),
           mode: sayMode === 'cmd' ? 'cmd' : 'say',
           text, career: CAREERS[S.career].name, dayStr: dayStr(),
+          bio: npc.bio || '',
+          heroCtx: window.QianWorld ? window.QianWorld.heroContext(S) : '',
+          worldMode: S.worldMode === 'free' ? '高度自由' : '史實軌道',
           factionStance: window.QianFactions ? window.QianFactions.stanceText(S) : ''
         });
         // remove sys
@@ -2290,6 +2405,10 @@
       else academyDebate();
     }
     else if (LEISURE_MODES.includes(mode) && Math.random() < 0.35) doLeisure(mode);
+    else if ((QIN_COURT_MODES.includes(mode) || mode === 'guanshi' || mode === 'hejin' || mode === 'ying') && Math.random() < 0.4) {
+      const conf = QIN_PANEL[mode];
+      if (conf && conf.acts.length) doQinAct(mode, conf.acts[Math.floor(Math.random() * conf.acts.length)].id);
+    }
     // slow day advance while farming auto
     if (mode === 'farm' && Math.random() < 0.08) nextDay();
   }
@@ -2337,19 +2456,349 @@
     $('modal-settings').hidden = true;
   }
 
+
+  /* ---- Qin court / map panels ---- */
+  const QIN_PANEL = {
+    xianyang: {
+      blurb: '咸陽：秦都街巷。可聽詔、投刺求見、觀市口風向。',
+      acts: [
+        { id: 'listen', label: '聽詔', tip: '體力-2 · 聞朝議' },
+        { id: 'card', label: '投刺', tip: '銀8 · 名↑' },
+        { id: 'watch', label: '觀市口', tip: '打聽勢力' }
+      ]
+    },
+    palace: {
+      blurb: '宮城外：衛士森嚴。可打聽王位、投書、慎與衛士周旋。',
+      acts: [
+        { id: 'rumor', label: '打聽王位', tip: '體力-3' },
+        { id: 'letter', label: '投書內廷', tip: '銀12 · 秦廷↑' },
+        { id: 'guard', label: '與衛士話', tip: '體力-2 · 或得罪' }
+      ]
+    },
+    xiangbang: {
+      blurb: '相邦府：呂不韋門下。拜謁、貨殖請託、門客清談。',
+      acts: [
+        { id: 'visit', label: '拜謁', tip: '體力-3 · 呂黨↑' },
+        { id: 'trade', label: '貨殖請託', tip: '銀10 · 或得利' },
+        { id: 'chat', label: '門客清談', tip: '體力-2 · 名↑' }
+      ]
+    },
+    taihou: {
+      blurb: '太后宮外：進貢討喜，打聽宮爭，勿多嘴。',
+      acts: [
+        { id: 'gift', label: '進貢', tip: '花/藥或銀' },
+        { id: 'spy', label: '打聽宮爭', tip: '體力-3 · 險' },
+        { id: 'quiet', label: '緘默退', tip: '民心微↑' }
+      ]
+    },
+    guowei: {
+      blurb: '國尉府：軍政文書處。報功、領差、習軍法。',
+      acts: [
+        { id: 'report', label: '報功', tip: '需勝場' },
+        { id: 'duty', label: '領差', tip: '體力-4 · 銀' },
+        { id: 'law', label: '習軍法', tip: '體力-3 · 武/文' }
+      ]
+    },
+    keguan: {
+      blurb: '客館：六國使者與賓客投宿。宴客、刺探、結交。',
+      acts: [
+        { id: 'banquet', label: '宴客', tip: '銀15 · 塞↑' },
+        { id: 'probe', label: '刺探合縱', tip: '體力-3' },
+        { id: 'befriend', label: '結賓客', tip: '體力-2 · 好感' }
+      ]
+    },
+    guanshi: {
+      blurb: '關市：校度量、征市租、邊貨互市。',
+      acts: [
+        { id: 'buy', label: '買邊貨', tip: '銀14 · 礦/花' },
+        { id: 'sell', label: '售山貨', tip: '賣礦藥' },
+        { id: 'tax', label: '助市吏', tip: '體力-3 · 秦↑' }
+      ]
+    },
+    hejin: {
+      blurb: '河津：渡口與水工往來。渡船、問渠、運糧。',
+      acts: [
+        { id: 'ferry', label: '渡船', tip: '銀4 · 復體' },
+        { id: 'canal', label: '問水工', tip: '體力-3 · 史跡' },
+        { id: 'haul', label: '運糧', tip: '糧-2 · 銀' }
+      ]
+    },
+    cimiao: {
+      blurb: '祠廟：祈社稷、賽祭安民。',
+      acts: [
+        { id: 'pray', label: '祈福', tip: '銀5 · 民心' },
+        { id: 'fest', label: '賽祭', tip: '銀10 · 名民' },
+        { id: 'meditate', label: '靜思', tip: '體力-2 · 文' }
+      ]
+    },
+    ying: {
+      blurb: '軍營：操練、領餉差、與校場互補。可對練。',
+      acts: [
+        { id: 'drill', label: '營中操練', tip: '體力-4 · 武' },
+        { id: 'pay', label: '領餉差', tip: '體力-3 · 銀' },
+        { id: 'fight', label: '營內對練', tip: '開戰' }
+      ]
+    }
+  };
+
+  function renderQinPanel(m) {
+    if (!S) return;
+    const conf = QIN_PANEL[m];
+    const blurb = $('qin-blurb');
+    const acts = $('qin-acts');
+    const meet = $('qin-meet');
+    const stat = $('qin-stat');
+    if (stat) stat.textContent = '體力 ' + S.hp + '/' + S.maxHp + ' · 銀' + S.gold;
+    if (blurb && conf) blurb.textContent = conf.blurb;
+    if (acts && conf) {
+      acts.innerHTML = conf.acts.map((a) =>
+        '<button type="button" class="btn' + (a.id === conf.acts[0].id ? ' primary' : '') + '" data-qin="' + m + '" data-act="' + a.id + '">' +
+        a.label + '<small class="act-tip">' + a.tip + '</small></button>'
+      ).join('');
+      acts.querySelectorAll('[data-qin]').forEach((b) => {
+        b.addEventListener('click', () => doQinAct(b.dataset.qin, b.dataset.act));
+      });
+    }
+    if (meet) {
+      const here = liveNpcs().filter((n) => n.meet === m).slice(0, 6);
+      if (!here.length) {
+        meet.innerHTML = '<p class="tiny muted">此處暫無熟面孔，可至人脈找秦人。</p>';
+      } else {
+        meet.innerHTML = '<div class="panel-h-row"><span class="panel-h">可見之人</span></div>' +
+          here.map((n) => {
+            const aff = (S.npcs[n.id] && S.npcs[n.id].aff) || 0;
+            return '<button type="button" class="villager-card" data-meet-npc="' + n.id + '">' +
+              faceThumbHtml(npcFaceKey(n), n.name) +
+              '<div><strong>' + n.name + '</strong><span class="muted"> ' + n.role + '</span>' +
+              '<div class="aff-bar"><i style="width:' + Math.min(100, aff) + '%"></i></div></div></button>';
+          }).join('');
+        meet.querySelectorAll('[data-meet-npc]').forEach((b) => {
+          b.addEventListener('click', () => {
+            selectedNpc = b.dataset.meetNpc;
+            openTalk();
+          });
+        });
+      }
+    }
+  }
+
+  function doQinAct(m, act) {
+    if (!S || battle) { toast(battle ? '戰鬥中' : '…'); return; }
+    const bump = (k, n) => { if (window.QianFactions) window.QianFactions.bump(S, k, n); };
+    const diverge = (id, note) => { if (window.QianWorld) window.QianWorld.markDiverge(S, id, note); };
+    const needHp = (n) => { if (S.hp < n) { toast('體力不足'); return false; } S.hp -= n; return true; };
+    const needGold = (n) => { if (S.gold < n) { toast('銀不足'); return false; } S.gold -= n; return true; };
+
+    if (m === 'xianyang') {
+      if (act === 'listen') {
+        if (!needHp(2)) return;
+        const lines = ['內史清查編戶。', '相邦府夜宴門客。', '少年王問邊關糧草。', '六國使團將至客館。'];
+        const L = lines[(S.day + act.length) % lines.length];
+        bump('fame', 1); toast('聽得：' + L); pushStory('咸陽街口：' + L, 'nar');
+      } else if (act === 'card') {
+        if (!needGold(8)) return;
+        bump('fame', 3); bump('qin', 1); toast('投刺求見 · 名聲↑'); pushStory('你投刺於府門，小吏記下名字。', 'nar');
+      } else if (act === 'watch') {
+        if (!needHp(2)) return;
+        const top = ['lu', 'qin', 'sai'].slice().sort((a, b) => (S.factions[b]||0) - (S.factions[a]||0))[0];
+        const names = { lu: '呂黨', qin: '王府', sai: '邊市' };
+        toast('市口多議' + names[top]); pushStory('咸陽市口，人多議「' + names[top] + '」風向。', 'nar');
+      }
+    } else if (m === 'palace') {
+      if (act === 'rumor') {
+        if (!needHp(3)) return;
+        bump('qin', 1); toast('聞宮中語'); pushStory('宮牆外有人竊語：王年雖幼，目光已漸利。', 'nar');
+      } else if (act === 'letter') {
+        if (!needGold(12)) return;
+        bump('qin', 4); bump('fame', 2); toast('投書內廷'); pushStory('一封書信送入內廷——不知是否有人拆閱。', 'nar');
+        diverge('qin_rule', '你向王府投書，加速親政傳聞');
+      } else if (act === 'guard') {
+        if (!needHp(2)) return;
+        if (Math.random() < 0.55) { bump('qin', 2); toast('衛士點頭'); }
+        else { bump('qin', -1); S.hp = Math.max(1, S.hp - 4); toast('衛士不悅 · 被喝退'); }
+        pushStory('你與宮門衛士搭話。', 'nar');
+      }
+    } else if (m === 'xiangbang') {
+      if (act === 'visit') {
+        if (!needHp(3)) return;
+        bump('lu', 3); bump('fame', 1); toast('拜謁相邦府'); pushStory('相邦府門客引你入側廳，茶香與算盤聲並起。', 'nar');
+      } else if (act === 'trade') {
+        if (!needGold(10)) return;
+        if (Math.random() < 0.6) { const w = 16 + Math.floor(Math.random()*12); S.gold += w; bump('lu', 2); toast('貨殖得利 +' + w); }
+        else { toast('請託無果'); }
+        pushStory('你在相邦府外圍做了一筆貨殖請託。', 'nar');
+      } else if (act === 'chat') {
+        if (!needHp(2)) return;
+        bump('lu', 1); bump('fame', 1); toast('門客清談'); pushStory('舍人程賈與你清談「奇貨可居」。', 'nar');
+      }
+    } else if (m === 'taihou') {
+      if (act === 'gift') {
+        if (bagCount('flower') >= 1) { addBag('flower', -1); bump('lu', 2); bump('people', 1); toast('鮮花進貢'); }
+        else if (bagCount('herb') >= 1) { addBag('herb', -1); bump('lu', 1); toast('草藥進貢'); }
+        else if (needGold(10)) { bump('lu', 2); toast('銀帛進貢'); }
+        else return;
+        pushStory('你在太后宮外投下薄禮。', 'nar');
+      } else if (act === 'spy') {
+        if (!needHp(3)) return;
+        if (Math.random() < 0.5) {
+          bump('fame', 2); toast('聽得宮爭影');
+          diverge('laoai', '你探得太后宮私門養士之風');
+          pushStory('宮婢低聲：私門養士，漸與相邦府分庭。', 'nar');
+        } else { bump('lu', -2); toast('險些惹禍'); pushStory('你打聽太過，被人冷眼逐出牆外。', 'nar'); }
+      } else if (act === 'quiet') {
+        bump('people', 1); toast('緘默而退'); pushStory('你拱手退開，不多一言。', 'nar');
+      }
+    } else if (m === 'guowei') {
+      if (act === 'report') {
+        if ((S.wins || 0) < 2) { toast('勝場不足，無可報'); return; }
+        bump('qin', 3); bump('fame', 2); S.gold += 8; toast('報功獲賞 +8銀'); pushStory('國尉府小吏記下你的戰功。', 'nar');
+      } else if (act === 'duty') {
+        if (!needHp(4)) return;
+        const g = 6 + Math.floor(Math.random() * 8); S.gold += g; bump('qin', 1); toast('領差得銀' + g);
+        pushStory('你替國尉府跑了一趟文書差。', 'nar');
+      } else if (act === 'law') {
+        if (!needHp(3)) return;
+        if (Math.random() < 0.5) S.skills.mart = Math.min(8, (S.skills.mart || 0) + 1);
+        else S.skills.lit = Math.min(8, (S.skills.lit || 0) + 1);
+        toast('習軍法有所得'); pushStory('尉府廊下，你研讀軍法殘篇。', 'nar');
+      }
+    } else if (m === 'keguan') {
+      if (act === 'banquet') {
+        if (!needGold(15)) return;
+        bump('sai', 3); bump('fame', 2); bump('people', 1); toast('宴客成功');
+        pushStory('客館夜宴，楚使與齊客舉杯。', 'nar');
+      } else if (act === 'probe') {
+        if (!needHp(3)) return;
+        bump('sai', 1); bump('fame', 1); toast('刺探合縱傳聞');
+        diverge('six_states', '你介入六國合縱傳聞的傳播');
+        pushStory('你從使團隨員口中套得合縱隻言片語。', 'nar');
+      } else if (act === 'befriend') {
+        if (!needHp(2)) return;
+        const guests = liveNpcs().filter((n) => n.meet === 'keguan');
+        const n = guests[Math.floor(Math.random() * Math.max(1, guests.length))] || liveNpcs()[0];
+        if (n && S.npcs[n.id]) S.npcs[n.id].aff = Math.min(100, (S.npcs[n.id].aff || 0) + 4);
+        toast('結識' + (n ? n.name : '賓客')); pushStory('客館廊下，你與賓客交換名刺。', 'nar');
+      }
+    } else if (m === 'guanshi') {
+      if (act === 'buy') {
+        if (!needGold(14)) return;
+        addBag('ore', 2); addBag('flower', 1); toast('買得邊貨'); pushStory('關市上你購下皮毛換來的礦與花。', 'nar');
+      } else if (act === 'sell') {
+        let g = 0;
+        if (bagCount('ore') >= 1) { const n = Math.min(3, bagCount('ore')); addBag('ore', -n); g += n * 7; }
+        if (bagCount('herb') >= 1) { const n = Math.min(2, bagCount('herb')); addBag('herb', -n); g += n * 5; }
+        if (!g) { toast('無山貨可售'); return; }
+        S.gold += g; S.soldGold += g; bump('lu', 1); bump('sai', 1); toast('售出 +' + g + '銀');
+      } else if (act === 'tax') {
+        if (!needHp(3)) return;
+        bump('qin', 2); S.gold += 4; toast('助市吏 · +4銀'); pushStory('你協助市吏校秤半日。', 'nar');
+      }
+    } else if (m === 'hejin') {
+      if (act === 'ferry') {
+        if (!needGold(4)) return;
+        S.hp = Math.min(S.maxHp, S.hp + 10); toast('渡船歇息'); pushStory('津渡船搖，河風吹散疲憊。', 'nar');
+      } else if (act === 'canal') {
+        if (!needHp(3)) return;
+        bump('fame', 1); bump('people', 1); toast('聞渠議');
+        diverge('zhengguo', '你過問鄭國渠議，影響農田輿論');
+        pushStory('水工言：渠成則關中畝產可倍——亦或疲民。', 'nar');
+        if (S.npcs.zhengguo) S.npcs.zhengguo.aff = Math.min(100, (S.npcs.zhengguo.aff || 0) + 3);
+      } else if (act === 'haul') {
+        if (S.food < 2) { toast('存糧不足'); return; }
+        S.food -= 2; const g = 10 + Math.floor(Math.random() * 8); S.gold += g; bump('qin', 1);
+        toast('運糧得銀' + g); pushStory('你幫津吏運了一船糧。', 'nar');
+      }
+    } else if (m === 'cimiao') {
+      if (act === 'pray') {
+        if (!needGold(5)) return;
+        bump('people', 3); toast('祈福 · 民心↑'); pushStory('祠廟香火，你默祝田稼平安。', 'nar');
+      } else if (act === 'fest') {
+        if (!needGold(10)) return;
+        bump('people', 4); bump('fame', 2); toast('賽祭熱鬧'); pushStory('社祭鼓響，鄉鄰見你出銀，紛紛拱手。', 'nar');
+      } else if (act === 'meditate') {
+        if (!needHp(2)) return;
+        if (Math.random() < 0.45) S.skills.lit = Math.min(8, (S.skills.lit || 0) + 1);
+        toast('靜思片刻'); pushStory('你在祠階上閉目片刻，心神略定。', 'nar');
+      }
+    } else if (m === 'ying') {
+      if (act === 'drill') {
+        if (!needHp(4)) return;
+        S.skills.mart = Math.min(8, (S.skills.mart || 0) + (Math.random() < 0.6 ? 1 : 0));
+        bump('qin', 1); toast('營中操練'); pushStory('軍營校場，你隨卒伍出了數身汗。', 'nar');
+      } else if (act === 'pay') {
+        if (!needHp(3)) return;
+        const g = 5 + Math.floor(Math.random() * 6); S.gold += g; bump('qin', 1); toast('餉差 +' + g);
+        pushStory('軍候派你送一趟餉冊。', 'nar');
+      } else if (act === 'fight') {
+        startBattle('drill'); return;
+      }
+    }
+    renderQinPanel(m); renderHUD(); saveQuiet();
+  }
+
   /* ---- Screens ---- */
   function showTitle() {
     $('screen-title').hidden = false;
+    if ($('screen-create')) $('screen-create').hidden = true;
     $('screen-career').hidden = true;
     $('screen-game').hidden = true;
     closeSheets();
     $('btn-continue').hidden = !hasSave();
   }
+  function showCreate() {
+    $('screen-title').hidden = true;
+    if ($('screen-create')) $('screen-create').hidden = false;
+    $('screen-career').hidden = true;
+    $('screen-game').hidden = true;
+    fillCreateForm();
+  }
+  function fillCreateForm() {
+    const d = window.__createDraft || { name: '豆豆', gender: 'x', origin: 'farm', goal: '', worldMode: 'history' };
+    window.__createDraft = d;
+    if ($('create-name')) $('create-name').value = d.name || '';
+    if ($('create-goal')) $('create-goal').value = d.goal || '';
+    document.querySelectorAll('[data-gender]').forEach((b) => b.classList.toggle('active', b.dataset.gender === d.gender));
+    document.querySelectorAll('[data-origin]').forEach((b) => b.classList.toggle('active', b.dataset.origin === d.origin));
+    document.querySelectorAll('[data-wmode]').forEach((b) => b.classList.toggle('active', b.dataset.wmode === d.worldMode));
+    const og = $('origin-grid');
+    if (og && window.QianWorld && !og.dataset.ready) {
+      og.innerHTML = window.QianWorld.ORIGINS.map((o) =>
+        '<button type="button" class="chip-card' + (d.origin === o.id ? ' active' : '') + '" data-origin="' + o.id + '">' +
+        '<strong>' + o.name + '</strong><span>' + o.desc + '</span></button>'
+      ).join('');
+      og.dataset.ready = '1';
+      og.querySelectorAll('[data-origin]').forEach((b) => {
+        b.addEventListener('click', () => {
+          window.__createDraft.origin = b.dataset.origin;
+          og.querySelectorAll('[data-origin]').forEach((x) => x.classList.toggle('active', x === b));
+        });
+      });
+    }
+  }
+  function readCreateDraft() {
+    const d = window.__createDraft || {};
+    d.name = (($('create-name') && $('create-name').value.trim()) || '旅人').slice(0, 8);
+    d.goal = (($('create-goal') && $('create-goal').value.trim()) || '').slice(0, 24);
+    d.gender = d.gender || 'x';
+    d.origin = d.origin || 'farm';
+    d.worldMode = d.worldMode || 'history';
+    window.__createDraft = d;
+    return d;
+  }
   function showCareer() {
+    readCreateDraft();
+    if ($('screen-create')) $('screen-create').hidden = true;
     $('screen-title').hidden = true;
     $('screen-career').hidden = false;
     $('screen-game').hidden = true;
     const grid = $('career-grid');
+    const blurb = $('career-blurb');
+    if (blurb && window.__createDraft) {
+      const o = window.QianWorld ? window.QianWorld.originById(window.__createDraft.origin) : { name: '農家' };
+      const g = window.__createDraft.gender === 'm' ? '男' : (window.__createDraft.gender === 'f' ? '女' : '不顯');
+      blurb.textContent = '秦王政元年。' + window.__createDraft.name + '（' + g + '·' + o.name + '）——汝欲以何業立足？' +
+        (window.__createDraft.worldMode === 'free' ? '〔高度自由〕' : '〔史實軌道〕');
+    }
     grid.innerHTML = Object.values(CAREERS).map((c) =>
       '<button type="button" class="career-card" data-career="' + c.id + '">' +
       '<h3>' + c.name + '</h3><p>' + c.desc + '</p>' +
@@ -2360,16 +2809,22 @@
     });
   }
   function startGame(careerId) {
+    readCreateDraft();
     S = newState(careerId);
     autoOn = false;
     directive = 'grain';
     mode = 'farm';
+    refreshNpcs();
     $('screen-career').hidden = true;
+    if ($('screen-create')) $('screen-create').hidden = true;
     $('screen-title').hidden = true;
     $('screen-game').hidden = false;
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
     showMode('farm');
-    status('以' + CAREERS[careerId].name + '之身，立於青阡。聲名未起時，且耕且讀；名利漸顯，車馬或至。');
+    const h = S.hero || {};
+    const o = window.QianWorld ? window.QianWorld.originById(h.origin) : { name: '' };
+    const modeTxt = S.worldMode === 'free' ? '高度自由世界' : '史實軌道';
+    status('秦王政元年。你是' + (h.name || '旅人') + '，出身' + (o.name || '') + '，以' + CAREERS[careerId].name + '立足青阡。（' + modeTxt + '）少年王即位，呂不韋為相邦——天下軌道可被你改寫。');
     toast('開局 · ' + CAREERS[careerId].name);
     saveQuiet();
     setTimeout(openActSheet, 350);
@@ -2379,6 +2834,7 @@
     $('screen-title').hidden = true;
     $('screen-game').hidden = false;
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
+    refreshNpcs();
     showMode('farm');
     toast('繼續 · ' + dayStr());
     pushStory('續寫 · ' + dayStr(), 'sys');
@@ -2394,9 +2850,25 @@
 
   /* ---- Bind ---- */
   function bind() {
-    $('btn-new').addEventListener('click', showCareer);
+    $('btn-new').addEventListener('click', showCreate);
     $('btn-continue').addEventListener('click', continueGame);
-    $('btn-career-back').addEventListener('click', showTitle);
+    $('btn-career-back').addEventListener('click', showCreate);
+    if ($('btn-create-back')) $('btn-create-back').addEventListener('click', showTitle);
+    if ($('btn-create-next')) $('btn-create-next').addEventListener('click', showCareer);
+    document.querySelectorAll('[data-gender]').forEach((b) => {
+      b.addEventListener('click', () => {
+        window.__createDraft = window.__createDraft || {};
+        window.__createDraft.gender = b.dataset.gender;
+        document.querySelectorAll('[data-gender]').forEach((x) => x.classList.toggle('active', x === b));
+      });
+    });
+    document.querySelectorAll('[data-wmode]').forEach((b) => {
+      b.addEventListener('click', () => {
+        window.__createDraft = window.__createDraft || {};
+        window.__createDraft.worldMode = b.dataset.wmode;
+        document.querySelectorAll('[data-wmode]').forEach((x) => x.classList.toggle('active', x === b));
+      });
+    });
     $('btn-settings-title').addEventListener('click', openSettings);
     $('btn-settings-game').addEventListener('click', () => { $('modal-menu').hidden = true; openSettings(); });
     $('btn-menu').addEventListener('click', () => { $('modal-menu').hidden = false; });
@@ -2447,7 +2919,7 @@
 
     canvas().addEventListener('click', (e) => tapPlot(plotAt(e.clientX, e.clientY)));
 
-    ['btn-auto', 'btn-auto-v', 'btn-auto-mkt', 'btn-auto-clinic', 'btn-auto-drill', 'btn-auto-wild', 'btn-auto-garden', 'btn-auto-swim', 'btn-auto-moon', 'btn-auto-mine', 'btn-auto-post', 'btn-auto-tavern', 'btn-auto-academy', 'btn-auto-frontier'].forEach((id) => {
+    ['btn-auto', 'btn-auto-v', 'btn-auto-mkt', 'btn-auto-clinic', 'btn-auto-drill', 'btn-auto-wild', 'btn-auto-garden', 'btn-auto-swim', 'btn-auto-moon', 'btn-auto-mine', 'btn-auto-post', 'btn-auto-tavern', 'btn-auto-academy', 'btn-auto-frontier', 'btn-auto-qin'].forEach((id) => {
       const el = $(id); if (el) el.addEventListener('click', toggleAuto);
     });
     $('btn-water-all').addEventListener('click', waterAll);

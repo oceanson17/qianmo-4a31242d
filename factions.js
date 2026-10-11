@@ -24,7 +24,7 @@
       desc: '嬴政左右與內史吏屬。重軍功、秩序、鄉里編戶。',
       color: '#b8323a',
       recruiter: { name: '內史吏', role: '王府小吏' },
-      joinLine: '王府有令：邊野亦屬編戶。君若效力，校場山野皆可記功；若抗命，則另當別論。',
+      joinLine: '王府有令：秦王新政，邊野亦屬編戶。君若效力，校場山野皆可記功；若抗命，則另當別論。',
       refuseLine: '小吏冷笑一聲：編戶自便。只是……官府眼線，無處不在。',
       questTitle: '王府差遣',
       autoHint: '多練兵、多入山'
@@ -125,7 +125,7 @@
     if (S.fameBonus == null) S.fameBonus = 0;
     if (S.people == null) S.people = 8;
     if (S.joined === undefined) S.joined = null;
-    if (!S.worldLine) S.worldLine = '天下初定，邊野尚安。';
+    if (!S.worldLine) S.worldLine = '秦王政元年，少年王即位，呂不韋為相邦。';
     if (!S.endings) S.endings = [];
     if (!S.seenEvents) S.seenEvents = {};
     if (!S.dayActs) S.dayActs = { farm: 0, sell: 0, gift: 0, heal: 0, fight: 0, trade: 0, order: 0 };

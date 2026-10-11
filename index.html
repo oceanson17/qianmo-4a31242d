@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#f6ebe4">
 <title>青阡</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E阡%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body x-apple-data-detectors="false">
 <div id="app">
@@ -19,21 +19,58 @@
   <section id="screen-title" class="screen on">
     <div class="title-bg" aria-hidden="true">
       <picture>
-        <source srcset="assets/bg_village.webp?v=8" type="image/webp">
-        <img src="assets/bg_village.jpg?v=8" alt="" decoding="async">
+        <source srcset="assets/bg_village.webp?v=9" type="image/webp">
+        <img src="assets/bg_village.jpg?v=9" alt="" decoding="async">
       </picture>
       <div class="title-bg-shade"></div>
     </div>
     <div class="title-content">
       <div class="tseal">阡陌</div>
       <h1>青阡</h1>
-      <p class="subtitle">秦際阡陌　三方來訪　AUTO·AI</p>
+      <p class="subtitle">秦王政元年　少年王即位　AUTO·AI</p>
       <div class="tmenu">
-        <button type="button" class="tbtn" id="btn-new"><b>開始新局</b><small>擇業開局</small></button>
+        <button type="button" class="tbtn" id="btn-new"><b>開始新局</b><small>身世·擇業</small></button>
         <button type="button" class="tbtn" id="btn-continue" hidden><b>續寫阡陌</b><small>讀取存檔</small></button>
         <button type="button" class="tbtn" id="btn-settings-title"><b>設定</b><small>AI·文字</small></button>
       </div>
-      <p class="tfoot">國風文字介面 · 呂黨／王府／邊市盟 · AUTO 種田打怪 · AI 對白</p>
+      <p class="tfoot">國風文字介面 · 秦廷場景 · 史實／自由軌道 · AUTO·AI</p>
+    </div>
+  </section>
+
+  <!-- 身世創建 -->
+  <section id="screen-create" class="screen" hidden>
+    <div class="career-wrap parchment create-wrap">
+      <h2>身世</h2>
+      <p class="career-blurb">秦王政元年。嬴政新立，呂不韋為相邦。先書汝之姓名出身。</p>
+      <label class="field">姓名
+        <input type="text" id="create-name" maxlength="8" placeholder="例：豆豆" autocomplete="off" value="豆豆">
+      </label>
+      <div class="field">
+        <span class="flabel">性別</span>
+        <div class="seg-row" id="gender-row">
+          <button type="button" class="chip-card" data-gender="m">男</button>
+          <button type="button" class="chip-card" data-gender="f">女</button>
+          <button type="button" class="chip-card active" data-gender="x">不顯</button>
+        </div>
+      </div>
+      <div class="field">
+        <span class="flabel">出身</span>
+        <div class="origin-grid" id="origin-grid"></div>
+      </div>
+      <label class="field">志向（可空）
+        <input type="text" id="create-goal" maxlength="24" placeholder="例：富甲一方／效力王廷／改寫命運" autocomplete="off">
+      </label>
+      <div class="field">
+        <span class="flabel">世界模式</span>
+        <div class="seg-row" id="wmode-row">
+          <button type="button" class="chip-card active" data-wmode="history"><strong>史實軌道</strong><span>天下依史推演，你可改史</span></button>
+          <button type="button" class="chip-card" data-wmode="free"><strong>高度自由</strong><span>史實權重低，世界隨你與隨機</span></button>
+        </div>
+      </div>
+      <div class="create-actions">
+        <button type="button" class="btn ghost" id="btn-create-back">返回</button>
+        <button type="button" class="btn primary" id="btn-create-next">下一步 · 擇業</button>
+      </div>
     </div>
   </section>
 
@@ -41,7 +78,7 @@
   <section id="screen-career" class="screen" hidden>
     <div class="career-wrap parchment">
       <h2>擇業開局</h2>
-      <p class="career-blurb">秦漢之際，阡陌初開。汝欲以何業立足？</p>
+      <p class="career-blurb" id="career-blurb">秦王政元年，阡陌初開。汝欲以何業立足？</p>
       <div class="career-grid" id="career-grid"></div>
       <button type="button" class="btn ghost" id="btn-career-back">返回</button>
     </div>
@@ -52,8 +89,8 @@
     <!-- 全屏場景 -->
     <div class="vn-stage" id="adventure-scene">
       <picture id="scene-pic">
-        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=8" type="image/webp">
-        <img id="scene-img" src="assets/bg_busy_farm.webp?v=8" alt="場景" class="scene-img" decoding="async">
+        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=9" type="image/webp">
+        <img id="scene-img" src="assets/bg_busy_farm.webp?v=9" alt="場景" class="scene-img" decoding="async">
       </picture>
       <div class="season-tint" id="season-tint" data-season="0"></div>
       <canvas id="worker-layer" class="worker-layer" aria-hidden="true"></canvas>
@@ -71,7 +108,7 @@
           </div>
           <div class="wave-label" id="wave-label">第 1／3 波</div>
           <div class="hp-block player">
-            <img class="battle-hero" src="assets/char_hero.webp?v=8" alt="" decoding="async">
+            <img class="battle-hero" src="assets/char_hero.webp?v=9" alt="" decoding="async">
             <div class="hp-name">你</div>
             <div class="hp-bar"><div class="hp-fill player" id="player-hp-fill"></div></div>
             <div class="hp-num" id="player-hp-num">0/0</div>
@@ -115,8 +152,8 @@
         <button type="button" id="q-save" aria-label="存檔">存檔</button>
       </div>
       <div id="txt" aria-live="polite">
-        <div id="status-text" class="nar">點「地圖」換場景，開「自動」幫你種田打怪。聲名漸起，三方或將來訪。</div>
-        <div id="world-line" class="world-line">天下初定，邊野尚安。</div>
+        <div id="status-text" class="nar">秦王政元年。點「地圖」走秦都與邊野，開「自動」種田打怪。史實可被你改寫。</div>
+        <div id="world-line" class="world-line">少年秦王即位，呂不韋為相邦。</div>
         <div id="story-log"></div>
       </div>
       <span id="auto-label" class="auto-off" hidden>AUTO 關</span>
@@ -140,7 +177,7 @@
     <nav class="mode-tabs" role="tablist" aria-label="場景" hidden>
       <button type="button" class="mode-tab active" data-mode="farm">田莊</button>
       <button type="button" class="mode-tab" data-mode="village">村落</button>
-      <button type="button" class="mode-tab" data-mode="market">坊市</button>
+      <button type="button" class="mode-tab" data-mode="market">市井</button>
       <button type="button" class="mode-tab" data-mode="clinic">藥廬</button>
       <button type="button" class="mode-tab" data-mode="drill">校場</button>
       <button type="button" class="mode-tab" data-mode="wild">山野</button>
@@ -148,10 +185,20 @@
       <button type="button" class="mode-tab" data-mode="swim">水塘</button>
       <button type="button" class="mode-tab" data-mode="moon">夜宴</button>
       <button type="button" class="mode-tab" data-mode="mine">礦坑</button>
-      <button type="button" class="mode-tab" data-mode="post">驛站</button>
+      <button type="button" class="mode-tab" data-mode="post">驛道</button>
       <button type="button" class="mode-tab" data-mode="tavern">酒肆</button>
       <button type="button" class="mode-tab" data-mode="academy">書塾</button>
-      <button type="button" class="mode-tab" data-mode="frontier">邊塞</button>
+      <button type="button" class="mode-tab" data-mode="frontier">邊關</button>
+      <button type="button" class="mode-tab" data-mode="xianyang">咸陽</button>
+      <button type="button" class="mode-tab" data-mode="palace">宮城外</button>
+      <button type="button" class="mode-tab" data-mode="xiangbang">相邦府</button>
+      <button type="button" class="mode-tab" data-mode="taihou">太后宮外</button>
+      <button type="button" class="mode-tab" data-mode="guowei">國尉府</button>
+      <button type="button" class="mode-tab" data-mode="keguan">客館</button>
+      <button type="button" class="mode-tab" data-mode="guanshi">關市</button>
+      <button type="button" class="mode-tab" data-mode="hejin">河津</button>
+      <button type="button" class="mode-tab" data-mode="cimiao">祠廟</button>
+      <button type="button" class="mode-tab" data-mode="ying">軍營</button>
     </nav>
 
     <!-- 地圖羊皮紙 -->
@@ -165,7 +212,7 @@
         <div class="map-pins" id="map-pins">
           <button type="button" class="pin" data-mode="farm"><span class="ps">田</span><span class="pn">田莊</span></button>
           <button type="button" class="pin" data-mode="village"><span class="ps">村</span><span class="pn">村落</span></button>
-          <button type="button" class="pin" data-mode="market"><span class="ps">市</span><span class="pn">坊市</span></button>
+          <button type="button" class="pin" data-mode="market"><span class="ps">井</span><span class="pn">市井</span></button>
           <button type="button" class="pin" data-mode="clinic"><span class="ps">藥</span><span class="pn">藥廬</span></button>
           <button type="button" class="pin" data-mode="drill"><span class="ps">校</span><span class="pn">校場</span></button>
           <button type="button" class="pin" data-mode="wild"><span class="ps">崖</span><span class="pn">山野</span></button>
@@ -173,12 +220,22 @@
           <button type="button" class="pin" data-mode="swim"><span class="ps">塘</span><span class="pn">水塘</span></button>
           <button type="button" class="pin" data-mode="moon"><span class="ps">宴</span><span class="pn">夜宴</span></button>
           <button type="button" class="pin" data-mode="mine"><span class="ps">礦</span><span class="pn">礦坑</span></button>
-          <button type="button" class="pin" data-mode="post"><span class="ps">驛</span><span class="pn">驛站</span></button>
+          <button type="button" class="pin" data-mode="post"><span class="ps">驛</span><span class="pn">驛道</span></button>
           <button type="button" class="pin" data-mode="tavern"><span class="ps">酒</span><span class="pn">酒肆</span></button>
           <button type="button" class="pin" data-mode="academy"><span class="ps">塾</span><span class="pn">書塾</span></button>
-          <button type="button" class="pin" data-mode="frontier"><span class="ps">塞</span><span class="pn">邊塞</span></button>
+          <button type="button" class="pin" data-mode="frontier"><span class="ps">關</span><span class="pn">邊關</span></button>
+          <button type="button" class="pin" data-mode="xianyang"><span class="ps">咸</span><span class="pn">咸陽</span></button>
+          <button type="button" class="pin" data-mode="palace"><span class="ps">宮</span><span class="pn">宮城外</span></button>
+          <button type="button" class="pin" data-mode="xiangbang"><span class="ps">相</span><span class="pn">相邦府</span></button>
+          <button type="button" class="pin" data-mode="taihou"><span class="ps">后</span><span class="pn">太后宮外</span></button>
+          <button type="button" class="pin" data-mode="guowei"><span class="ps">尉</span><span class="pn">國尉府</span></button>
+          <button type="button" class="pin" data-mode="keguan"><span class="ps">客</span><span class="pn">客館</span></button>
+          <button type="button" class="pin" data-mode="guanshi"><span class="ps">關</span><span class="pn">關市</span></button>
+          <button type="button" class="pin" data-mode="hejin"><span class="ps">津</span><span class="pn">河津</span></button>
+          <button type="button" class="pin" data-mode="cimiao"><span class="ps">祠</span><span class="pn">祠廟</span></button>
+          <button type="button" class="pin" data-mode="ying"><span class="ps">營</span><span class="pn">軍營</span></button>
         </div>
-        <p class="note" id="map-note">點選地點前往（耗體力／少許時間）。AUTO 跟住當前場景做事。</p>
+        <p class="note" id="map-note">秦王政元年輿圖。點選地點前往（耗體力）。AUTO 跟住當前場景做事。</p>
       </div>
     </div>
 
@@ -190,7 +247,7 @@
       </div>
       <div class="sbody act-body">
         <div class="act-scene" id="act-scene">
-          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=8" alt="場景" class="act-scene-img" decoding="async">
+          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=9" alt="場景" class="act-scene-img" decoding="async">
           <canvas id="act-worker-layer" class="act-worker-layer" aria-hidden="true"></canvas>
           <div class="act-scene-cap" id="act-scene-cap">場景人物走動</div>
         </div>
@@ -397,7 +454,28 @@
             <button type="button" class="btn" id="btn-flee-front" hidden>撤退</button>
             <button type="button" class="btn" id="btn-front-deeper">更深</button>
           </div>
-          <p class="mode-blurb tiny-blurb">邊塞怪強、掉落佳 · 需體力充足</p>
+          <p class="mode-blurb tiny-blurb">邊關怪強、掉落佳 · 需體力充足</p>
+        </div>
+
+        <div class="mode-panel" id="xianyang-panel" hidden></div>
+        <div class="mode-panel" id="palace-panel" hidden></div>
+        <div class="mode-panel" id="xiangbang-panel" hidden></div>
+        <div class="mode-panel" id="taihou-panel" hidden></div>
+        <div class="mode-panel" id="guowei-panel" hidden></div>
+        <div class="mode-panel" id="keguan-panel" hidden></div>
+        <div class="mode-panel" id="guanshi-panel" hidden></div>
+        <div class="mode-panel" id="hejin-panel" hidden></div>
+        <div class="mode-panel" id="cimiao-panel" hidden></div>
+        <div class="mode-panel" id="ying-panel" hidden></div>
+
+        <div class="mode-panel" id="qin-shared-panel" hidden>
+          <p class="mode-blurb" id="qin-blurb">秦都場景</p>
+          <p class="tiny" id="qin-stat">體力 —</p>
+          <div class="controls qin-acts" id="qin-acts"></div>
+          <div id="qin-meet" class="qin-meet"></div>
+          <div class="controls">
+            <button type="button" class="btn auto-btn" id="btn-auto-qin">AUTO</button>
+          </div>
         </div>
       </div>
     </div>
@@ -453,7 +531,7 @@
   <!-- 人脈（村落快捷） -->
   <div id="modal-ppl" class="modal" hidden>
     <div class="modal-card wide parchment">
-      <h2>人脈 · 鄉鄰</h2>
+      <h2>人脈 · 秦人與鄉鄰</h2>
       <div id="ppl-list" class="villager-list"></div>
       <div class="modal-actions row">
         <button type="button" class="btn primary" id="btn-ppl-talk">對白</button>
@@ -504,7 +582,7 @@
   <!-- 天下大勢 -->
   <div id="modal-world" class="modal" hidden>
     <div class="modal-card wide parchment">
-      <h2>天下大勢</h2>
+      <h2>天下 · 編年</h2>
       <div id="world-body"></div>
       <button type="button" class="btn ghost" id="btn-close-world">關閉</button>
     </div>
@@ -565,9 +643,10 @@
     </div>
   </div>
 </div>
-<script src="ai.js?v=8"></script>
-<script src="factions.js?v=8"></script>
-<script src="workers.js?v=8"></script>
-<script src="game.js?v=8"></script>
+<script src="ai.js?v=9"></script>
+<script src="factions.js?v=9"></script>
+<script src="world.js?v=9"></script>
+<script src="workers.js?v=9"></script>
+<script src="game.js?v=9"></script>
 </body>
 </html>

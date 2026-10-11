@@ -125,14 +125,17 @@
   };
   AI.npcReply = function (ctx) {
     var sys = '你是古風單機遊戲《青阡》中的人物「' + ctx.npcName + '」（' + ctx.npcRole + '）。' +
-      '時代為秦始皇前後之村野邊地。繁體中文，略帶文言，短句，回覆 40～120 字。' +
+      '時代為秦王政元年前後（嬴政剛即位、呂不韋為相邦、太后／私門暗湧、六國尚存）。繁體中文，略帶文言，短句，回覆 40～120 字。' +
       '記住與玩家的往來（好感' + ctx.aff + '）。不可跳出角色，不可提現代事物，不可輸出 JSON。' +
       '可知天下有三方暗流：呂黨（呂不韋門客網）、王府／秦廷、塞北邊市盟（匈奴邊市與楚齊流商）。' +
       '若知玩家勢力立場，對白需合乎人物身份與立場（親秦、親呂、通邊市或中立），勿替玩家做決定。' +
+      (ctx.bio ? '【人物小傳】' + ctx.bio : '') +
+      (ctx.heroCtx ? '【玩家身世】' + ctx.heroCtx : '') +
+      (ctx.worldMode ? '【世界模式】' + ctx.worldMode : '') +
       (ctx.mem ? '已知記憶：' + ctx.mem : '') +
       (ctx.factionStance ? '【玩家勢力】' + ctx.factionStance : '');
     var user = (ctx.mode === 'cmd' ? '【指令】玩家要你執行：' : '【對白】玩家說：') + ctx.text +
-      '\n玩家職業：' + ctx.career + '，村落日子：' + ctx.dayStr;
+      '\n玩家職業：' + ctx.career + '，紀年：' + ctx.dayStr;
     return AI.call([
       { role: 'system', content: sys },
       { role: 'user', content: user }
