@@ -233,22 +233,26 @@
 
     // Leadership visit: high people
     if (!S.seenEvents.folk_push && (S.people || 0) >= 70 && fame >= 40) {
-      return makeEvent('folk_push', '鄉鄰聯名',
+      var eFolk = makeEvent('folk_push', '鄉鄰聯名',
         '何伯率數人叩門：近日劫匪與苛征並起，里中無主。眾人願推你暫攝里務——可救一村，亦可為日後自立張本。',
         [
           { id: 'accept_lead', label: '受推攝事', effect: 'lead' },
           { id: 'refuse_lead', label: '婉謝歸田', effect: 'humble' }
         ]);
+      eFolk.face = 'scholar';
+      return eFolk;
     }
 
     // Ambition whisper
     if (!S.seenEvents.ambition_whisper && fame >= 65 && (S.wildBest || 0) >= 3 && (S.joined === 'sai' || S.flags.refusedQin)) {
-      return makeEvent('ambition_whisper', '夜訪密語',
+      var eAmb = makeEvent('ambition_whisper', '夜訪密語',
         '蒙面客低聲：秦法日苛，六國遺民與塞上皆望新主。君若有意……山野刀槍、邊市貨線，皆可暗助。',
         [
           { id: 'ambition_yes', label: '默許此念', effect: 'ambition' },
           { id: 'ambition_no', label: '斥為妄言', effect: 'loyal_quiet' }
         ]);
+      eAmb.face = 'soldier';
+      return eAmb;
     }
 
     // Recruitment order by thresholds
@@ -274,24 +278,29 @@
         var extra = S.joined && S.joined !== o.fac
           ? '\n（對方似乎知你另有所屬，試探你是否願意……另結一線。）'
           : '';
-        return makeEvent(o.id, F.recruiter.name + '來訪',
+        var ev = makeEvent(o.id, F.recruiter.name + '來訪',
           F.recruiter.role + '「' + F.recruiter.name + '」登門：\n' + F.joinLine + extra,
           [
             { id: 'join_' + o.fac, label: '加入' + F.name, effect: 'join', fac: o.fac },
             { id: 'refuse_' + o.fac, label: '婉拒獨立', effect: 'refuse', fac: o.fac },
             { id: 'double_' + o.fac, label: '虛與委蛇', effect: 'double', fac: o.fac }
           ]);
+        ev.faction = o.fac;
+        ev.face = o.fac === 'lu' ? 'merchant' : (o.fac === 'qin' ? 'soldier' : 'scholar');
+        return ev;
       }
     }
 
     // Independent rare: wealthy farmer peace
     if (!S.seenEvents.peace_offer && !S.joined && fame >= 45 && gold >= 400 && day >= 25) {
-      return makeEvent('peace_offer', '富戶宴請',
+      var ePeace = makeEvent('peace_offer', '富戶宴請',
         '鄰里設席賀你田莊殷實。有人勸你出頭入黨，有人勸你閉門耕讀。今夜只問：你要的是什麼？',
         [
           { id: 'stay_free', label: '安於阡陌', effect: 'stay_free' },
           { id: 'seek_name', label: '再求聲名', effect: 'seek_name' }
         ]);
+      ePeace.face = 'farmer_m';
+      return ePeace;
     }
     return null;
   }

@@ -1,23 +1,26 @@
-/* 青阡 · 田莊／坊市／藥廬 原創工人層（canvas 點繪，非抄圖） */
+/* 青阡 · 場景工人：Q 版 char_* 小人走動（原創圖，非抄圖） */
 (() => {
   'use strict';
 
   const MAX = 12;
+  const ASSET_V = '5';
+  const SPRITE_KEYS = {
+    farm: ['farmer_m', 'farmer_f', 'farmer_m', 'farmer_f'],
+    market: ['merchant', 'merchant', 'farmer_m', 'farmer_f'],
+    clinic: ['doctor', 'doctor', 'farmer_f', 'scholar'],
+    village: ['scholar', 'farmer_m', 'farmer_f', 'merchant'],
+    drill: ['soldier', 'soldier', 'farmer_m'],
+    wild: ['soldier', 'soldier', 'farmer_f'],
+    garden: ['scholar', 'farmer_f', 'merchant', 'farmer_m'],
+    swim: ['farmer_f', 'farmer_m', 'scholar'],
+    moon: ['merchant', 'scholar', 'farmer_f', 'soldier']
+  };
   const ROLES = [
     { id: 'hoe', label: '耕', carry: false },
     { id: 'water', label: '澆', carry: false },
     { id: 'basket', label: '擔', carry: true },
     { id: 'cart', label: '車', carry: true },
     { id: 'seed', label: '播', carry: false }
-  ];
-  // 國風衣色（土褐／靛青／硃砂／葵綠）
-  const PALETTES = [
-    { body: '#5d4037', sash: '#c9a227', hat: '#3e2723', skin: '#f0d5b8' },
-    { body: '#37474f', sash: '#b8323a', hat: '#263238', skin: '#e8c4a0' },
-    { body: '#556b2f', sash: '#c9a227', hat: '#3e4a28', skin: '#f2d8bc' },
-    { body: '#6d4c41', sash: '#4a6741', hat: '#4e342e', skin: '#edd0b0' },
-    { body: '#455a64', sash: '#c9a227', hat: '#1c313a', skin: '#f5dcc0' },
-    { body: '#8d6e63', sash: '#b8323a', hat: '#5d4037', skin: '#eac4a2' }
   ];
 
   const PATHS = {
@@ -34,52 +37,95 @@
     clinic: [
       [[0.18, 0.72], [0.35, 0.70], [0.55, 0.74], [0.72, 0.70], [0.50, 0.78], [0.28, 0.76]],
       [[0.22, 0.62], [0.45, 0.60], [0.68, 0.64], [0.48, 0.68], [0.30, 0.66]]
+    ],
+    village: [
+      [[0.12, 0.68], [0.28, 0.72], [0.48, 0.68], [0.68, 0.74], [0.85, 0.70], [0.55, 0.66], [0.32, 0.70]],
+      [[0.18, 0.58], [0.42, 0.56], [0.62, 0.60], [0.80, 0.56], [0.50, 0.62]]
+    ],
+    drill: [
+      [[0.15, 0.70], [0.35, 0.68], [0.55, 0.72], [0.75, 0.68], [0.60, 0.76], [0.35, 0.74]],
+      [[0.22, 0.60], [0.45, 0.58], [0.70, 0.62], [0.48, 0.66]]
+    ],
+    wild: [
+      [[0.12, 0.72], [0.32, 0.68], [0.55, 0.74], [0.78, 0.70], [0.58, 0.78], [0.30, 0.76]],
+      [[0.20, 0.58], [0.48, 0.56], [0.72, 0.60], [0.42, 0.64]]
+    ],
+    garden: [
+      [[0.14, 0.70], [0.35, 0.66], [0.55, 0.72], [0.75, 0.68], [0.50, 0.76], [0.28, 0.74]],
+      [[0.20, 0.58], [0.45, 0.56], [0.70, 0.60], [0.42, 0.64]]
+    ],
+    swim: [
+      [[0.16, 0.74], [0.38, 0.70], [0.60, 0.76], [0.82, 0.72], [0.55, 0.80], [0.30, 0.78]],
+      [[0.22, 0.62], [0.48, 0.60], [0.72, 0.64], [0.40, 0.68]]
+    ],
+    moon: [
+      [[0.12, 0.68], [0.32, 0.72], [0.55, 0.68], [0.78, 0.74], [0.60, 0.78], [0.35, 0.74]],
+      [[0.18, 0.56], [0.42, 0.54], [0.68, 0.58], [0.45, 0.62]]
     ]
   };
 
+  const imgCache = {};
   let agents = [];
   let lastMode = '';
   let dripAcc = 0;
-  let lastTs = 0;
-  let farmAgents = []; // 田畦 canvas 上的小人
+  let farmAgents = [];
+
+  function spriteUrl(key) {
+    return 'assets/char_' + key + '.webp?v=' + ASSET_V;
+  }
+  function getImg(key) {
+    if (!key) return null;
+    if (imgCache[key]) return imgCache[key];
+    const im = new Image();
+    im.decoding = 'async';
+    im.src = spriteUrl(key);
+    imgCache[key] = im;
+    return im;
+  }
+  // preload all
+  ['farmer_m', 'farmer_f', 'merchant', 'doctor', 'scholar', 'soldier', 'hero'].forEach(getImg);
+
+  function pickSprite(mode, i) {
+    const pool = SPRITE_KEYS[mode] || SPRITE_KEYS.farm;
+    return pool[i % pool.length];
+  }
 
   function targetCount(S, mode) {
     if (!S) return 0;
-    if (mode !== 'farm' && mode !== 'market' && mode !== 'clinic') return 0;
+    if (!SPRITE_KEYS[mode]) return 0;
     const plots = S.plotCount || 8;
     const fame = S.fame || 0;
     const gold = S.gold || 0;
     const hands = S.hands || 0;
     let n = 3;
-    n += Math.floor(plots / 4);          // 擴田
-    n += Math.floor(fame / 18);          // 名聲
-    n += Math.floor(gold / 220);         // 家資
-    n += Math.min(4, hands);            // 僱工
+    n += Math.floor(plots / 4);
+    n += Math.floor(fame / 18);
+    n += Math.floor(gold / 220);
+    n += Math.min(4, hands);
     if (mode === 'market') n = Math.max(2, Math.floor(n * 0.55));
     if (mode === 'clinic') n = Math.max(2, Math.floor(n * 0.4));
-    return Math.max(3, Math.min(MAX, n));
+    if (mode === 'village') n = Math.max(2, Math.floor(n * 0.5));
+    if (mode === 'drill' || mode === 'wild') n = Math.max(2, Math.min(6, Math.floor(n * 0.45)));
+    if (mode === 'garden' || mode === 'swim') n = Math.max(2, Math.floor(n * 0.45));
+    if (mode === 'moon') n = Math.max(3, Math.floor(n * 0.7));
+    return Math.max(2, Math.min(MAX, n));
   }
 
   function spawnOne(mode, i) {
     const paths = PATHS[mode] || PATHS.farm;
     const path = paths[i % paths.length];
     const role = ROLES[i % ROLES.length];
-    const pal = PALETTES[i % PALETTES.length];
     const wp = Math.floor(Math.random() * path.length);
+    const sprite = pickSprite(mode, i);
+    getImg(sprite);
     return {
-      path,
-      wp,
-      t: Math.random(),
-      x: path[wp][0],
-      y: path[wp][1],
-      speed: 0.018 + Math.random() * 0.022,
-      role,
-      pal,
+      path, wp, t: Math.random(),
+      x: path[wp][0], y: path[wp][1],
+      speed: 0.016 + Math.random() * 0.02,
+      role, sprite,
       bob: Math.random() * Math.PI * 2,
-      scale: 0.85 + (i % 3) * 0.08,
-      dir: 1,
-      pause: 0,
-      workFrame: 0
+      scale: 0.9 + (i % 3) * 0.06,
+      dir: 1, pause: 0, workFrame: 0
     };
   }
 
@@ -91,6 +137,10 @@
     }
     while (agents.length < n) agents.push(spawnOne(mode, agents.length));
     while (agents.length > n) agents.pop();
+    // refresh sprites if mode pool changed mid-life
+    agents.forEach((a, i) => {
+      if (!a.sprite) a.sprite = pickSprite(mode, i);
+    });
     return n;
   }
 
@@ -98,16 +148,20 @@
     const n = Math.min(MAX, Math.max(2, Math.floor(targetCount(S, 'farm') * 0.7)));
     while (farmAgents.length < n) {
       const i = farmAgents.length;
+      const sprite = pickSprite('farm', i);
+      getImg(sprite);
       farmAgents.push({
         col: Math.floor(Math.random() * cols),
         row: Math.floor(Math.random() * rows),
         tx: 0, ty: 0,
         x: Math.random(), y: Math.random(),
-        speed: 0.35 + Math.random() * 0.4,
+        speed: 0.32 + Math.random() * 0.38,
         role: ROLES[i % ROLES.length],
-        pal: PALETTES[i % PALETTES.length],
+        sprite,
         bob: Math.random() * 6,
-        wait: 0
+        wait: 0,
+        dir: 1,
+        scale: 0.92 + (i % 3) * 0.05
       });
       const a = farmAgents[i];
       a.tx = (a.col + 0.5) / cols;
@@ -132,7 +186,6 @@
     if (a.t >= 1) {
       a.t = 0;
       a.wp = i1;
-      // 偶爾停下來「幹活」
       if (Math.random() < 0.28) a.pause = 0.4 + Math.random() * 0.9;
       return;
     }
@@ -153,7 +206,6 @@
     const dist = Math.hypot(dx, dy);
     if (dist < 0.02) {
       a.wait = 0.5 + Math.random() * 1.2;
-      // 揀下一塊已開田
       let tries = 8;
       while (tries--) {
         const c = Math.floor(Math.random() * cols);
@@ -168,97 +220,41 @@
       }
       return;
     }
+    a.dir = dx >= 0 ? 1 : -1;
     const step = a.speed * dt;
     a.x += (dx / dist) * Math.min(step, dist);
     a.y += (dy / dist) * Math.min(step, dist);
   }
 
-  /** 畫一個迷你國風工人（頭＋身＋笠／籃） */
-  function drawChibi(g, x, y, a, pxScale) {
-    const s = (a.scale || 1) * pxScale;
-    const bob = Math.sin(a.bob) * 1.2 * (a.pause > 0 ? 0.3 : 1);
+  /** 畫 Q 版 char_* 小人，高度約 32–48 CSS px */
+  function drawSprite(g, x, y, a, cssPxTall, dpr) {
+    const tall = (cssPxTall || 40) * (a.scale || 1) * (dpr || 1);
+    const bob = Math.sin(a.bob) * 1.4 * ((a.pause > 0 || a.wait > 0) ? 0.25 : 1);
     const face = a.dir || 1;
+    const im = getImg(a.sprite || 'farmer_m');
     g.save();
     g.translate(x, y + bob);
-    g.scale(face, 1);
-
     // 影
-    g.fillStyle = 'rgba(40,25,15,.22)';
+    g.fillStyle = 'rgba(40,25,15,.2)';
     g.beginPath();
-    g.ellipse(0, 2, 5 * s, 1.6 * s, 0, 0, Math.PI * 2);
+    g.ellipse(0, 2 * (dpr || 1), tall * 0.28, tall * 0.07, 0, 0, Math.PI * 2);
     g.fill();
 
-    // 身
-    g.fillStyle = a.pal.body;
-    g.fillRect(-3.5 * s, -10 * s, 7 * s, 10 * s);
-    // 腰帶
-    g.fillStyle = a.pal.sash;
-    g.fillRect(-3.5 * s, -4 * s, 7 * s, 1.6 * s);
-
-    // 頭
-    g.fillStyle = a.pal.skin;
-    g.beginPath();
-    g.arc(0, -13 * s, 3.4 * s, 0, Math.PI * 2);
-    g.fill();
-
-    // 斗笠
-    g.fillStyle = a.pal.hat;
-    g.beginPath();
-    g.moveTo(-5.5 * s, -14.5 * s);
-    g.lineTo(0, -18 * s);
-    g.lineTo(5.5 * s, -14.5 * s);
-    g.closePath();
-    g.fill();
-
-    // 擔物／籃
-    if (a.role && a.role.carry) {
-      const swing = Math.sin(a.bob * 1.3) * 1.5;
-      g.strokeStyle = '#5d4037';
-      g.lineWidth = 1.2 * s;
-      g.beginPath();
-      g.moveTo(-7 * s, -8 * s + swing);
-      g.lineTo(7 * s, -8 * s - swing);
-      g.stroke();
-      g.fillStyle = '#c9a227';
-      g.beginPath();
-      g.ellipse(-7 * s, -6 * s + swing, 2.4 * s, 2 * s, 0, 0, Math.PI * 2);
-      g.fill();
-      g.beginPath();
-      g.ellipse(7 * s, -6 * s - swing, 2.4 * s, 2 * s, 0, 0, Math.PI * 2);
-      g.fill();
-      // 籃裡小綠點（菜／藥）
-      g.fillStyle = a.role.id === 'cart' ? '#8d6e63' : '#66bb6a';
-      g.fillRect(-8 * s, -7.5 * s + swing, 2 * s, 2 * s);
-      g.fillRect(6 * s, -7.5 * s - swing, 2 * s, 2 * s);
-    } else if (a.pause > 0 || (a.wait && a.wait > 0)) {
-      // 幹活：揮鋤／澆
-      const ang = Math.sin(a.workFrame || a.bob) * 0.6;
-      g.save();
-      g.translate(4 * s, -6 * s);
-      g.rotate(ang);
-      g.strokeStyle = '#5d4037';
-      g.lineWidth = 1.4 * s;
-      g.beginPath();
-      g.moveTo(0, 0);
-      g.lineTo(0, 8 * s);
-      g.stroke();
-      g.fillStyle = a.role && a.role.id === 'water' ? '#64b5f6' : '#90a4ae';
-      g.fillRect(-2 * s, 7 * s, 5 * s, 2.5 * s);
-      g.restore();
-    }
-
-    // 腳（走路）
-    if (!(a.pause > 0) && !(a.wait > 0)) {
-      const leg = Math.sin(a.bob * 2) * 2 * s;
-      g.fillStyle = '#3e2723';
-      g.fillRect(-2.8 * s, 0, 2 * s, 3 * s + leg);
-      g.fillRect(0.8 * s, 0, 2 * s, 3 * s - leg);
+    if (im && im.complete && im.naturalWidth > 0) {
+      const ratio = im.naturalWidth / im.naturalHeight;
+      const h = tall;
+      const w = h * ratio;
+      g.scale(face, 1);
+      g.drawImage(im, -w / 2, -h, w, h);
     } else {
-      g.fillStyle = '#3e2723';
-      g.fillRect(-2.5 * s, 0, 2.2 * s, 3 * s);
-      g.fillRect(0.5 * s, 0, 2.2 * s, 3 * s);
+      // 載入中：極簡占位（非最終）
+      g.fillStyle = '#5d4037';
+      g.fillRect(-4, -18, 8, 16);
+      g.fillStyle = '#f0d5b8';
+      g.beginPath();
+      g.arc(0, -20, 4, 0, Math.PI * 2);
+      g.fill();
     }
-
     g.restore();
   }
 
@@ -277,7 +273,7 @@
       cv.style.width = w + 'px';
       cv.style.height = h + 'px';
     }
-    return { w: bw, h: bh, dpr };
+    return { w: bw, h: bh, dpr, cssW: w };
   }
 
   function drawScene(cv, S, mode) {
@@ -286,13 +282,13 @@
     const sz = resizeLayer(cv);
     if (!sz) return;
     g.clearRect(0, 0, sz.w, sz.h);
-    if (!S || (mode !== 'farm' && mode !== 'market' && mode !== 'clinic')) return;
+    if (!S || !SPRITE_KEYS[mode]) return;
     ensure(S, mode);
-    // 深度排序
     const sorted = agents.slice().sort((a, b) => a.y - b.y);
-    const px = 1.15 * sz.dpr * (sz.w / 390);
+    // ~40 CSS px tall on a ~390 wide phone
+    const cssTall = Math.max(32, Math.min(48, 40 * (sz.cssW / 390)));
     sorted.forEach((a) => {
-      drawChibi(g, a.x * sz.w, a.y * sz.h, a, px);
+      drawSprite(g, a.x * sz.w, a.y * sz.h, a, cssTall, sz.dpr);
     });
   }
 
@@ -300,18 +296,19 @@
     if (!S || !g) return;
     ensureFarmMini(S, cols, rows);
     const sorted = farmAgents.slice().sort((a, b) => a.y - b.y);
+    // farm canvas is often smaller; aim ~36px relative to canvas height
+    const cssTall = Math.max(28, Math.min(44, H * 0.11));
     sorted.forEach((a) => {
-      drawChibi(g, a.x * W, a.y * H, a, 0.95);
+      drawSprite(g, a.x * W, a.y * H, a, cssTall, 1);
     });
   }
 
   function update(dt, S, mode, cols, rows) {
     if (!S) return { drip: 0 };
     let drip = 0;
-    if (mode === 'farm' || mode === 'market' || mode === 'clinic') {
+    if (SPRITE_KEYS[mode]) {
       ensure(S, mode);
       agents.forEach((a) => stepAgent(a, dt));
-      // 輕微銀兩滴漏：每人約每 40 秒 +1，總量有上限感
       dripAcc += dt * agents.length * 0.025;
       if (dripAcc >= 1) {
         drip = Math.floor(dripAcc);
@@ -329,8 +326,7 @@
   }
 
   function maybeHire(S) {
-    // 擴田時偶爾多一個長工名額
-    if (!S) return;
+    if (!S) return false;
     S.hands = (S.hands || 0);
     if (S.hands < 4 && Math.random() < 0.35) {
       S.hands++;
@@ -350,6 +346,8 @@
     drawOnFarmCanvas,
     maybeHire,
     count,
-    ensure
+    ensure,
+    spriteUrl,
+    ASSET_V
   };
 })();

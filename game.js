@@ -3,7 +3,7 @@
 
   const SAVE_KEY = 'qianmo_v2';
   const SAVE_KEY_OLD = 'qianmo_v1';
-  const ASSET_V = '?v=4';
+  const ASSET_V = '?v=5';
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
 
@@ -61,14 +61,19 @@
   const SCENE_ART = {
     farm:    { webp: 'assets/bg_village.webp', jpg: 'assets/bg_village.jpg', alt: '田莊' },
     village: { webp: 'assets/bg_village.webp', jpg: 'assets/bg_village.jpg', alt: '村落' },
-    market:  { webp: 'assets/bg_town.webp',    jpg: 'assets/bg_town.webp',   alt: '坊市' },
+    market:  { webp: 'assets/bg_capital.webp', jpg: 'assets/bg_capital.jpg', alt: '坊市' },
     clinic:  { webp: 'assets/bg_clinic.webp',  jpg: 'assets/bg_clinic.jpg',  alt: '藥廬' },
     drill:   { webp: 'assets/bg_fields.webp',  jpg: 'assets/bg_fields.webp', alt: '校場' },
-    wild:    { webp: 'assets/bg_dungeon.webp', jpg: 'assets/bg_dungeon.webp', alt: '山野' }
+    wild:    { webp: 'assets/bg_cliff.webp',   jpg: 'assets/bg_cliff.jpg',   alt: '山野' },
+    garden:  { webp: 'assets/bg_garden.webp',  jpg: 'assets/bg_garden.jpg',  alt: '園林' },
+    swim:    { webp: 'assets/bg_swim.webp',    jpg: 'assets/bg_swim.jpg',    alt: '水塘' },
+    moon:    { webp: 'assets/bg_moon.webp',    jpg: 'assets/bg_moon.jpg',    alt: '夜宴' }
   };
   const MODE_LABELS = {
-    farm: '田莊', village: '村落', market: '坊市', clinic: '藥廬', drill: '校場', wild: '山野'
+    farm: '田莊', village: '村落', market: '坊市', clinic: '藥廬', drill: '校場', wild: '山野',
+    garden: '園林', swim: '水塘', moon: '夜宴'
   };
+  const LEISURE_MODES = ['garden', 'swim', 'moon'];
   const PERIODS = ['晨', '午', '暮', '夜'];
   let storyLines = [];
 
@@ -113,14 +118,28 @@
     { name: '山魅', hp: 60, atk: 11 },
     { name: '岩傀', hp: 80, atk: 12 }
   ];
+  const FACE_V = '5';
   const NPCS = [
-    { id: 'he', name: '何伯', role: '里正', likes: ['rice', 'wheat'], giftBoost: 10,
+    { id: 'he', name: '何伯', role: '里正', face: 'scholar', likes: ['rice', 'wheat'], giftBoost: 10,
       lines: ['里中諸事，皆在我眼。', '春耕勿怠，秋穫有望。', '日令之單，速去坊市交來。'] },
-    { id: 'su', name: '蘇娘', role: '藥婆', likes: ['herb', 'flower'], giftBoost: 12,
+    { id: 'su', name: '蘇娘', role: '藥婆', face: 'doctor', likes: ['herb', 'flower'], giftBoost: 12,
       lines: ['草藥貴在新鮮。', '你若傷了，來廬中坐坐。', '回春散一味，可解小恙。'] },
-    { id: 'zhao', name: '趙三郎', role: '行商', likes: ['flower', 'ore'], giftBoost: 11,
-      lines: ['坊市行情，朝夕不同。', '珍貨來得快，銀兩去得也快。', '與我交好，買賣可讓三分。'] }
+    { id: 'zhao', name: '趙三郎', role: '行商', face: 'merchant', likes: ['flower', 'ore'], giftBoost: 11,
+      lines: ['坊市行情，朝夕不同。', '珍貨來得快，銀兩去得也快。', '與我交好，買賣可讓三分。'] },
+    { id: 'lin', name: '林嫂', role: '田戶', face: 'farmer_f', likes: ['veg', 'rice'], giftBoost: 9,
+      lines: ['田裏一雙手，勝似空談。', '孩子們都去幫你澆水了。', '收成好，心就安。'] },
+    { id: 'wu', name: '伍叔', role: '守望', face: 'soldier', likes: ['wheat', 'ore'], giftBoost: 10,
+      lines: ['校場刀槍，不可疏忽。', '山野有匪，入夜早歸。', '壯丁齊心，里中自安。'] },
+    { id: 'cheng', name: '成郎', role: '書生', face: 'farmer_m', likes: ['flower', 'wheat'], giftBoost: 8,
+      lines: ['讀得半卷，耕得半畝。', '名聲這東西，靠一行一行走。', '願聞君近日見聞。'] }
   ];
+  const FACTION_FACE = { lu: 'merchant', qin: 'soldier', sai: 'scholar' };
+  function faceUrl(key) {
+    return 'assets/face_' + key + '.webp?v=' + FACE_V;
+  }
+  function npcFaceKey(n) {
+    return (n && n.face) || 'farmer_m';
+  }
   const RECIPES = [
     { id: 'riceBall', name: '稻香糰', scene: 'market', needs: { rice: 2 }, out: { food: 8 }, desc: '回復存糧' },
     { id: 'vegSoup', name: '青菜湯', scene: 'market', needs: { veg: 2, wheat: 1 }, out: { food: 4 }, heal: 18, desc: '戰鬥回血 18' },
@@ -271,6 +290,10 @@
     if (!o) return null;
     if (o.v === 2) {
       if (o.hands == null) o.hands = 0;
+      if (!o.npcs) o.npcs = {};
+      NPCS.forEach(function (n) {
+        if (!o.npcs[n.id]) o.npcs[n.id] = { aff: 0, mem: [], talked: 0 };
+      });
       if (window.QianFactions) window.QianFactions.ensure(o);
       return o;
     }
@@ -414,10 +437,13 @@
     const caps = {
       farm: ['春光滿阡', '夏畦茂盛', '秋穫將至', '冬雪守田'],
       village: ['春光滿村', '夏日邨景', '秋色入村', '冬雪覆簷'],
-      market: ['坊市晨喧', '夏日商影', '秋成買賣', '冬市炭香'],
+      market: ['京市晨喧', '夏日商影', '秋成買賣', '冬市炭香'],
       clinic: ['藥廬青煙', '夏草芬芳', '秋採山藥', '冬爐煎劑'],
       drill: ['校場塵起', '夏日練兵', '秋風習武', '冬日對樁'],
-      wild: ['山野晨霧', '夏林虫鳴', '秋山葉紅', '冬嶺寂寂']
+      wild: ['邊崖晨霧', '夏嶺虫鳴', '秋崖葉紅', '冬嶺寂寂'],
+      garden: ['園林春色', '夏蔭清幽', '秋桂滿庭', '冬梅疏影'],
+      swim: ['水塘春暖', '夏日濯足', '秋水澄明', '冬塘薄冰'],
+      moon: ['花朝夜宴', '夏夜賞月', '中秋團圓', '冬夜燈影']
     };
     $('scene-caption').textContent = (caps[m] || caps.village)[seasonIdx()];
   }
@@ -426,7 +452,7 @@
     mode = m;
     document.querySelectorAll('.mode-tab').forEach((t) => t.classList.toggle('active', t.dataset.mode === m));
     document.querySelectorAll('#map-pins .pin').forEach((p) => p.classList.toggle('cur', p.dataset.mode === m));
-    ['farm', 'village', 'market', 'clinic', 'drill', 'wild'].forEach((id) => {
+    ['farm', 'village', 'market', 'clinic', 'drill', 'wild', 'garden', 'swim', 'moon'].forEach((id) => {
       const el = $(id + '-panel');
       if (el) el.hidden = id !== m;
     });
@@ -441,28 +467,93 @@
     if (m === 'village') renderVillage();
     if (m === 'market' || m === 'clinic') renderCraft();
     if (m === 'drill' || m === 'wild') renderCombatPanel();
+    if (LEISURE_MODES.includes(m)) renderLeisure(m);
     renderHUD();
     paintWorkers(true);
   }
+  function renderLeisure(m) {
+    if (!S) return;
+    const st = $('leisure-stat-' + m) || $('leisure-stat');
+    if (st) st.textContent = '體力 ' + S.hp + '/' + S.maxHp + ' · 銀' + S.gold + ' · 民心' + (S.people || 0);
+  }
+  function doLeisure(kind) {
+    if (!S) return;
+    if (kind === 'garden') {
+      S.hp = Math.min(S.maxHp, S.hp + 8);
+      if (window.QianFactions) window.QianFactions.bump(S, 'people', 1);
+      toast('園林閒步 · 體力回復');
+      pushStory('你在園林信步，心神稍定。', 'nar');
+    } else if (kind === 'swim') {
+      S.hp = Math.min(S.maxHp, S.hp + 14);
+      if (S.food > 0 && Math.random() < 0.3) { S.food -= 1; }
+      toast('水塘洗濯 · 體力大復');
+      pushStory('清波濯足，暑氣盡去。', 'nar');
+    } else if (kind === 'moon') {
+      const cost = 12;
+      if (S.gold < cost) { toast('銀兩不足辦宴'); return; }
+      S.gold -= cost;
+      if (window.QianFactions) {
+        window.QianFactions.bump(S, 'fame', 2);
+        window.QianFactions.bump(S, 'people', 2);
+        window.QianFactions.recomputeFame(S);
+      } else {
+        S.fame = Math.min(100, (S.fame || 0) + 2);
+        S.people = Math.min(100, (S.people || 0) + 2);
+      }
+      // 略增鄉鄰好感
+      Object.keys(S.npcs || {}).forEach((id) => {
+        if (Math.random() < 0.45) S.npcs[id].aff = Math.min(100, (S.npcs[id].aff || 0) + 1);
+      });
+      toast('夜宴辦成 · 名聲民心↑');
+      pushStory('燈影月華，席間談笑。有人記起了你的名字。', 'nar');
+    }
+    renderLeisure(mode);
+    renderHUD();
+    saveQuiet();
+  }
   function updatePortraitForMode(m) {
     const char = $('vn-char');
+    const img = $('portrait-img');
     const plate = $('nameplate');
     const np = $('np-name');
-    if (!char) return;
-    char.classList.remove('npc', 'tint-su', 'tint-zhao');
+    if (!char || !img) return;
+    char.classList.remove('npc', 'face-mode', 'tint-su', 'tint-zhao');
     if (plate) plate.classList.remove('npc');
     if (m === 'village' && selectedNpc) {
       const n = NPCS.find((x) => x.id === selectedNpc);
       if (n) {
-        char.classList.add('npc');
-        if (n.id === 'su') char.classList.add('tint-su');
-        if (n.id === 'zhao') char.classList.add('tint-zhao');
+        char.classList.add('npc', 'face-mode');
+        img.src = faceUrl(npcFaceKey(n));
+        img.alt = n.name;
         if (plate) plate.classList.add('npc');
         if (np) np.textContent = n.name;
         return;
       }
     }
+    // 場景默認：主角全身（略小），非對話時不佔滿屏
+    char.classList.remove('face-mode');
+    img.src = 'assets/char_hero.webp?v=' + FACE_V;
+    img.alt = (S && S.name) || '你';
     if (np) np.textContent = (S && S.name) || '你';
+  }
+  function setTalkFace(n) {
+    const el = $('talk-face');
+    if (!el) return;
+    if (!n) { el.hidden = true; return; }
+    el.hidden = false;
+    el.src = faceUrl(npcFaceKey(n));
+    el.alt = n.name;
+  }
+  function setEventFace(factionId) {
+    const el = $('event-face');
+    if (!el) return;
+    const key = FACTION_FACE[factionId] || 'scholar';
+    el.hidden = false;
+    el.src = faceUrl(key);
+    el.alt = '來訪';
+  }
+  function faceThumbHtml(faceKey, name) {
+    return '<img class="face-thumb" src="' + faceUrl(faceKey) + '" alt="' + (name || '') + '" width="40" height="40" decoding="async">';
   }
   function openSheet(id) {
     ['sheet-map', 'sheet-act'].forEach((x) => { if ($(x)) $(x).hidden = true; });
@@ -488,9 +579,10 @@
       const st = S.npcs[n.id] || { aff: 0 };
       const pct = Math.min(100, st.aff);
       return '<button type="button" class="villager-card' + (selectedNpc === n.id ? ' active' : '') + '" data-npc="' + n.id + '">' +
-        '<b>' + n.name + '</b> <span class="muted">' + n.role + '</span>' +
+        '<div class="villager-row">' + faceThumbHtml(npcFaceKey(n), n.name) +
+        '<div class="villager-meta"><b>' + n.name + '</b> <span class="muted">' + n.role + '</span>' +
         '<div class="aff-bar"><i style="width:' + pct + '%"></i></div>' +
-        '<div class="aff-num">好感 ' + st.aff + '</div></button>';
+        '<div class="aff-num">好感 ' + st.aff + '</div></div></div></button>';
     }).join('');
     list.querySelectorAll('[data-npc]').forEach((b) => {
       b.addEventListener('click', () => {
@@ -739,6 +831,16 @@
       pushStory('【來訪】' + ev.title + '——' + ev.body.replace(/\n/g, ' '), 'sys');
       return;
     }
+    if (ev.face) {
+      const el = $('event-face');
+      if (el) { el.hidden = false; el.src = faceUrl(ev.face); el.alt = ev.title || '來訪'; }
+    } else if (ev.faction) {
+      setEventFace(ev.faction);
+    } else if (ev.id && ev.id.indexOf('recruit_') === 0) {
+      setEventFace(ev.id.replace('recruit_', ''));
+    } else {
+      setEventFace('scholar');
+    }
     title.textContent = ev.title;
     body.textContent = ev.body;
     choices.innerHTML = (ev.choices || []).map((c) =>
@@ -864,12 +966,13 @@
     }
     const list = $('npc-list');
     list.innerHTML = NPCS.map((n) => {
-      const st = S.npcs[n.id];
+      const st = S.npcs[n.id] || { aff: 0 };
       const sel = n.id === selectedNpc ? ' active' : '';
       return '<button type="button" class="villager-card' + sel + '" data-npc="' + n.id + '">' +
-        '<strong>' + n.name + '</strong> <span class="muted">' + n.role + '</span>' +
+        '<div class="villager-row">' + faceThumbHtml(npcFaceKey(n), n.name) +
+        '<div class="villager-meta"><strong>' + n.name + '</strong> <span class="muted">' + n.role + '</span>' +
         '<div class="aff-bar"><i style="width:' + Math.min(100, st.aff) + '%"></i></div>' +
-        '<span class="aff-num">好感 ' + st.aff + '</span></button>';
+        '<span class="aff-num">好感 ' + st.aff + '</span></div></div></button>';
     }).join('');
     list.querySelectorAll('[data-npc]').forEach((b) => {
       b.addEventListener('click', () => { selectedNpc = b.dataset.npc; renderVillage(); updatePortraitForMode('village'); });
@@ -938,6 +1041,7 @@
   function openTalk() {
     const n = NPCS.find((x) => x.id === selectedNpc);
     $('talk-npc-name').textContent = n.name + ' · ' + n.role;
+    setTalkFace(n);
     updatePortraitForMode('village');
     pushStory('與' + n.name + '相對而坐……', 'sys');
     const log = $('talk-log');
@@ -1440,6 +1544,7 @@
     else if (mode === 'market') autoMarketStep();
     else if (mode === 'clinic') autoClinicStep();
     else if (mode === 'drill' || mode === 'wild') autoFightStep();
+    else if (LEISURE_MODES.includes(mode) && Math.random() < 0.35) doLeisure(mode);
     // slow day advance while farming auto
     if (mode === 'farm' && Math.random() < 0.08) nextDay();
   }
@@ -1597,7 +1702,7 @@
 
     canvas().addEventListener('click', (e) => tapPlot(plotAt(e.clientX, e.clientY)));
 
-    ['btn-auto', 'btn-auto-v', 'btn-auto-mkt', 'btn-auto-clinic', 'btn-auto-drill', 'btn-auto-wild'].forEach((id) => {
+    ['btn-auto', 'btn-auto-v', 'btn-auto-mkt', 'btn-auto-clinic', 'btn-auto-drill', 'btn-auto-wild', 'btn-auto-garden', 'btn-auto-swim', 'btn-auto-moon'].forEach((id) => {
       const el = $(id); if (el) el.addEventListener('click', toggleAuto);
     });
     $('btn-water-all').addEventListener('click', waterAll);
@@ -1607,6 +1712,12 @@
     $('btn-nextday').addEventListener('click', nextDay);
 
     $('btn-talk-npc').addEventListener('click', openTalk);
+    if ($('btn-garden')) $('btn-garden').addEventListener('click', () => doLeisure('garden'));
+    if ($('btn-swim')) $('btn-swim').addEventListener('click', () => doLeisure('swim'));
+    if ($('btn-moon')) $('btn-moon').addEventListener('click', () => doLeisure('moon'));
+    document.querySelectorAll('[data-leisure]').forEach((b) => {
+      b.addEventListener('click', () => doLeisure(b.dataset.leisure));
+    });
     $('btn-gift-npc').addEventListener('click', giftNpc);
     $('btn-submit-order').addEventListener('click', submitOrder);
     $('btn-close-talk').addEventListener('click', () => { $('modal-talk').hidden = true; });

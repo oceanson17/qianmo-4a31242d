@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#f6ebe4">
 <title>青阡</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E阡%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 </head>
 <body x-apple-data-detectors="false">
 <div id="app">
@@ -19,14 +19,14 @@
   <section id="screen-title" class="screen on">
     <div class="title-bg" aria-hidden="true">
       <picture>
-        <source srcset="assets/bg_village.webp?v=3" type="image/webp">
-        <img src="assets/bg_village.jpg?v=3" alt="" decoding="async">
+        <source srcset="assets/bg_village.webp?v=5" type="image/webp">
+        <img src="assets/bg_village.jpg?v=5" alt="" decoding="async">
       </picture>
       <div class="title-bg-shade"></div>
     </div>
     <div class="title-content">
       <div class="tseal">阡陌</div>
-      <img class="title-hero" src="assets/char_hero.webp?v=3" alt="主角" width="140" height="163" decoding="async">
+      <img class="title-hero" src="assets/char_hero.webp?v=5" alt="主角" width="140" height="163" decoding="async">
       <h1>青阡</h1>
       <p class="subtitle">秦際阡陌　三方來訪　AUTO·AI</p>
       <div class="tmenu">
@@ -53,14 +53,14 @@
     <!-- 全屏場景 -->
     <div class="vn-stage" id="adventure-scene">
       <picture id="scene-pic">
-        <source id="scene-webp" srcset="assets/bg_village.webp?v=3" type="image/webp">
-        <img id="scene-img" src="assets/bg_village.jpg?v=3" alt="場景" class="scene-img" decoding="async">
+        <source id="scene-webp" srcset="assets/bg_village.webp?v=5" type="image/webp">
+        <img id="scene-img" src="assets/bg_village.jpg?v=5" alt="場景" class="scene-img" decoding="async">
       </picture>
       <div class="season-tint" id="season-tint" data-season="0"></div>
       <canvas id="worker-layer" class="worker-layer" aria-hidden="true"></canvas>
       <div class="vn-fx" aria-hidden="true"></div>
       <div class="vn-char" id="vn-char">
-        <img id="portrait-img" src="assets/char_hero.webp?v=3" alt="" decoding="async">
+        <img id="portrait-img" src="assets/char_hero.webp?v=5" alt="" decoding="async">
       </div>
       <div class="toast" id="toast" hidden></div>
       <div class="battle-hud" id="battle-hud" hidden>
@@ -72,7 +72,7 @@
           </div>
           <div class="wave-label" id="wave-label">第 1／3 波</div>
           <div class="hp-block player">
-            <img class="battle-hero" src="assets/char_hero.webp?v=3" alt="" decoding="async">
+            <img class="battle-hero" src="assets/char_hero.webp?v=5" alt="" decoding="async">
             <div class="hp-name">你</div>
             <div class="hp-bar"><div class="hp-fill player" id="player-hp-fill"></div></div>
             <div class="hp-num" id="player-hp-num">0/0</div>
@@ -145,6 +145,9 @@
       <button type="button" class="mode-tab" data-mode="clinic">藥廬</button>
       <button type="button" class="mode-tab" data-mode="drill">校場</button>
       <button type="button" class="mode-tab" data-mode="wild">山野</button>
+      <button type="button" class="mode-tab" data-mode="garden">園林</button>
+      <button type="button" class="mode-tab" data-mode="swim">水塘</button>
+      <button type="button" class="mode-tab" data-mode="moon">夜宴</button>
     </nav>
 
     <!-- 地圖羊皮紙 -->
@@ -161,7 +164,10 @@
           <button type="button" class="pin" data-mode="market"><span class="ps">市</span><span class="pn">坊市</span></button>
           <button type="button" class="pin" data-mode="clinic"><span class="ps">藥</span><span class="pn">藥廬</span></button>
           <button type="button" class="pin" data-mode="drill"><span class="ps">校</span><span class="pn">校場</span></button>
-          <button type="button" class="pin" data-mode="wild"><span class="ps">山</span><span class="pn">山野</span></button>
+          <button type="button" class="pin" data-mode="wild"><span class="ps">崖</span><span class="pn">山野</span></button>
+          <button type="button" class="pin" data-mode="garden"><span class="ps">園</span><span class="pn">園林</span></button>
+          <button type="button" class="pin" data-mode="swim"><span class="ps">塘</span><span class="pn">水塘</span></button>
+          <button type="button" class="pin" data-mode="moon"><span class="ps">宴</span><span class="pn">夜宴</span></button>
         </div>
         <p class="note">點選地點前往。AUTO 會跟住當前場景做事。</p>
       </div>
@@ -227,7 +233,7 @@
         </div>
 
         <div class="mode-panel" id="market-panel" hidden>
-          <p class="mode-blurb">坊市買賣 · 工坊製物</p>
+          <p class="mode-blurb">京城坊市 · 買賣製物</p>
           <div id="craft-list" class="craft-list"></div>
           <div class="controls">
             <button type="button" class="btn auto-btn" id="btn-auto-mkt">AUTO</button>
@@ -271,7 +277,32 @@
             <button type="button" class="btn" id="btn-flee-wild" hidden>撤退</button>
             <button type="button" class="btn" id="btn-deeper">更深</button>
           </div>
-          <p class="mode-blurb tiny-blurb">山野多怪 · 白→金裝備掉落 · AUTO 會自動作戰</p>
+          <p class="mode-blurb tiny-blurb">邊崖山野多怪 · 白→金裝備掉落 · AUTO 會自動作戰</p>
+        </div>
+
+        <div class="mode-panel" id="garden-panel" hidden>
+          <p class="mode-blurb">園林閒步，可略復體力、增益民心。</p>
+          <p class="tiny" id="leisure-stat-garden">體力 —</p>
+          <div class="controls">
+            <button type="button" class="btn auto-btn" id="btn-auto-garden">AUTO</button>
+            <button type="button" class="btn primary" id="btn-garden" data-leisure="garden">閒步</button>
+          </div>
+        </div>
+        <div class="mode-panel" id="swim-panel" hidden>
+          <p class="mode-blurb">水塘濯洗，可復體力。</p>
+          <p class="tiny" id="leisure-stat-swim">體力 —</p>
+          <div class="controls">
+            <button type="button" class="btn auto-btn" id="btn-auto-swim">AUTO</button>
+            <button type="button" class="btn primary" id="btn-swim" data-leisure="swim">洗濯</button>
+          </div>
+        </div>
+        <div class="mode-panel" id="moon-panel" hidden>
+          <p class="mode-blurb">中秋夜宴／節慶聚飲，花費銀兩換名聲與人情。</p>
+          <p class="tiny" id="leisure-stat-moon">體力 —</p>
+          <div class="controls">
+            <button type="button" class="btn auto-btn" id="btn-auto-moon">AUTO</button>
+            <button type="button" class="btn primary" id="btn-moon" data-leisure="moon">辦宴（12銀）</button>
+          </div>
         </div>
       </div>
     </div>
@@ -280,7 +311,10 @@
   <!-- 對白 -->
   <div id="modal-talk" class="modal" hidden>
     <div class="modal-card wide parchment talk-card">
-      <h2 id="talk-npc-name">鄉鄰</h2>
+      <div class="talk-head">
+        <img id="talk-face" class="talk-face" src="assets/face_scholar.webp?v=5" alt="" width="56" height="56" decoding="async">
+        <h2 id="talk-npc-name">鄉鄰</h2>
+      </div>
       <div class="talk-log" id="talk-log"></div>
       <div class="talk-mode">
         <button type="button" class="seg active" data-say="say">說</button>
@@ -361,7 +395,10 @@
   <!-- 來訪事件 -->
   <div id="modal-event" class="modal" hidden>
     <div class="modal-card wide parchment">
-      <h2 id="event-title">來訪</h2>
+      <div class="event-head">
+        <img id="event-face" class="event-face" src="assets/face_merchant.webp?v=5" alt="來訪" width="64" height="64" decoding="async">
+        <h2 id="event-title">來訪</h2>
+      </div>
       <p id="event-body" class="event-body"></p>
       <div id="event-choices" class="event-choices"></div>
       <p class="tiny">請選擇應對。可加入、婉拒，或虛與委蛇。</p>
@@ -433,9 +470,9 @@
     </div>
   </div>
 </div>
-<script src="ai.js?v=4"></script>
-<script src="factions.js?v=4"></script>
-<script src="workers.js?v=4"></script>
-<script src="game.js?v=4"></script>
+<script src="ai.js?v=5"></script>
+<script src="factions.js?v=5"></script>
+<script src="workers.js?v=5"></script>
+<script src="game.js?v=5"></script>
 </body>
 </html>
