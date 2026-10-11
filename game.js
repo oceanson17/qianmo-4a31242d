@@ -1,0 +1,1327 @@
+(() => {
+  'use strict';
+
+  const SAVE_KEY = 'qianmo_v1';
+  const ASSET_V = '?v=1';
+  const SEASONS = ['春', '夏', '秋', '冬'];
+  const COLS = 6, ROWS = 4;
+
+  const CAREERS = {
+    farmer: {
+      id: 'farmer', name: '農夫', desc: '田畝起家，種稼為先。起始糧種充裕，農藝較高。',
+      gold: 70, food: 20, hp: 80, atk: 6, def: 2,
+      skills: { farm: 3, med: 0, trade: 1, mart: 1, lit: 0 },
+      bag: { rice: 4, veg: 2, wheat: 2 },
+      quest: { id: 'q_farm', title: '春耕首穫', desc: '收成稻 6 束', need: { rice: 6 }, gold: 40, food: 4 }
+    },
+    healer: {
+      id: 'healer', name: '醫者', desc: '懸壺青廬，採藥救人。藥術與草藥較豐。',
+      gold: 90, food: 12, hp: 75, atk: 5, def: 2,
+      skills: { farm: 1, med: 3, trade: 1, mart: 0, lit: 1 },
+      bag: { herb: 5, rice: 2 },
+      quest: { id: 'q_med', title: '青廬初診', desc: '煉成回春散 2 帖', need: { potion: 2 }, gold: 50, food: 2 }
+    },
+    merchant: {
+      id: 'merchant', name: '商賈', desc: '坊市往來，銀兩較厚，買賣更利。',
+      gold: 160, food: 10, hp: 70, atk: 5, def: 1,
+      skills: { farm: 1, med: 0, trade: 3, mart: 0, lit: 1 },
+      bag: { flower: 3, rice: 2 },
+      quest: { id: 'q_trade', title: '坊市第一單', desc: '累計賣出得銀 80', needFlag: 'soldGold', needVal: 80, gold: 45, food: 3 }
+    },
+    soldier: {
+      id: 'soldier', name: '武卒', desc: '校場出身，身強力壯，攜木劍開局。',
+      gold: 60, food: 14, hp: 100, atk: 10, def: 4,
+      skills: { farm: 0, med: 0, trade: 0, mart: 3, lit: 0 },
+      bag: { rice: 2 },
+      startGear: { slot: 'weapon', name: '木劍', atk: 3, def: 0, hp: 0, rarity: 'white' },
+      quest: { id: 'q_fight', title: '校場初勝', desc: '戰勝 3 場', needFlag: 'wins', needVal: 3, gold: 55, food: 2 }
+    },
+    scholar: {
+      id: 'scholar', name: '書生', desc: '通文識禮，鄉鄰好感較易提升。',
+      gold: 85, food: 12, hp: 70, atk: 4, def: 1,
+      skills: { farm: 1, med: 1, trade: 1, mart: 0, lit: 3 },
+      bag: { flower: 4, rice: 2 },
+      quest: { id: 'q_friend', title: '以文會友', desc: '任一鄉鄰好感達 30', needFlag: 'maxAff', needVal: 30, gold: 50, food: 2 }
+    }
+  };
+
+  const CROPS = {
+    rice:   { name: '稻', grow: 5, waterNeed: true,  sell: 8,  food: 6, seedCost: 3, color: '#8bc34a', ripe: '#fdd835' },
+    veg:    { name: '菜', grow: 4, waterNeed: true,  sell: 10, food: 3, seedCost: 4, color: '#66bb6a', ripe: '#43a047' },
+    flower: { name: '花', grow: 3, waterNeed: false, sell: 14, food: 0, seedCost: 5, color: '#ec407a', ripe: '#f48fb1' },
+    wheat:  { name: '麥', grow: 4, waterNeed: false, sell: 7,  food: 5, seedCost: 3, color: '#dce775', ripe: '#fbc02d' }
+  };
+  const DIRS = {
+    grain:  { label: '多種糧', prefer: ['rice', 'wheat'], sellFoodKeep: 20, expandBias: 0.2 },
+    money:  { label: '多賺錢', prefer: ['flower', 'veg'], sellFoodKeep: 8, expandBias: 0.35 },
+    expand: { label: '擴田優先', prefer: ['flower', 'veg'], sellFoodKeep: 10, expandBias: 0.95 },
+    winter: { label: '存糧過冬', prefer: ['wheat', 'rice'], sellFoodKeep: 40, expandBias: 0.1 }
+  };
+  const SCENE_ART = {
+    farm:    { webp: 'assets/bg_village.webp', jpg: 'assets/bg_village.jpg', alt: '田莊' },
+    village: { webp: 'assets/bg_village.webp', jpg: 'assets/bg_village.jpg', alt: '村落' },
+    market:  { webp: 'assets/bg_town.webp',    jpg: 'assets/bg_town.webp',   alt: '坊市' },
+    clinic:  { webp: 'assets/bg_pond.webp',    jpg: 'assets/bg_pond.webp',   alt: '藥廬' },
+    drill:   { webp: 'assets/bg_fields.webp',  jpg: 'assets/bg_fields.webp', alt: '校場' },
+    wild:    { webp: 'assets/bg_dungeon.webp', jpg: 'assets/bg_dungeon.webp', alt: '山野' }
+  };
+  const RARITIES = {
+    white:  { id: 'white',  name: '白', className: 'rarity-white',  mult: 1,   sell: 8 },
+    green:  { id: 'green',  name: '綠', className: 'rarity-green',  mult: 1.4, sell: 18 },
+    blue:   { id: 'blue',   name: '藍', className: 'rarity-blue',   mult: 1.9, sell: 40 },
+    purple: { id: 'purple', name: '紫', className: 'rarity-purple', mult: 2.6, sell: 90 },
+    gold:   { id: 'gold',   name: '金', className: 'rarity-gold',   mult: 3.5, sell: 200 }
+  };
+  const RARITY_ORDER = ['white', 'green', 'blue', 'purple', 'gold'];
+  const GEAR_BASE = {
+    weapon: [
+      { name: '木劍', atk: 3, def: 0, hp: 0 },
+      { name: '鐵刃', atk: 5, def: 0, hp: 0 },
+      { name: '青鋼刀', atk: 7, def: 0, hp: 2 },
+      { name: '霜紋劍', atk: 9, def: 1, hp: 0 }
+    ],
+    armor: [
+      { name: '布衣', atk: 0, def: 2, hp: 8 },
+      { name: '皮甲', atk: 0, def: 4, hp: 12 },
+      { name: '鐵鎧', atk: 0, def: 6, hp: 18 },
+      { name: '玄甲', atk: 1, def: 8, hp: 24 }
+    ],
+    accessory: [
+      { name: '草繩環', atk: 1, def: 0, hp: 4 },
+      { name: '玉佩', atk: 1, def: 1, hp: 8 },
+      { name: '護心鏡', atk: 2, def: 2, hp: 10 },
+      { name: '金絲墜', atk: 3, def: 2, hp: 14 }
+    ]
+  };
+  const SLOT_LABEL = { weapon: '武器', armor: '防具', accessory: '飾品' };
+  const ENEMIES_DRILL = [
+    { name: '木人樁', hp: 22, atk: 4 },
+    { name: '校場教習', hp: 30, atk: 6 },
+    { name: '遊卒', hp: 36, atk: 7 }
+  ];
+  const ENEMIES_WILD = [
+    { name: '山鼠', hp: 28, atk: 5 },
+    { name: '野狼', hp: 40, atk: 8 },
+    { name: '伏匪', hp: 48, atk: 9 },
+    { name: '山魅', hp: 60, atk: 11 },
+    { name: '岩傀', hp: 80, atk: 12 }
+  ];
+  const NPCS = [
+    { id: 'he', name: '何伯', role: '里正', likes: ['rice', 'wheat'], giftBoost: 10,
+      lines: ['里中諸事，皆在我眼。', '春耕勿怠，秋穫有望。', '日令之單，速去坊市交來。'] },
+    { id: 'su', name: '蘇娘', role: '藥婆', likes: ['herb', 'flower'], giftBoost: 12,
+      lines: ['草藥貴在新鮮。', '你若傷了，來廬中坐坐。', '回春散一味，可解小恙。'] },
+    { id: 'zhao', name: '趙三郎', role: '行商', likes: ['flower', 'ore'], giftBoost: 11,
+      lines: ['坊市行情，朝夕不同。', '珍貨來得快，銀兩去得也快。', '與我交好，買賣可讓三分。'] }
+  ];
+  const RECIPES = [
+    { id: 'riceBall', name: '稻香糰', scene: 'market', needs: { rice: 2 }, out: { food: 8 }, desc: '回復存糧' },
+    { id: 'vegSoup', name: '青菜湯', scene: 'market', needs: { veg: 2, wheat: 1 }, out: { food: 4 }, heal: 18, desc: '戰鬥回血 18' },
+    { id: 'potion', name: '回春散', scene: 'clinic', needs: { herb: 2, flower: 1 }, out: { potion: 1 }, heal: 0, desc: '藥劑 · 可服回血 35' }
+  ];
+  const ORDER_POOL = [
+    { need: { rice: 4 }, rewardGold: 40, rewardFood: 2, title: '糧行急單' },
+    { need: { veg: 3 }, rewardGold: 38, rewardFood: 1, title: '菜攤補貨' },
+    { need: { flower: 3 }, rewardGold: 48, rewardFood: 0, title: '花市訂購' },
+    { need: { herb: 3 }, rewardGold: 42, rewardFood: 0, title: '藥廬草料' },
+    { need: { wheat: 4 }, rewardGold: 36, rewardFood: 2, title: '磨坊麥單' }
+  ];
+
+  let S = null;
+  let mode = 'farm';
+  let autoOn = false;
+  let selectedCrop = 'rice';
+  let directive = 'grain';
+  let selectedNpc = 'he';
+  let sayMode = 'say';
+  let battle = null;
+  let toastTimer = 0;
+  let lastTick = 0;
+
+  const $ = (id) => document.getElementById(id);
+  const canvas = () => $('farm');
+  const ctx = () => canvas() && canvas().getContext('2d');
+
+  function toast(msg) {
+    const el = $('toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.hidden = true; }, 2200);
+  }
+  function status(msg) {
+    const el = $('status-text');
+    if (el) el.textContent = msg;
+  }
+  function dayStr() {
+    if (!S) return '';
+    const season = SEASONS[Math.floor((S.day - 1) / 28) % 4];
+    const d = ((S.day - 1) % 28) + 1;
+    return season + ' · 第' + d + '日';
+  }
+  function seasonIdx() {
+    return Math.floor((S.day - 1) / 28) % 4;
+  }
+
+  function emptyPlot() {
+    return { crop: null, grow: 0, watered: false, unlocked: false };
+  }
+  function makePlots(n) {
+    const plots = [];
+    for (let i = 0; i < COLS * ROWS; i++) {
+      const p = emptyPlot();
+      p.unlocked = i < n;
+      plots.push(p);
+    }
+    return plots;
+  }
+
+  function newState(careerId) {
+    const C = CAREERS[careerId];
+    const gear = [];
+    const equipped = { weapon: null, armor: null, accessory: null };
+    if (C.startGear) {
+      const g = Object.assign({ id: 'g0', slot: C.startGear.slot }, C.startGear);
+      gear.push(g);
+      equipped[g.slot] = g.id;
+    }
+    const quest = Object.assign({ done: false, progress: 0 }, C.quest);
+    return {
+      v: 1,
+      career: careerId,
+      name: '豆豆',
+      day: 1,
+      gold: C.gold,
+      food: C.food,
+      hp: C.hp,
+      maxHp: C.hp,
+      baseAtk: C.atk,
+      baseDef: C.def,
+      skills: Object.assign({}, C.skills),
+      bag: Object.assign({ rice: 0, veg: 0, flower: 0, wheat: 0, herb: 0, ore: 0, potion: 0 }, C.bag),
+      plots: makePlots(8 + (C.skills.farm || 0)),
+      plotCount: 8 + (C.skills.farm || 0),
+      auto: false,
+      directive: 'grain',
+      npcs: NPCS.reduce((a, n) => { a[n.id] = { aff: C.id === 'scholar' ? 8 : 0, mem: [], talked: 0 }; return a; }, {}),
+      order: rollOrder(1),
+      orderDone: false,
+      gear,
+      equipped,
+      gearSeq: 1,
+      wildFloor: 1,
+      wildBest: 0,
+      wins: 0,
+      soldGold: 0,
+      quest,
+      flags: {}
+    };
+  }
+
+  function rollOrder(day) {
+    const o = ORDER_POOL[day % ORDER_POOL.length];
+    return JSON.parse(JSON.stringify(o));
+  }
+
+  function save() {
+    if (!S) return;
+    S.auto = autoOn;
+    S.directive = directive;
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); toast('已存檔'); } catch (e) { toast('存檔失敗'); }
+  }
+  function load() {
+    try {
+      const o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+      if (!o || o.v !== 1) return false;
+      S = o;
+      autoOn = !!S.auto;
+      directive = S.directive || 'grain';
+      return true;
+    } catch (e) { return false; }
+  }
+  function hasSave() {
+    try { const o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); return !!(o && o.v === 1); } catch (e) { return false; }
+  }
+
+  function gearBonus() {
+    const b = { atk: 0, def: 0, hp: 0 };
+    if (!S) return b;
+    ['weapon', 'armor', 'accessory'].forEach((slot) => {
+      const id = S.equipped[slot];
+      if (!id) return;
+      const g = S.gear.find((x) => x.id === id);
+      if (!g) return;
+      const r = RARITIES[g.rarity] || RARITIES.white;
+      b.atk += Math.round((g.atk || 0) * r.mult);
+      b.def += Math.round((g.def || 0) * r.mult);
+      b.hp += Math.round((g.hp || 0) * r.mult);
+    });
+    return b;
+  }
+  function stats() {
+    const b = gearBonus();
+    const maxHp = S.maxHp + b.hp;
+    return {
+      atk: S.baseAtk + b.atk + (S.skills.mart || 0),
+      def: S.baseDef + b.def,
+      maxHp,
+      hp: Math.min(S.hp, maxHp)
+    };
+  }
+
+  function bagCount(k) { return (S.bag[k] || 0); }
+  function addBag(k, n) { S.bag[k] = Math.max(0, (S.bag[k] || 0) + n); }
+
+  function renderHUD() {
+    if (!S) return;
+    const st = stats();
+    $('hud-day').textContent = dayStr();
+    $('hud-gold').textContent = '銀 ' + S.gold;
+    $('hud-food').textContent = '糧 ' + S.food;
+    $('hud-combat').textContent = 'HP ' + st.hp + '/' + st.maxHp + ' · ATK ' + st.atk;
+    $('hud-career').textContent = CAREERS[S.career].name;
+    $('auto-label').textContent = autoOn ? 'AUTO 開' : 'AUTO 關';
+    $('auto-label').className = autoOn ? 'auto-on' : 'auto-off';
+    document.querySelectorAll('.auto-btn').forEach((b) => b.classList.toggle('on', autoOn));
+    $('season-tint').dataset.season = String(seasonIdx());
+    const q = S.quest;
+    $('quest-dot').hidden = !q || q.done;
+  }
+
+  function setSceneArt(m) {
+    const art = SCENE_ART[m] || SCENE_ART.village;
+    $('scene-webp').srcset = art.webp + ASSET_V;
+    $('scene-img').src = (art.jpg || art.webp) + ASSET_V;
+    $('scene-img').alt = art.alt;
+    const caps = {
+      farm: ['春光滿阡', '夏畦茂盛', '秋穫將至', '冬雪守田'],
+      village: ['春光滿村', '夏日邨景', '秋色入村', '冬雪覆簷'],
+      market: ['坊市晨喧', '夏日商影', '秋成買賣', '冬市炭香'],
+      clinic: ['藥廬青煙', '夏草芬芳', '秋採山藥', '冬爐煎劑'],
+      drill: ['校場塵起', '夏日練兵', '秋風習武', '冬日對樁'],
+      wild: ['山野晨霧', '夏林虫鳴', '秋山葉紅', '冬嶺寂寂']
+    };
+    $('scene-caption').textContent = (caps[m] || caps.village)[seasonIdx()];
+  }
+
+  function showMode(m) {
+    mode = m;
+    document.querySelectorAll('.mode-tab').forEach((t) => t.classList.toggle('active', t.dataset.mode === m));
+    ['farm', 'village', 'market', 'clinic', 'drill', 'wild'].forEach((id) => {
+      const el = $(id + '-panel');
+      if (el) el.hidden = id !== m;
+    });
+    const plot = $('plot-card');
+    if (plot) plot.style.display = m === 'farm' ? '' : 'none';
+    $('adventure-scene').classList.toggle('mode-farm', m === 'farm');
+    $('adventure-scene').classList.toggle('in-battle', !!(battle && (m === 'drill' || m === 'wild')));
+    setSceneArt(m);
+    if (m === 'farm') drawFarm();
+    if (m === 'village') renderVillage();
+    if (m === 'market' || m === 'clinic') renderCraft();
+    if (m === 'drill' || m === 'wild') renderCombatPanel();
+    renderHUD();
+  }
+
+  /* ---- Farm canvas ---- */
+  function drawFarm() {
+    const c = canvas();
+    if (!c || !S) return;
+    const g = ctx();
+    const W = c.width, H = c.height;
+    const tw = W / COLS, th = H / ROWS;
+    g.clearRect(0, 0, W, H);
+    S.plots.forEach((p, i) => {
+      const x = (i % COLS) * tw, y = Math.floor(i / COLS) * th;
+      if (!p.unlocked) {
+        g.fillStyle = 'rgba(40,30,20,.55)';
+        roundRect(g, x + 3, y + 3, tw - 6, th - 6, 6);
+        g.fill();
+        g.fillStyle = 'rgba(255,255,255,.35)';
+        g.font = '11px sans-serif';
+        g.textAlign = 'center';
+        g.fillText('鎖', x + tw / 2, y + th / 2 + 4);
+        return;
+      }
+      // soil
+      const grd = g.createLinearGradient(x, y, x, y + th);
+      grd.addColorStop(0, '#a1887f');
+      grd.addColorStop(1, '#6d4c41');
+      g.fillStyle = grd;
+      roundRect(g, x + 2, y + 2, tw - 4, th - 4, 7);
+      g.fill();
+      g.strokeStyle = '#c9a227';
+      g.lineWidth = 1.5;
+      g.stroke();
+      if (p.watered) {
+        g.fillStyle = 'rgba(100,180,255,.28)';
+        roundRect(g, x + 2, y + 2, tw - 4, th - 4, 7);
+        g.fill();
+      }
+      if (p.crop) {
+        const crop = CROPS[p.crop];
+        const ripe = p.grow >= crop.grow;
+        const prog = Math.min(1, p.grow / crop.grow);
+        g.fillStyle = ripe ? crop.ripe : crop.color;
+        const r = 4 + prog * 8;
+        g.beginPath();
+        g.arc(x + tw / 2, y + th / 2 + 2, r, 0, Math.PI * 2);
+        g.fill();
+        if (ripe) {
+          g.fillStyle = 'rgba(255,236,150,.7)';
+          g.beginPath();
+          g.arc(x + tw / 2 + 6, y + th / 2 - 6, 3, 0, Math.PI * 2);
+          g.fill();
+        }
+        g.fillStyle = '#fff8e1';
+        g.font = 'bold 10px sans-serif';
+        g.textAlign = 'center';
+        g.fillText(crop.name, x + tw / 2, y + 12);
+      }
+    });
+  }
+  function roundRect(g, x, y, w, h, r) {
+    g.beginPath();
+    g.moveTo(x + r, y);
+    g.arcTo(x + w, y, x + w, y + h, r);
+    g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r);
+    g.arcTo(x, y, x + w, y, r);
+    g.closePath();
+  }
+
+  function plotAt(mx, my) {
+    const c = canvas();
+    const rect = c.getBoundingClientRect();
+    const x = (mx - rect.left) * (c.width / rect.width);
+    const y = (my - rect.top) * (c.height / rect.height);
+    const col = Math.floor(x / (c.width / COLS));
+    const row = Math.floor(y / (c.height / ROWS));
+    if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return -1;
+    return row * COLS + col;
+  }
+  function tapPlot(i) {
+    if (!S || i < 0) return;
+    const p = S.plots[i];
+    if (!p.unlocked) { toast('尚未開墾'); return; }
+    if (!p.crop) {
+      const crop = CROPS[selectedCrop];
+      const cost = Math.max(1, crop.seedCost - Math.floor((S.skills.farm || 0) / 2));
+      if (S.gold < cost) { toast('銀兩不足'); return; }
+      S.gold -= cost;
+      p.crop = selectedCrop;
+      p.grow = 0;
+      p.watered = false;
+      status('播下' + crop.name);
+    } else if (p.grow >= CROPS[p.crop].grow) {
+      harvestOne(p);
+    } else if (CROPS[p.crop].waterNeed && !p.watered) {
+      p.watered = true;
+      status('已澆水');
+    } else {
+      status(CROPS[p.crop].name + ' 成長 ' + p.grow + '/' + CROPS[p.crop].grow);
+    }
+    drawFarm();
+    renderHUD();
+  }
+  function harvestOne(p) {
+    const crop = CROPS[p.crop];
+    const bonus = 1 + Math.floor((S.skills.farm || 0) / 3);
+    addBag(p.crop, bonus);
+    if (crop.food) S.food += Math.floor(crop.food / 2);
+    status('收成 ' + crop.name + ' ×' + bonus);
+    p.crop = null; p.grow = 0; p.watered = false;
+    checkQuest();
+  }
+  function waterAll() {
+    S.plots.forEach((p) => {
+      if (p.unlocked && p.crop && CROPS[p.crop].waterNeed) p.watered = true;
+    });
+    toast('全田已澆');
+    drawFarm();
+  }
+  function harvestAll() {
+    let n = 0;
+    S.plots.forEach((p) => {
+      if (p.unlocked && p.crop && p.grow >= CROPS[p.crop].grow) { harvestOne(p); n++; }
+    });
+    toast(n ? '收成 ' + n + ' 畦' : '無可收');
+    drawFarm(); renderHUD();
+  }
+  function sellCrops() {
+    const keep = (DIRS[directive] || DIRS.grain).sellFoodKeep;
+    let gained = 0;
+    ['flower', 'veg', 'wheat', 'rice'].forEach((k) => {
+      let n = bagCount(k);
+      if (k === 'rice' || k === 'wheat') {
+        const can = Math.max(0, n - Math.ceil(keep / 4));
+        n = can;
+      }
+      if (n <= 0) return;
+      const price = CROPS[k].sell * (1 + (S.skills.trade || 0) * 0.08);
+      const gold = Math.floor(n * price);
+      addBag(k, -n);
+      S.gold += gold;
+      S.soldGold = (S.soldGold || 0) + gold;
+      gained += gold;
+    });
+    toast(gained ? '賣得銀 ' + gained : '沒什麼可賣');
+    checkQuest();
+    renderHUD();
+  }
+  function expandPlot() {
+    const locked = S.plots.findIndex((p) => !p.unlocked);
+    if (locked < 0) { toast('田已盡開'); return; }
+    const cost = 25 + S.plotCount * 8;
+    if (S.gold < cost) { toast('需銀 ' + cost); return; }
+    S.gold -= cost;
+    S.plots[locked].unlocked = true;
+    S.plotCount++;
+    toast('開墾一畦（-' + cost + '銀）');
+    drawFarm(); renderHUD();
+  }
+  function growDay() {
+    S.plots.forEach((p) => {
+      if (!p.unlocked || !p.crop) return;
+      const c = CROPS[p.crop];
+      if (c.waterNeed && !p.watered) return;
+      p.grow++;
+      p.watered = false;
+    });
+  }
+  function nextDay() {
+    if (battle) { toast('戰鬥中不可過日'); return; }
+    growDay();
+    S.day++;
+    S.orderDone = false;
+    if ((S.day - 1) % 1 === 0) S.order = rollOrder(S.day);
+    // light food drain
+    S.food = Math.max(0, S.food - 1);
+    if (S.food === 0 && S.gold >= 5) { S.gold -= 5; S.food += 3; toast('無糧，市買粗食 -5銀'); }
+    const st = stats();
+    S.hp = Math.min(st.maxHp, S.hp + 8);
+    toast(dayStr());
+    checkQuest();
+    drawFarm();
+    renderVillage();
+    renderHUD();
+    saveQuiet();
+  }
+  function saveQuiet() {
+    if (!S) return;
+    S.auto = autoOn; S.directive = directive;
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {}
+  }
+
+  /* ---- AUTO farm ---- */
+  function autoFarmStep() {
+    if (!S || mode !== 'farm') return;
+    const dir = DIRS[directive] || DIRS.grain;
+    // harvest
+    S.plots.forEach((p) => {
+      if (p.unlocked && p.crop && p.grow >= CROPS[p.crop].grow) harvestOne(p);
+    });
+    // water
+    S.plots.forEach((p) => {
+      if (p.unlocked && p.crop && CROPS[p.crop].waterNeed && !p.watered) p.watered = true;
+    });
+    // plant
+    const prefer = dir.prefer;
+    S.plots.forEach((p) => {
+      if (!p.unlocked || p.crop) return;
+      for (let i = 0; i < prefer.length; i++) {
+        const k = prefer[i];
+        const cost = Math.max(1, CROPS[k].seedCost - Math.floor((S.skills.farm || 0) / 2));
+        if (S.gold >= cost) {
+          S.gold -= cost;
+          p.crop = k; p.grow = 0; p.watered = false;
+          break;
+        }
+      }
+    });
+    // expand
+    if (Math.random() < dir.expandBias * 0.15) {
+      const locked = S.plots.findIndex((p) => !p.unlocked);
+      const cost = 25 + S.plotCount * 8;
+      if (locked >= 0 && S.gold >= cost + 20) expandPlot();
+    }
+    // sell overflow
+    if (Math.random() < 0.25) sellCrops();
+    drawFarm();
+    renderHUD();
+  }
+
+  /* ---- Village / NPC / Orders ---- */
+  function renderVillage() {
+    if (!S) return;
+    const board = $('order-board');
+    if (S.orderDone) {
+      board.innerHTML = '<strong>今日日令</strong><p>已交付，明日再來。</p>';
+    } else {
+      const need = Object.keys(S.order.need).map((k) => itemName(k) + '×' + S.order.need[k] + '（有' + bagCount(k) + '）').join('、');
+      board.innerHTML = '<strong>' + S.order.title + '</strong><p>需：' + need + '</p><p>酬：銀' + S.order.rewardGold + (S.order.rewardFood ? ' · 糧' + S.order.rewardFood : '') + '</p>';
+    }
+    const list = $('npc-list');
+    list.innerHTML = NPCS.map((n) => {
+      const st = S.npcs[n.id];
+      const sel = n.id === selectedNpc ? ' active' : '';
+      return '<button type="button" class="villager-card' + sel + '" data-npc="' + n.id + '">' +
+        '<strong>' + n.name + '</strong> <span class="muted">' + n.role + '</span>' +
+        '<div class="aff-bar"><i style="width:' + Math.min(100, st.aff) + '%"></i></div>' +
+        '<span class="aff-num">好感 ' + st.aff + '</span></button>';
+    }).join('');
+    list.querySelectorAll('[data-npc]').forEach((b) => {
+      b.addEventListener('click', () => { selectedNpc = b.dataset.npc; renderVillage(); });
+    });
+  }
+  function itemName(k) {
+    if (CROPS[k]) return CROPS[k].name;
+    if (k === 'herb') return '草藥';
+    if (k === 'ore') return '礦石';
+    if (k === 'potion') return '回春散';
+    return k;
+  }
+  function submitOrder() {
+    if (S.orderDone) { toast('今日已交'); return; }
+    for (const k of Object.keys(S.order.need)) {
+      if (bagCount(k) < S.order.need[k]) { toast('材料不足'); return; }
+    }
+    Object.keys(S.order.need).forEach((k) => addBag(k, -S.order.need[k]));
+    let gold = S.order.rewardGold;
+    if (S.npcs.zhao && S.npcs.zhao.aff >= 25) gold = Math.floor(gold * 1.15);
+    S.gold += gold;
+    S.food += S.order.rewardFood || 0;
+    S.soldGold = (S.soldGold || 0) + gold;
+    S.orderDone = true;
+    toast('日令完成 +' + gold + '銀');
+    checkQuest();
+    renderVillage();
+    renderHUD();
+  }
+  function giftNpc() {
+    const n = NPCS.find((x) => x.id === selectedNpc);
+    const st = S.npcs[selectedNpc];
+    let given = null;
+    for (const like of n.likes) {
+      if (bagCount(like) > 0) { given = like; break; }
+    }
+    if (!given) {
+      // any flower/rice
+      for (const k of ['flower', 'rice', 'herb', 'veg']) {
+        if (bagCount(k) > 0) { given = k; break; }
+      }
+    }
+    if (!given) { toast('沒有可送之物'); return; }
+    addBag(given, -1);
+    const boost = n.likes.includes(given) ? n.giftBoost : 4;
+    const lit = S.skills.lit || 0;
+    st.aff = Math.min(100, st.aff + boost + Math.floor(lit / 2));
+    st.mem.push('曾受贈' + itemName(given));
+    if (st.mem.length > 8) st.mem = st.mem.slice(-8);
+    toast('贈' + n.name + itemName(given) + ' · 好感' + st.aff);
+    checkQuest();
+    renderVillage();
+    renderHUD();
+  }
+
+  /* ---- Talk ---- */
+  function openTalk() {
+    const n = NPCS.find((x) => x.id === selectedNpc);
+    $('talk-npc-name').textContent = n.name + ' · ' + n.role;
+    const log = $('talk-log');
+    log.innerHTML = '<div class="talk-line sys">與' + n.name + '相對而坐……</div>';
+    const st = S.npcs[selectedNpc];
+    if (st.mem.length) {
+      log.innerHTML += '<div class="talk-line sys">記憶：' + st.mem.slice(-3).join('；') + '</div>';
+    }
+    $('quick-replies').innerHTML = [
+      '近日可好？', '村里可有新聞？', '請教生計', '告辭'
+    ].map((t) => '<button type="button" data-q="' + t + '">' + t + '</button>').join('');
+    $('quick-replies').querySelectorAll('[data-q]').forEach((b) => {
+      b.addEventListener('click', () => {
+        $('talk-input').value = b.dataset.q;
+        sendTalk();
+      });
+    });
+    $('modal-talk').hidden = false;
+  }
+  function appendTalk(who, text, cls) {
+    const log = $('talk-log');
+    const div = document.createElement('div');
+    div.className = 'talk-line ' + (cls || '');
+    div.innerHTML = '<span class="who">' + who + '：</span> ' + escapeHtml(text);
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function offlineReply(npc, text, modeCmd) {
+    const st = S.npcs[npc.id];
+    const pool = npc.lines;
+    let line = pool[Math.floor(Math.random() * pool.length)];
+    if (modeCmd) {
+      if (/送|贈|禮/.test(text)) line = '若有心物，拿來便是；我心領了。';
+      else if (/教|學|問/.test(text)) line = '且聽我一言：' + pool[0];
+      else line = '既然吩咐，我記下了。——' + pool[Math.floor(Math.random() * pool.length)];
+      st.aff = Math.min(100, st.aff + 2);
+    } else {
+      if (/好|安|久/.test(text)) { line = '托福安好。' + line; st.aff = Math.min(100, st.aff + 1); }
+      else if (/告辭|再見/.test(text)) line = '去罷，有事再來。';
+      else line = line + '（好感 ' + st.aff + '）';
+    }
+    st.talked++;
+    st.mem.push((modeCmd ? '指令：' : '談：') + text.slice(0, 20));
+    if (st.mem.length > 8) st.mem = st.mem.slice(-8);
+    return line;
+  }
+  async function sendTalk() {
+    const input = $('talk-input');
+    const text = (input.value || '').trim();
+    if (!text) return;
+    input.value = '';
+    const npc = NPCS.find((x) => x.id === selectedNpc);
+    appendTalk('你', text, 'you');
+    const AI = window.QianAI;
+    if (AI && AI.ready()) {
+      appendTalk('…', '沉吟中', 'sys');
+      try {
+        const st = S.npcs[selectedNpc];
+        const r = await AI.npcReply({
+          npcName: npc.name, npcRole: npc.role, aff: st.aff,
+          mem: st.mem.slice(-4).join('；'),
+          mode: sayMode === 'cmd' ? 'cmd' : 'say',
+          text, career: CAREERS[S.career].name, dayStr: dayStr()
+        });
+        // remove sys
+        const log = $('talk-log');
+        if (log.lastChild && log.lastChild.classList.contains('sys')) log.removeChild(log.lastChild);
+        appendTalk(npc.name, r.text);
+        st.aff = Math.min(100, st.aff + (sayMode === 'cmd' ? 2 : 1));
+        st.mem.push((sayMode === 'cmd' ? '指令：' : '談：') + text.slice(0, 20));
+        if (st.mem.length > 8) st.mem = st.mem.slice(-8);
+        st.talked++;
+      } catch (e) {
+        const log = $('talk-log');
+        if (log.lastChild && log.lastChild.classList.contains('sys')) log.removeChild(log.lastChild);
+        appendTalk('系統', 'AI 失敗：' + AI.errMsg(e) + '，改用離線對白', 'sys');
+        appendTalk(npc.name, offlineReply(npc, text, sayMode === 'cmd'));
+      }
+    } else {
+      appendTalk(npc.name, offlineReply(npc, text, sayMode === 'cmd'));
+    }
+    checkQuest();
+    renderVillage();
+    renderHUD();
+  }
+
+  /* ---- Craft ---- */
+  function renderCraft() {
+    const listId = mode === 'clinic' ? 'clinic-list' : 'craft-list';
+    const list = $(listId);
+    if (!list) return;
+    const recipes = RECIPES.filter((r) => r.scene === (mode === 'clinic' ? 'clinic' : 'market') || (mode === 'clinic' && r.id === 'potion'));
+    const show = mode === 'clinic' ? RECIPES.filter((r) => r.scene === 'clinic') : RECIPES.filter((r) => r.scene === 'market');
+    list.innerHTML = show.map((r) => {
+      const need = Object.keys(r.needs).map((k) => itemName(k) + bagCount(k) + '/' + r.needs[k]).join(' ');
+      return '<button type="button" class="craft-item" data-craft="' + r.id + '"><strong>' + r.name + '</strong><span>' + r.desc + '</span><span class="need">' + need + '</span></button>';
+    }).join('');
+    list.querySelectorAll('[data-craft]').forEach((b) => {
+      b.addEventListener('click', () => doCraft(b.dataset.craft));
+    });
+  }
+  function doCraft(id) {
+    const r = RECIPES.find((x) => x.id === id);
+    if (!r) return;
+    for (const k of Object.keys(r.needs)) {
+      if (bagCount(k) < r.needs[k]) { toast('材料不足'); return; }
+    }
+    Object.keys(r.needs).forEach((k) => addBag(k, -r.needs[k]));
+    if (r.out) Object.keys(r.out).forEach((k) => {
+      if (k === 'food') S.food += r.out[k];
+      else addBag(k, r.out[k]);
+    });
+    if (r.heal) {
+      const st = stats();
+      S.hp = Math.min(st.maxHp, S.hp + r.heal);
+    }
+    // healer bonus
+    if (S.career === 'healer' && id === 'potion') addBag('potion', 1);
+    toast('製成 ' + r.name);
+    checkQuest();
+    renderCraft();
+    renderHUD();
+  }
+  function gatherHerb() {
+    const n = 1 + Math.floor(Math.random() * 2) + (S.skills.med > 1 ? 1 : 0);
+    addBag('herb', n);
+    toast('採得草藥 ×' + n);
+    renderCraft();
+    renderHUD();
+  }
+  function usePotion() {
+    if (bagCount('potion') <= 0) { toast('無回春散'); return; }
+    addBag('potion', -1);
+    const st = stats();
+    S.hp = Math.min(st.maxHp, S.hp + 35);
+    toast('服藥 · HP ' + S.hp);
+    renderHUD();
+  }
+
+  /* ---- Combat ---- */
+  function renderCombatPanel() {
+    $('drill-stat').textContent = battle && battle.where === 'drill' ? '對練中' : '校場練兵';
+    $('drill-gear').textContent = '裝備 ' + S.gear.length;
+    $('wild-floor').textContent = '山層 ' + S.wildFloor;
+    $('wild-best').textContent = '最深 ' + S.wildBest;
+    $('wild-gear').textContent = '裝備 ' + S.gear.length;
+    const inB = !!battle;
+    $('btn-flee-drill').hidden = !(inB && battle.where === 'drill');
+    $('btn-flee-wild').hidden = !(inB && battle.where === 'wild');
+    $('battle-hud').hidden = !inB;
+  }
+
+  function startBattle(where) {
+    if (battle) return;
+    const floor = where === 'wild' ? S.wildFloor : 1;
+    const pool = where === 'wild' ? ENEMIES_WILD : ENEMIES_DRILL;
+    const idx = Math.min(pool.length - 1, floor - 1 + Math.floor(Math.random() * 2));
+    const base = pool[idx];
+    const scale = where === 'wild' ? 1 + (floor - 1) * 0.18 : 1;
+    const st = stats();
+    S.hp = Math.min(S.hp, st.maxHp);
+    battle = {
+      where,
+      wave: 1,
+      maxWave: where === 'wild' ? 3 : 2,
+      enemy: { name: base.name, maxHp: Math.floor(base.hp * scale), hp: Math.floor(base.hp * scale), atk: Math.floor(base.atk * scale) },
+      log: [],
+      autoTimer: 0
+    };
+    $('adventure-scene').classList.add('in-battle');
+    $('battle-hud').hidden = false;
+    updateBattleHUD('遇敵：' + battle.enemy.name);
+    renderCombatPanel();
+  }
+  function updateBattleHUD(msg) {
+    if (!battle) return;
+    const st = stats();
+    $('enemy-name').textContent = battle.enemy.name;
+    $('enemy-hp-fill').style.width = Math.max(0, 100 * battle.enemy.hp / battle.enemy.maxHp) + '%';
+    $('enemy-hp-num').textContent = battle.enemy.hp + '/' + battle.enemy.maxHp;
+    $('player-hp-fill').style.width = Math.max(0, 100 * S.hp / st.maxHp) + '%';
+    $('player-hp-num').textContent = S.hp + '/' + st.maxHp;
+    $('wave-label').textContent = '第 ' + battle.wave + '／' + battle.maxWave + ' 波';
+    if (msg) {
+      battle.log.push(msg);
+      $('battle-log').textContent = battle.log.slice(-3).join(' · ');
+    }
+  }
+  function playerAttack() {
+    if (!battle) return;
+    const st = stats();
+    const dmg = Math.max(1, st.atk - Math.floor(battle.enemy.atk * 0.05) + Math.floor(Math.random() * 4));
+    battle.enemy.hp = Math.max(0, battle.enemy.hp - dmg);
+    updateBattleHUD('你造成 ' + dmg + ' 傷');
+    if (battle.enemy.hp <= 0) { onEnemyDown(); return; }
+    enemyAttack();
+  }
+  function enemyAttack() {
+    if (!battle) return;
+    const st = stats();
+    const dmg = Math.max(1, battle.enemy.atk - st.def + Math.floor(Math.random() * 3));
+    S.hp = Math.max(0, S.hp - dmg);
+    updateBattleHUD(battle.enemy.name + '擊你 ' + dmg);
+    if (S.hp <= 0) {
+      toast('戰敗…回村休養');
+      S.hp = Math.max(1, Math.floor(st.maxHp * 0.3));
+      endBattle(false);
+    }
+    renderHUD();
+  }
+  function onEnemyDown() {
+    updateBattleHUD('擊敗 ' + battle.enemy.name);
+    if (battle.wave >= battle.maxWave) {
+      winBattle();
+    } else {
+      battle.wave++;
+      const pool = battle.where === 'wild' ? ENEMIES_WILD : ENEMIES_DRILL;
+      const floor = battle.where === 'wild' ? S.wildFloor : 1;
+      const base = pool[Math.min(pool.length - 1, battle.wave + floor - 2)];
+      const scale = battle.where === 'wild' ? 1 + (floor - 1) * 0.18 : 1;
+      battle.enemy = { name: base.name, maxHp: Math.floor(base.hp * scale * 1.05), hp: Math.floor(base.hp * scale * 1.05), atk: Math.floor(base.atk * scale) };
+      updateBattleHUD('下一波：' + battle.enemy.name);
+    }
+  }
+  function winBattle() {
+    S.wins = (S.wins || 0) + 1;
+    const where = battle.where;
+    const floor = where === 'wild' ? S.wildFloor : 1;
+    let gold = 12 + floor * 6 + Math.floor(Math.random() * 10);
+    if (S.skills.trade) gold += S.skills.trade * 2;
+    S.gold += gold;
+    S.soldGold = (S.soldGold || 0) + gold;
+    const gear = rollDrop(where, floor);
+    if (gear) S.gear.push(gear);
+    if (where === 'wild') S.wildBest = Math.max(S.wildBest, S.wildFloor);
+    // chance herb/ore
+    if (Math.random() < 0.4) addBag('ore', 1 + Math.floor(Math.random() * 2));
+    if (Math.random() < 0.3) addBag('herb', 1);
+    showLoot(gold, gear);
+    endBattle(true);
+    checkQuest();
+  }
+  function rollDrop(where, floor) {
+    const roll = Math.random();
+    let rarity = 'white';
+    const bonus = where === 'wild' ? floor * 0.03 : 0;
+    if (roll > 0.97 - bonus) rarity = 'gold';
+    else if (roll > 0.90 - bonus) rarity = 'purple';
+    else if (roll > 0.75 - bonus) rarity = 'blue';
+    else if (roll > 0.50 - bonus) rarity = 'green';
+    if (where === 'drill' && rarity === 'gold') rarity = 'blue';
+    const slots = ['weapon', 'armor', 'accessory'];
+    const slot = slots[Math.floor(Math.random() * slots.length)];
+    const base = GEAR_BASE[slot][Math.min(GEAR_BASE[slot].length - 1, Math.floor(Math.random() * (1 + floor / 2)))];
+    S.gearSeq++;
+    return {
+      id: 'g' + S.gearSeq,
+      slot,
+      name: base.name,
+      atk: base.atk, def: base.def, hp: base.hp,
+      rarity
+    };
+  }
+  function showLoot(gold, gear) {
+    $('loot-body').textContent = '銀 +' + gold + (gear ? '' : ' · 無裝備掉落');
+    const box = $('loot-gear');
+    if (gear) {
+      const r = RARITIES[gear.rarity];
+      box.innerHTML = '<div class="gear-card ' + r.className + '">【' + r.name + '】' + SLOT_LABEL[gear.slot] + ' · ' + gear.name +
+        '<br>ATK+' + Math.round(gear.atk * r.mult) + ' DEF+' + Math.round(gear.def * r.mult) + ' HP+' + Math.round(gear.hp * r.mult) + '</div>';
+    } else box.innerHTML = '';
+    $('modal-loot').hidden = false;
+  }
+  function endBattle() {
+    battle = null;
+    $('battle-hud').hidden = true;
+    $('adventure-scene').classList.remove('in-battle');
+    renderCombatPanel();
+    renderHUD();
+    saveQuiet();
+  }
+  function fleeBattle() {
+    if (!battle) return;
+    toast('撤退');
+    endBattle();
+  }
+  function autoFightStep() {
+    if (!battle) {
+      if (mode === 'drill' || mode === 'wild') startBattle(mode === 'drill' ? 'drill' : 'wild');
+      return;
+    }
+    // potion if low
+    const st = stats();
+    if (S.hp < st.maxHp * 0.35 && bagCount('potion') > 0) {
+      usePotion();
+      updateBattleHUD('服藥');
+      return;
+    }
+    playerAttack();
+  }
+
+  /* ---- Bag / Gear / Quest ---- */
+  function openBag() {
+    const st = stats();
+    $('combat-summary').textContent = 'HP ' + st.hp + '/' + st.maxHp + ' · ATK ' + st.atk + ' · DEF ' + st.def;
+    $('equip-slots').innerHTML = ['weapon', 'armor', 'accessory'].map((slot) => {
+      const id = S.equipped[slot];
+      const g = id && S.gear.find((x) => x.id === id);
+      return '<div class="equip-slot"><span>' + SLOT_LABEL[slot] + '</span><strong>' + (g ? g.name + '（' + RARITIES[g.rarity].name + '）' : '空') + '</strong></div>';
+    }).join('');
+    $('bag-grid').innerHTML = Object.keys(S.bag).filter((k) => S.bag[k] > 0).map((k) =>
+      '<div class="bag-item">' + itemName(k) + ' <b>×' + S.bag[k] + '</b></div>'
+    ).join('') || '<p class="muted">空空如也</p>';
+    $('gear-list').innerHTML = S.gear.map((g) => {
+      const r = RARITIES[g.rarity];
+      const on = S.equipped[g.slot] === g.id;
+      return '<button type="button" class="gear-card ' + r.className + (on ? ' on' : '') + '" data-gid="' + g.id + '">' +
+        (on ? '【裝】' : '') + '【' + r.name + '】' + g.name + ' · ' + SLOT_LABEL[g.slot] + '</button>';
+    }).join('') || '<p class="muted">尚無裝備</p>';
+    $('gear-list').querySelectorAll('[data-gid]').forEach((b) => {
+      b.addEventListener('click', () => {
+        const g = S.gear.find((x) => x.id === b.dataset.gid);
+        if (!g) return;
+        if (S.equipped[g.slot] === g.id) S.equipped[g.slot] = null;
+        else S.equipped[g.slot] = g.id;
+        const st2 = stats();
+        S.hp = Math.min(S.hp, st2.maxHp);
+        openBag();
+        renderHUD();
+      });
+    });
+    $('modal-bag').hidden = false;
+  }
+  function openQuest() {
+    const q = S.quest;
+    let body = '<div class="quest-item' + (q.done ? ' done' : '') + '"><strong>' + q.title + '</strong><p>' + q.desc + '</p>';
+    if (q.done) body += '<p class="ok">已完成</p>';
+    else body += '<p>酬：銀' + q.gold + ' · 糧' + q.food + '</p>';
+    body += '</div>';
+    body += '<div class="quest-item"><strong>累計</strong><p>勝場 ' + (S.wins || 0) + ' · 賣銀 ' + (S.soldGold || 0) + ' · 最深山層 ' + S.wildBest + '</p></div>';
+    $('quest-list').innerHTML = body;
+    $('modal-quest').hidden = false;
+  }
+  function checkQuest() {
+    const q = S.quest;
+    if (!q || q.done) return;
+    let ok = false;
+    if (q.need) {
+      ok = Object.keys(q.need).every((k) => bagCount(k) >= q.need[k]);
+    } else if (q.needFlag === 'soldGold') ok = (S.soldGold || 0) >= q.needVal;
+    else if (q.needFlag === 'wins') ok = (S.wins || 0) >= q.needVal;
+    else if (q.needFlag === 'maxAff') {
+      ok = Math.max(...Object.values(S.npcs).map((n) => n.aff)) >= q.needVal;
+    }
+    if (ok) {
+      q.done = true;
+      if (q.need) Object.keys(q.need).forEach((k) => addBag(k, -q.need[k]));
+      S.gold += q.gold;
+      S.food += q.food;
+      toast('差事完成：' + q.title);
+      $('quest-dot').hidden = true;
+    }
+  }
+
+  /* ---- AUTO loop ---- */
+  function autoVillageStep() {
+    if (!S.orderDone) {
+      let can = true;
+      for (const k of Object.keys(S.order.need)) if (bagCount(k) < S.order.need[k]) can = false;
+      if (can) submitOrder();
+    }
+    // gift occasionally
+    if (Math.random() < 0.2) giftNpc();
+  }
+  function autoMarketStep() {
+    // craft if possible
+    const list = RECIPES.filter((r) => r.scene === 'market');
+    for (const r of list) {
+      let ok = true;
+      for (const k of Object.keys(r.needs)) if (bagCount(k) < r.needs[k]) ok = false;
+      if (ok) { doCraft(r.id); return; }
+    }
+    sellCrops();
+  }
+  function autoClinicStep() {
+    if (bagCount('herb') < 2) gatherHerb();
+    else {
+      const r = RECIPES.find((x) => x.id === 'potion');
+      let ok = true;
+      for (const k of Object.keys(r.needs)) if (bagCount(k) < r.needs[k]) ok = false;
+      if (ok) doCraft('potion');
+      else gatherHerb();
+    }
+  }
+
+  function tick(ts) {
+    requestAnimationFrame(tick);
+    if (!S || !autoOn) return;
+    if (ts - lastTick < 900) return;
+    lastTick = ts;
+    if (battle) { autoFightStep(); return; }
+    if (mode === 'farm') autoFarmStep();
+    else if (mode === 'village') autoVillageStep();
+    else if (mode === 'market') autoMarketStep();
+    else if (mode === 'clinic') autoClinicStep();
+    else if (mode === 'drill' || mode === 'wild') autoFightStep();
+    // slow day advance while farming auto
+    if (mode === 'farm' && Math.random() < 0.08) nextDay();
+  }
+
+  /* ---- Settings UI ---- */
+  function openSettings() {
+    const AI = window.QianAI;
+    const SET = AI.getSet();
+    $('set-provider').value = SET.preset || 'deepseek';
+    fillModels();
+    $('set-model').value = SET.model;
+    $('set-key').value = SET.key || '';
+    $('set-base').value = SET.base || '';
+    $('set-ai-on').checked = !!SET.ai;
+    $('set-base-wrap').hidden = SET.preset !== 'custom';
+    $('ai-test-result').textContent = '';
+    $('modal-settings').hidden = false;
+  }
+  function fillModels() {
+    const AI = window.QianAI;
+    const SET = AI.getSet();
+    const p = AI.presets[SET.preset] || AI.presets.deepseek;
+    const sel = $('set-model');
+    if (SET.preset === 'deepseek' || (p.models && p.models.length)) {
+      sel.innerHTML = (p.models.length ? p.models : ['deepseek-chat']).map((m) =>
+        '<option value="' + m + '">' + m + '</option>').join('');
+    } else {
+      sel.innerHTML = '<option value="' + (SET.model || '') + '">' + (SET.model || '自訂') + '</option>';
+    }
+  }
+  function applySettingsFromUI() {
+    const AI = window.QianAI;
+    const SET = AI.getSet();
+    SET.preset = $('set-provider').value;
+    AI.applyPreset(SET.preset);
+    SET.model = $('set-model').value || SET.model;
+    SET.key = $('set-key').value.trim();
+    if (SET.preset === 'custom') SET.base = $('set-base').value.trim();
+    SET.ai = $('set-ai-on').checked;
+    AI.save();
+  }
+  function saveSettingsFromUI() {
+    applySettingsFromUI();
+    toast('設定已存');
+    $('modal-settings').hidden = true;
+  }
+
+  /* ---- Screens ---- */
+  function showTitle() {
+    $('screen-title').hidden = false;
+    $('screen-career').hidden = true;
+    $('screen-game').hidden = true;
+    $('btn-continue').hidden = !hasSave();
+  }
+  function showCareer() {
+    $('screen-title').hidden = true;
+    $('screen-career').hidden = false;
+    $('screen-game').hidden = true;
+    const grid = $('career-grid');
+    grid.innerHTML = Object.values(CAREERS).map((c) =>
+      '<button type="button" class="career-card" data-career="' + c.id + '">' +
+      '<h3>' + c.name + '</h3><p>' + c.desc + '</p>' +
+      '<div class="stats">銀' + c.gold + ' · 糧' + c.food + ' · HP' + c.hp + ' · ATK' + c.atk + '</div></button>'
+    ).join('');
+    grid.querySelectorAll('[data-career]').forEach((b) => {
+      b.addEventListener('click', () => startGame(b.dataset.career));
+    });
+  }
+  function startGame(careerId) {
+    S = newState(careerId);
+    autoOn = false;
+    directive = 'grain';
+    mode = 'farm';
+    $('screen-career').hidden = true;
+    $('screen-title').hidden = true;
+    $('screen-game').hidden = false;
+    document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
+    showMode('farm');
+    status('以' + CAREERS[careerId].name + '之身，立於青阡');
+    toast('開局 · ' + CAREERS[careerId].name);
+    saveQuiet();
+  }
+  function continueGame() {
+    if (!load()) { toast('無存檔'); return; }
+    $('screen-title').hidden = true;
+    $('screen-game').hidden = false;
+    document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
+    showMode('farm');
+    toast('繼續 · ' + dayStr());
+  }
+
+  function toggleAuto() {
+    autoOn = !autoOn;
+    renderHUD();
+    toast(autoOn ? 'AUTO 開' : 'AUTO 關');
+  }
+
+  /* ---- Bind ---- */
+  function bind() {
+    $('btn-new').addEventListener('click', showCareer);
+    $('btn-continue').addEventListener('click', continueGame);
+    $('btn-career-back').addEventListener('click', showTitle);
+    $('btn-settings-title').addEventListener('click', openSettings);
+    $('btn-settings-game').addEventListener('click', () => { $('modal-menu').hidden = true; openSettings(); });
+    $('btn-menu').addEventListener('click', () => { $('modal-menu').hidden = false; });
+    $('btn-close-menu').addEventListener('click', () => { $('modal-menu').hidden = true; });
+    $('btn-save').addEventListener('click', () => { save(); $('modal-menu').hidden = true; });
+    $('btn-title').addEventListener('click', () => { saveQuiet(); $('modal-menu').hidden = true; showTitle(); });
+    $('btn-close-settings').addEventListener('click', () => { $('modal-settings').hidden = true; });
+    $('btn-save-settings').addEventListener('click', saveSettingsFromUI);
+    $('set-provider').addEventListener('change', () => {
+      const AI = window.QianAI;
+      AI.applyPreset($('set-provider').value);
+      fillModels();
+      $('set-base-wrap').hidden = $('set-provider').value !== 'custom';
+    });
+    $('btn-test-ai').addEventListener('click', async () => {
+      applySettingsFromUI();
+      const AI = window.QianAI;
+      const SET = AI.getSet();
+      SET.ai = true; AI.save();
+      $('ai-test-result').textContent = '測試中…';
+      if (!SET.key && SET.preset !== 'custom') {
+        $('ai-test-result').textContent = '請先填 API Key';
+        return;
+      }
+      try {
+        const r = await AI.test();
+        $('ai-test-result').textContent = '成功：' + r.text.slice(0, 40);
+      } catch (e) {
+        $('ai-test-result').textContent = AI.errMsg(e);
+      }
+    });
+
+    document.querySelectorAll('.mode-tab').forEach((t) => {
+      t.addEventListener('click', () => showMode(t.dataset.mode));
+    });
+    document.querySelectorAll('.dir').forEach((d) => {
+      d.addEventListener('click', () => {
+        directive = d.dataset.dir;
+        document.querySelectorAll('.dir').forEach((x) => x.classList.toggle('active', x === d));
+      });
+    });
+    document.querySelectorAll('.crop-btn').forEach((b) => {
+      b.addEventListener('click', () => {
+        selectedCrop = b.dataset.crop;
+        document.querySelectorAll('.crop-btn').forEach((x) => x.classList.toggle('active', x === b));
+      });
+    });
+
+    canvas().addEventListener('click', (e) => tapPlot(plotAt(e.clientX, e.clientY)));
+
+    ['btn-auto', 'btn-auto-v', 'btn-auto-mkt', 'btn-auto-clinic', 'btn-auto-drill', 'btn-auto-wild'].forEach((id) => {
+      const el = $(id); if (el) el.addEventListener('click', toggleAuto);
+    });
+    $('btn-water-all').addEventListener('click', waterAll);
+    $('btn-harvest').addEventListener('click', harvestAll);
+    $('btn-sell').addEventListener('click', sellCrops);
+    $('btn-expand').addEventListener('click', expandPlot);
+    $('btn-nextday').addEventListener('click', nextDay);
+
+    $('btn-talk-npc').addEventListener('click', openTalk);
+    $('btn-gift-npc').addEventListener('click', giftNpc);
+    $('btn-submit-order').addEventListener('click', submitOrder);
+    $('btn-close-talk').addEventListener('click', () => { $('modal-talk').hidden = true; });
+    $('btn-talk-send').addEventListener('click', sendTalk);
+    $('talk-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendTalk(); });
+    document.querySelectorAll('.talk-mode .seg').forEach((s) => {
+      s.addEventListener('click', () => {
+        sayMode = s.dataset.say;
+        document.querySelectorAll('.talk-mode .seg').forEach((x) => x.classList.toggle('active', x === s));
+        $('talk-input').placeholder = sayMode === 'cmd' ? '指令（要對方做什麼）…' : '對他說……';
+      });
+    });
+
+    $('btn-sell-all').addEventListener('click', () => { sellCrops(); if (bagCount('ore')) { const n = bagCount('ore'); S.gold += n * 6; addBag('ore', -n); S.soldGold += n * 6; toast('礦亦售出'); } renderHUD(); });
+    $('btn-buy-seed').addEventListener('click', () => {
+      if (S.gold < 15) { toast('銀不足'); return; }
+      S.gold -= 15; addBag('rice', 2); addBag('veg', 1); addBag('wheat', 1);
+      toast('買得種子包'); renderHUD();
+    });
+    $('btn-gather-herb').addEventListener('click', gatherHerb);
+    $('btn-heal-self').addEventListener('click', usePotion);
+
+    $('btn-drill-fight').addEventListener('click', () => startBattle('drill'));
+    $('btn-wild-fight').addEventListener('click', () => startBattle('wild'));
+    $('btn-flee-drill').addEventListener('click', fleeBattle);
+    $('btn-flee-wild').addEventListener('click', fleeBattle);
+    $('btn-deeper').addEventListener('click', () => {
+      if (battle) { toast('戰鬥中'); return; }
+      S.wildFloor++;
+      toast('深入山層 ' + S.wildFloor);
+      renderCombatPanel();
+    });
+
+    // manual attack while in battle: tap scene
+    $('adventure-scene').addEventListener('click', () => {
+      if (battle && !autoOn) playerAttack();
+    });
+
+    $('btn-bag').addEventListener('click', openBag);
+    $('btn-close-bag').addEventListener('click', () => { $('modal-bag').hidden = true; });
+    $('btn-bag-sell').addEventListener('click', () => { sellCrops(); openBag(); });
+    $('btn-quest').addEventListener('click', openQuest);
+    $('btn-close-quest').addEventListener('click', () => { $('modal-quest').hidden = true; });
+    $('btn-close-loot').addEventListener('click', () => { $('modal-loot').hidden = true; });
+
+    // block weixin links
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a');
+      if (a && /^weixin:/i.test(a.getAttribute('href') || '')) { e.preventDefault(); toast('已攔截微信連結'); }
+    }, true);
+  }
+
+  // villager-card style inject if missing
+  function ensureExtraCss() {
+    if (document.getElementById('qq-extra')) return;
+    const s = document.createElement('style');
+    s.id = 'qq-extra';
+    s.textContent = `
+      .villager-card{display:block;width:100%;text-align:left;border:2px solid #c9a227;border-radius:10px;background:linear-gradient(180deg,#fff8e7,#f0e0b8);padding:10px;margin-bottom:6px;cursor:pointer}
+      .villager-card.active{box-shadow:0 0 0 2px #f0c14b}
+      .villager-card .muted{color:#8d6e63;font-size:12px}
+      .aff-bar{height:6px;background:#d7ccc8;border-radius:99px;margin:6px 0 2px;overflow:hidden}
+      .aff-bar i{display:block;height:100%;background:linear-gradient(90deg,#81c784,#43a047)}
+      .aff-num{font-size:11px;font-weight:700;color:#5d4037}
+      .craft-item{display:block;width:100%;text-align:left;border:2px solid #a1887f;border-radius:10px;background:#fff8e7;padding:10px;margin-bottom:6px;cursor:pointer}
+      .craft-item .need{display:block;font-size:11px;color:#8d6e63;margin-top:4px}
+      .gear-card{display:block;width:100%;text-align:left;border:2px solid #8d6e63;border-radius:8px;padding:8px;margin:4px 0;cursor:pointer;background:#faf6ea;font-size:12px}
+      .gear-card.on{border-color:#f0c14b;background:#fff3c4}
+      .rarity-white{border-color:#bdbdbd}.rarity-green{border-color:#66bb6a;color:#2e7d32}
+      .rarity-blue{border-color:#42a5f5;color:#1565c0}.rarity-purple{border-color:#ab47bc;color:#6a1b9a}
+      .rarity-gold{border-color:#f9a825;color:#f57f17;box-shadow:0 0 8px rgba(249,168,37,.4)}
+      .auto-btn.on{background:linear-gradient(180deg,#81c784,#2e7d32)!important;color:#fff!important;border-color:#1b5e20!important}
+      .auto-on{color:#2e7d32;font-weight:800}.auto-off{color:#8d6e63}
+      .equip-slot{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #d7ccc8;font-size:13px}
+      .bag-item{display:inline-block;background:#efebe9;border-radius:8px;padding:6px 10px;margin:3px;font-size:12px}
+      .quest-item{background:rgba(255,255,255,.5);border-radius:10px;padding:10px;margin-bottom:8px}
+      .quest-item.done{opacity:.7}
+      .parchment-mini{background:linear-gradient(180deg,#f7ecd4,#e8d4a8);border:2px solid #c9a227;border-radius:10px;padding:10px;margin-bottom:8px;font-size:12px}
+      .panel-h{margin:8px 0 6px;font-size:13px}
+      .village-scroll{max-height:160px;overflow-y:auto;margin-bottom:6px}
+      .craft-list{max-height:140px;overflow-y:auto;margin-bottom:6px}
+      .mode-blurb{font-size:12px;color:#ffe0a3;margin:0 0 6px;text-shadow:0 1px 2px #000}
+      .tiny-blurb{font-size:11px;opacity:.85}
+      .dungeon-stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+      .dungeon-stats span{background:rgba(243,230,200,.9);border:1.5px solid #c9a227;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700}
+      .combat-summary{font-size:12px;margin:6px 0;font-weight:700}
+      .bag-section-title{font-size:13px;margin:10px 0 4px}
+      .muted{color:#8d6e63}
+      .ok{color:#2e7d32;font-weight:700}
+      .field{display:block;margin:8px 0;font-size:13px;font-weight:700}
+      .field input,.field select{display:block;width:100%;margin-top:4px;padding:10px;border:2px solid #8d6e63;border-radius:8px;font-size:14px;font-weight:500}
+      .tiny{font-size:11px;color:#8d6e63;line-height:1.4}
+      .status-bar{display:flex;justify-content:space-between;align-items:center;padding:4px 2px;font-size:12px;color:#ffe0a3;flex-shrink:0}
+      .directives{display:flex;gap:4px;margin-bottom:6px;overflow-x:auto}
+      .dir{appearance:none;border:2px solid #8d6e63;background:#5d4037;color:#d7ccc8;border-radius:8px;padding:6px 8px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}
+      .dir.active{background:linear-gradient(180deg,#f0c14b,#c9921a);color:#3e2723;border-color:#ffe082}
+      .controls{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}
+      .controls .btn{width:100%;min-width:0;padding:8px 6px;font-size:12px;min-height:38px}
+      .crop-pick{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+      .crop-pick .label{font-size:11px;color:#ffe0a3;font-weight:700}
+      .crop-btn{appearance:none;border:2px solid #8d6e63;background:#6d4c41;color:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:800;cursor:pointer}
+      .crop-btn.active{background:linear-gradient(180deg,#f0c14b,#c9921a);color:#3e2723;border-color:#ffe082}
+      .plot-card{border:3px solid #c9a227;border-radius:12px;overflow:hidden;background:#2a2118;flex-shrink:0}
+      .plot-card-head{display:flex;justify-content:space-between;padding:6px 10px;background:linear-gradient(180deg,#6d4c41,#3e2723);color:#ffe0a3;font-size:12px;font-weight:700}
+      .plot-canvas-wrap{position:relative}
+      .plot-bg{position:absolute;inset:0;opacity:.35;pointer-events:none}
+      .plot-bg img{width:100%;height:100%;object-fit:cover}
+      #farm{position:relative;z-index:1;width:100%;height:auto;display:block;touch-action:manipulation}
+      .modal{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;padding:12px}
+      .modal[hidden]{display:none!important}
+      .modal-card{width:100%;max-height:85%;overflow-y:auto;border-radius:14px;padding:16px;margin-bottom:var(--safe-bottom)}
+      .modal-card.wide{max-height:90%}
+      .parchment{background:linear-gradient(180deg,#f7ecd4,#e8d4a8);border:3px solid #c9a227;color:var(--ink)}
+      .parchment h2{margin:0 0 10px;font-size:18px;text-align:center}
+      .modal-actions.row{display:flex;gap:8px}
+      .modal-actions .btn{flex:1}
+      .loot-gear{margin:8px 0}
+      .battle-log{background:rgba(0,0,0,.45);color:#fff8e1;font-size:11px;padding:6px 8px;border-radius:8px;margin-top:8px;pointer-events:none}
+    `;
+    document.head.appendChild(s);
+  }
+
+  ensureExtraCss();
+  bind();
+  showTitle();
+  requestAnimationFrame(tick);
+})();

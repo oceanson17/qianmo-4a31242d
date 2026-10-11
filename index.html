@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="青阡">
+<meta name="format-detection" content="telephone=no,email=no,address=no">
+<meta name="theme-color" content="#3e2723">
+<title>青阡</title>
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<div id="app">
+  <!-- 標題 -->
+  <section id="screen-title" class="screen">
+    <div class="title-bg" aria-hidden="true">
+      <picture>
+        <source srcset="assets/bg_village.webp?v=1" type="image/webp">
+        <img src="assets/bg_village.jpg?v=1" alt="" decoding="async">
+      </picture>
+      <div class="title-bg-shade"></div>
+    </div>
+    <div class="title-content">
+      <img class="title-hero" src="assets/char_hero.webp?v=1" alt="主角" width="140" height="163" decoding="async">
+      <h1>青阡</h1>
+      <p class="subtitle">秦漢村野 · 田莊 · 坊市 · AUTO · AI 對白</p>
+      <button type="button" class="btn primary" id="btn-new">開始新局</button>
+      <button type="button" class="btn" id="btn-continue" hidden>繼續</button>
+      <button type="button" class="btn ghost" id="btn-settings-title">設定</button>
+      <p class="hint">選職業開局 · 開 AUTO 自動種田打怪 · 可對 NPC 說／指令</p>
+    </div>
+  </section>
+
+  <!-- 選職業 -->
+  <section id="screen-career" class="screen" hidden>
+    <div class="career-wrap parchment">
+      <h2>擇業開局</h2>
+      <p class="career-blurb">秦漢之際，阡陌初開。汝欲以何業立足？</p>
+      <div class="career-grid" id="career-grid"></div>
+      <button type="button" class="btn ghost" id="btn-career-back">返回</button>
+    </div>
+  </section>
+
+  <!-- 主遊戲 -->
+  <section id="screen-game" class="screen" hidden>
+    <header class="hud">
+      <div class="hud-left">
+        <div class="hud-hero" title="主角">
+          <img src="assets/char_hero.webp?v=1" alt="" decoding="async">
+        </div>
+        <button type="button" class="hud-icon bag" id="btn-bag" title="行囊">
+          <span class="hud-icon-glyph" aria-hidden="true">🎒</span>
+          <span class="hud-icon-label">行囊</span>
+        </button>
+        <button type="button" class="hud-icon quest" id="btn-quest" title="差事">
+          <span class="hud-icon-glyph" aria-hidden="true">📜</span>
+          <span class="hud-icon-label">差事</span>
+          <span class="quest-dot" id="quest-dot" hidden></span>
+        </button>
+      </div>
+      <div class="hud-mid">
+        <span class="pill" id="hud-day">春 · 第1日</span>
+        <span class="pill gold" id="hud-gold">銀 80</span>
+        <span class="pill food" id="hud-food">糧 12</span>
+        <span class="pill combat" id="hud-combat">HP 80</span>
+        <span class="pill career" id="hud-career">農夫</span>
+      </div>
+      <div class="hud-right">
+        <button type="button" class="btn-icon" id="btn-menu" title="選單">☰</button>
+      </div>
+    </header>
+
+    <nav class="mode-tabs" role="tablist" aria-label="場景">
+      <button type="button" class="mode-tab active" data-mode="farm">田莊</button>
+      <button type="button" class="mode-tab" data-mode="village">村落</button>
+      <button type="button" class="mode-tab" data-mode="market">坊市</button>
+      <button type="button" class="mode-tab" data-mode="clinic">藥廬</button>
+      <button type="button" class="mode-tab" data-mode="drill">校場</button>
+      <button type="button" class="mode-tab" data-mode="wild">山野</button>
+    </nav>
+
+    <div class="scene-wrap">
+      <div class="adventure-scene" id="adventure-scene">
+        <picture id="scene-pic">
+          <source id="scene-webp" srcset="assets/bg_village.webp?v=1" type="image/webp">
+          <img id="scene-img" src="assets/bg_village.jpg?v=1" alt="場景" class="scene-img" decoding="async">
+        </picture>
+        <div class="season-tint" id="season-tint" data-season="0"></div>
+        <div class="scene-caption" id="scene-caption">春光滿阡</div>
+        <div class="toast" id="toast" hidden></div>
+
+        <div class="battle-hud" id="battle-hud" hidden>
+          <div class="battle-top">
+            <div class="hp-block enemy">
+              <div class="hp-name" id="enemy-name">敵</div>
+              <div class="hp-bar"><div class="hp-fill" id="enemy-hp-fill"></div></div>
+              <div class="hp-num" id="enemy-hp-num">0/0</div>
+            </div>
+            <div class="wave-label" id="wave-label">第 1／3 波</div>
+            <div class="hp-block player">
+              <img class="battle-hero" src="assets/char_hero.webp?v=1" alt="" decoding="async">
+              <div class="hp-name">你</div>
+              <div class="hp-bar"><div class="hp-fill player" id="player-hp-fill"></div></div>
+              <div class="hp-num" id="player-hp-num">0/0</div>
+            </div>
+          </div>
+          <div class="battle-log" id="battle-log"></div>
+        </div>
+      </div>
+
+      <div class="plot-card" id="plot-card">
+        <div class="plot-card-head">
+          <span class="plot-card-title">田畦</span>
+          <span class="plot-card-hint" id="plot-hint">點畦操作 · AUTO 亦會自動</span>
+        </div>
+        <div class="plot-canvas-wrap">
+          <picture class="plot-bg" aria-hidden="true">
+            <source srcset="assets/bg_fields.webp?v=1" type="image/webp">
+            <img src="assets/bg_fields.webp?v=1" alt="" decoding="async">
+          </picture>
+          <canvas id="farm" width="360" height="168"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <span id="status-text">點田操作，或開 AUTO</span>
+      <span id="auto-label" class="auto-off">AUTO 關</span>
+    </div>
+
+    <!-- 田莊 -->
+    <div class="mode-panel" id="farm-panel">
+      <div class="directives" role="group" aria-label="方針">
+        <button type="button" class="dir active" data-dir="grain">多種糧</button>
+        <button type="button" class="dir" data-dir="money">多賺錢</button>
+        <button type="button" class="dir" data-dir="expand">擴田優先</button>
+        <button type="button" class="dir" data-dir="winter">存糧過冬</button>
+      </div>
+      <div class="controls">
+        <button type="button" class="btn auto-btn" id="btn-auto">AUTO</button>
+        <button type="button" class="btn" id="btn-water-all">全澆</button>
+        <button type="button" class="btn" id="btn-harvest">收成</button>
+        <button type="button" class="btn" id="btn-sell">賣出</button>
+        <button type="button" class="btn" id="btn-expand">擴田</button>
+        <button type="button" class="btn" id="btn-nextday">過一日</button>
+      </div>
+      <div class="crop-pick" id="crop-pick">
+        <span class="label">種子</span>
+        <button type="button" class="crop-btn active" data-crop="rice">稻</button>
+        <button type="button" class="crop-btn" data-crop="veg">菜</button>
+        <button type="button" class="crop-btn" data-crop="flower">花</button>
+        <button type="button" class="crop-btn" data-crop="wheat">麥</button>
+      </div>
+    </div>
+
+    <!-- 村落 -->
+    <div class="mode-panel" id="village-panel" hidden>
+      <div class="order-board parchment-mini" id="order-board"></div>
+      <div class="village-scroll">
+        <h3 class="panel-h">鄉鄰</h3>
+        <div id="npc-list" class="villager-list"></div>
+      </div>
+      <div class="controls">
+        <button type="button" class="btn auto-btn" id="btn-auto-v">AUTO</button>
+        <button type="button" class="btn" id="btn-talk-npc">對白</button>
+        <button type="button" class="btn" id="btn-gift-npc">送禮</button>
+        <button type="button" class="btn" id="btn-submit-order">交日令</button>
+      </div>
+    </div>
+
+    <!-- 坊市 -->
+    <div class="mode-panel" id="market-panel" hidden>
+      <p class="mode-blurb">坊市買賣 · 工坊製物</p>
+      <div id="craft-list" class="craft-list"></div>
+      <div class="controls">
+        <button type="button" class="btn auto-btn" id="btn-auto-mkt">AUTO</button>
+        <button type="button" class="btn" id="btn-sell-all">全賣材料</button>
+        <button type="button" class="btn" id="btn-buy-seed">買種子包（15銀）</button>
+      </div>
+    </div>
+
+    <!-- 藥廬 -->
+    <div class="mode-panel" id="clinic-panel" hidden>
+      <p class="mode-blurb">採藥煉劑 · 醫者更能事半功倍</p>
+      <div id="clinic-list" class="craft-list"></div>
+      <div class="controls">
+        <button type="button" class="btn auto-btn" id="btn-auto-clinic">AUTO</button>
+        <button type="button" class="btn primary" id="btn-gather-herb">採藥</button>
+        <button type="button" class="btn" id="btn-heal-self">服藥回血</button>
+      </div>
+    </div>
+
+    <!-- 校場 -->
+    <div class="mode-panel" id="drill-panel" hidden>
+      <div class="dungeon-stats">
+        <span id="drill-stat">校場練兵</span>
+        <span id="drill-gear">裝備 0</span>
+      </div>
+      <div class="controls">
+        <button type="button" class="btn auto-btn" id="btn-auto-drill">AUTO</button>
+        <button type="button" class="btn primary" id="btn-drill-fight">對練</button>
+        <button type="button" class="btn" id="btn-flee-drill" hidden>撤退</button>
+      </div>
+      <p class="mode-blurb tiny-blurb">校場掉落較弱 · 適合練手與測試 AUTO</p>
+    </div>
+
+    <!-- 山野 -->
+    <div class="mode-panel" id="wild-panel" hidden>
+      <div class="dungeon-stats">
+        <span id="wild-floor">山層 1</span>
+        <span id="wild-best">最深 0</span>
+        <span id="wild-gear">裝備 0</span>
+      </div>
+      <div class="controls">
+        <button type="button" class="btn auto-btn" id="btn-auto-wild">AUTO</button>
+        <button type="button" class="btn primary" id="btn-wild-fight">入山</button>
+        <button type="button" class="btn" id="btn-flee-wild" hidden>撤退</button>
+        <button type="button" class="btn" id="btn-deeper">更深</button>
+      </div>
+      <p class="mode-blurb tiny-blurb">山野多怪 · 白→金裝備掉落 · AUTO 會自動作戰</p>
+    </div>
+  </section>
+
+  <!-- 對白 -->
+  <div id="modal-talk" class="modal" hidden>
+    <div class="modal-card wide parchment talk-card">
+      <h2 id="talk-npc-name">鄉鄰</h2>
+      <div class="talk-log" id="talk-log"></div>
+      <div class="talk-mode">
+        <button type="button" class="seg active" data-say="say">說</button>
+        <button type="button" class="seg" data-say="cmd">指令</button>
+      </div>
+      <div class="talk-input-row">
+        <input type="text" id="talk-input" placeholder="對他說……" maxlength="120" autocomplete="off">
+        <button type="button" class="btn primary slim" id="btn-talk-send">送出</button>
+      </div>
+      <div class="quick-replies" id="quick-replies"></div>
+      <button type="button" class="btn ghost" id="btn-close-talk">告退</button>
+    </div>
+  </div>
+
+  <!-- 行囊 -->
+  <div id="modal-bag" class="modal" hidden>
+    <div class="modal-card wide parchment">
+      <h2>行囊 · 裝備</h2>
+      <div class="equip-slots" id="equip-slots"></div>
+      <div class="combat-summary" id="combat-summary"></div>
+      <h3 class="bag-section-title">物品</h3>
+      <div class="bag-grid" id="bag-grid"></div>
+      <h3 class="bag-section-title">裝備庫</h3>
+      <div class="gear-list" id="gear-list"></div>
+      <div class="modal-actions row">
+        <button type="button" class="btn primary" id="btn-bag-sell">賣材料</button>
+        <button type="button" class="btn ghost" id="btn-close-bag">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 差事 -->
+  <div id="modal-quest" class="modal" hidden>
+    <div class="modal-card wide parchment">
+      <h2>差事</h2>
+      <div class="quest-list" id="quest-list"></div>
+      <button type="button" class="btn ghost" id="btn-close-quest">關閉</button>
+    </div>
+  </div>
+
+  <!-- 戰利品 -->
+  <div id="modal-loot" class="modal" hidden>
+    <div class="modal-card parchment">
+      <h2>戰利品</h2>
+      <p id="loot-body"></p>
+      <div id="loot-gear" class="loot-gear"></div>
+      <button type="button" class="btn primary" id="btn-close-loot">收下</button>
+    </div>
+  </div>
+
+  <!-- 選單 -->
+  <div id="modal-menu" class="modal" hidden>
+    <div class="modal-card parchment">
+      <h2>選單</h2>
+      <button type="button" class="btn" id="btn-save">立即存檔</button>
+      <button type="button" class="btn" id="btn-settings-game">設定</button>
+      <button type="button" class="btn" id="btn-title">回標題</button>
+      <button type="button" class="btn ghost" id="btn-close-menu">關閉</button>
+    </div>
+  </div>
+
+  <!-- 設定 -->
+  <div id="modal-settings" class="modal" hidden>
+    <div class="modal-card parchment">
+      <h2>設定 · AI</h2>
+      <label class="field">供應商
+        <select id="set-provider">
+          <option value="deepseek">DeepSeek</option>
+          <option value="xai">xAI</option>
+          <option value="openai">OpenAI</option>
+          <option value="openrouter">OpenRouter</option>
+          <option value="custom">自訂（OpenAI 相容）</option>
+        </select>
+      </label>
+      <label class="field">模型
+        <select id="set-model">
+          <option value="deepseek-chat">deepseek-chat（快）</option>
+          <option value="deepseek-reasoner">deepseek-reasoner（強）</option>
+        </select>
+      </label>
+      <label class="field" id="set-base-wrap" hidden>Base URL
+        <input type="text" id="set-base" placeholder="https://…" autocomplete="off" autocapitalize="off">
+      </label>
+      <label class="field">API Key（只存瀏覽器）
+        <input type="password" id="set-key" placeholder="sk-…" autocomplete="off">
+      </label>
+      <label class="field check">
+        <input type="checkbox" id="set-ai-on"> 啟用 AI 對白（關則用離線劇本）
+      </label>
+      <button type="button" class="btn" id="btn-test-ai">試連線</button>
+      <p class="tiny" id="ai-test-result"></p>
+      <p class="tiny">Key 只存本機 localStorage，不上傳。無 Key 時對白走離線劇本。</p>
+      <button type="button" class="btn primary" id="btn-save-settings">儲存</button>
+      <button type="button" class="btn ghost" id="btn-close-settings">關閉</button>
+    </div>
+  </div>
+</div>
+<script src="ai.js?v=1"></script>
+<script src="game.js?v=1"></script>
+</body>
+</html>
