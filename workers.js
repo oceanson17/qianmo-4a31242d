@@ -3,7 +3,7 @@
   'use strict';
 
   const MAX = 12;
-  const ASSET_V = '7';
+  const ASSET_V = '8';
   const SPRITE_KEYS = {
     farm: ['farmer_m', 'farmer_f', 'farmer_m', 'farmer_f'],
     market: ['merchant', 'merchant', 'farmer_m', 'farmer_f'],
@@ -13,7 +13,12 @@
     wild: ['soldier', 'soldier', 'farmer_f'],
     garden: ['scholar', 'farmer_f', 'merchant', 'farmer_m'],
     swim: ['farmer_f', 'farmer_m', 'scholar'],
-    moon: ['merchant', 'scholar', 'farmer_f', 'soldier']
+    moon: ['merchant', 'scholar', 'farmer_f', 'soldier'],
+    mine: ['farmer_m', 'soldier', 'farmer_f', 'merchant'],
+    post: ['merchant', 'soldier', 'scholar', 'farmer_m'],
+    tavern: ['merchant', 'farmer_f', 'soldier', 'scholar'],
+    academy: ['scholar', 'scholar', 'farmer_m', 'doctor'],
+    frontier: ['soldier', 'soldier', 'farmer_m', 'merchant']
   };
   const ROLES = [
     { id: 'hoe', label: '耕', carry: false },
@@ -67,6 +72,26 @@
     moon: [
       [[0.12, 0.68], [0.32, 0.72], [0.55, 0.68], [0.78, 0.74], [0.60, 0.78], [0.35, 0.74]],
       [[0.18, 0.56], [0.42, 0.54], [0.68, 0.58], [0.45, 0.62]]
+    ],
+    mine: [
+      [[0.15, 0.72], [0.35, 0.70], [0.55, 0.76], [0.75, 0.70], [0.50, 0.80], [0.28, 0.78]],
+      [[0.20, 0.60], [0.45, 0.58], [0.70, 0.62], [0.42, 0.66]]
+    ],
+    post: [
+      [[0.10, 0.70], [0.30, 0.68], [0.55, 0.72], [0.80, 0.68], [0.60, 0.76], [0.35, 0.74]],
+      [[0.18, 0.58], [0.45, 0.56], [0.72, 0.60], [0.40, 0.64]]
+    ],
+    tavern: [
+      [[0.14, 0.72], [0.35, 0.70], [0.58, 0.74], [0.80, 0.70], [0.55, 0.78], [0.30, 0.76]],
+      [[0.22, 0.60], [0.48, 0.58], [0.70, 0.62], [0.42, 0.66]]
+    ],
+    academy: [
+      [[0.16, 0.70], [0.38, 0.68], [0.58, 0.72], [0.78, 0.68], [0.52, 0.76], [0.28, 0.74]],
+      [[0.24, 0.58], [0.48, 0.56], [0.70, 0.60], [0.44, 0.64]]
+    ],
+    frontier: [
+      [[0.12, 0.74], [0.32, 0.70], [0.55, 0.76], [0.78, 0.72], [0.58, 0.80], [0.30, 0.78]],
+      [[0.20, 0.60], [0.48, 0.58], [0.72, 0.62], [0.40, 0.66]]
     ]
   };
 
@@ -114,6 +139,11 @@
     if (mode === 'drill' || mode === 'wild') n = Math.max(2, Math.min(6, Math.floor(n * 0.45)));
     if (mode === 'garden' || mode === 'swim') n = Math.max(2, Math.floor(n * 0.45));
     if (mode === 'moon') n = Math.max(3, Math.floor(n * 0.7));
+    if (mode === 'mine') n = Math.max(2, Math.floor(n * 0.4));
+    if (mode === 'post') n = Math.max(2, Math.floor(n * 0.45));
+    if (mode === 'tavern') n = Math.max(3, Math.floor(n * 0.55));
+    if (mode === 'academy') n = Math.max(2, Math.floor(n * 0.4));
+    if (mode === 'frontier') n = Math.max(2, Math.min(7, Math.floor(n * 0.5)));
     return Math.max(2, Math.min(MAX, n));
   }
 
@@ -285,6 +315,7 @@
   function drawScene(cv, S, mode) {
     if (!cv) return;
     const g = cv.getContext('2d');
+    if (!g) return;
     const sz = resizeLayer(cv);
     if (!sz) return;
     g.clearRect(0, 0, sz.w, sz.h);

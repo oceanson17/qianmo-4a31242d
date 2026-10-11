@@ -569,18 +569,64 @@ input,textarea,select{font-family:inherit;}
 .villager-row{display:flex;align-items:center;gap:10px;}
 .villager-meta{flex:1;min-width:0;}
 
-/* 行事面板內：忙碌田莊圖 + 圖上工人 */
-.act-farm-scene{
+/* 行事面板內：各場景專屬圖 + 圖上小人 */
+.act-scene{
   position:relative;margin:0 0 10px;border-radius:12px;overflow:hidden;
   border:1px solid rgba(201,163,90,.85);aspect-ratio:16/10;
   background:#2a2118;box-shadow:0 3px 10px rgba(80,40,30,.12);
 }
-.act-farm-img{width:100%;height:100%;object-fit:cover;object-position:center 45%;display:block;}
+.act-scene-img{width:100%;height:100%;object-fit:cover;object-position:center 45%;display:block;}
 .act-worker-layer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;}
-.act-farm-cap{
+.act-scene-cap{
   position:absolute;left:8px;bottom:8px;z-index:3;
   font-size:11px;letter-spacing:.08em;color:#fff8f0;
   background:rgba(40,24,16,.55);border:1px solid rgba(201,163,90,.5);
   border-radius:999px;padding:3px 10px;
 }
-#sheet-act:not([data-mode="farm"]) .act-farm-scene{display:none;}
+/* 兼容舊 class */
+.act-farm-scene{display:none;}
+
+.panel-h-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:4px 0 6px;}
+.panel-h-row .panel-h{margin:0;}
+.shop-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px;
+}
+.shop-item{
+  appearance:none;text-align:left;border:1px solid rgba(201,163,90,.75);
+  border-radius:10px;background:rgba(255,255,255,.62);padding:8px 10px;cursor:pointer;
+  font-size:12px;line-height:1.45;color:var(--ink);
+}
+.shop-item b{display:block;font-size:13px;letter-spacing:.08em;margin-bottom:2px;}
+.shop-item .price{color:var(--ver);font-weight:700;}
+.shop-item:disabled{opacity:.45;cursor:not-allowed;}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;}
+.chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,.62);border:1px solid rgba(201,163,90,.7);
+  border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;
+}
+.enemy-preview{
+  background:linear-gradient(180deg,#fffaf4,#f3e6d6);border:1px solid rgba(201,163,90,.75);
+  border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:13px;line-height:1.55;
+  min-height:44px;
+}
+.enemy-preview strong{color:var(--ver);letter-spacing:.1em;}
+.fish-spots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
+.fish-spot{
+  appearance:none;border:1px solid rgba(201,163,90,.75);border-radius:10px;
+  background:rgba(255,255,255,.6);padding:10px 6px;font-size:12px;font-weight:700;
+  cursor:pointer;color:var(--ink);min-height:44px;
+}
+.fish-spot.active{background:var(--dai);color:#fff;border-color:var(--dai);}
+.aff-mini-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:140px;overflow-y:auto;}
+.aff-mini{
+  display:flex;align-items:center;gap:8px;font-size:12px;
+  background:rgba(255,255,255,.55);border:1px solid rgba(201,163,90,.55);
+  border-radius:8px;padding:6px 8px;
+}
+.aff-mini .aff-bar{flex:1;margin:0;}
+.map-pins{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+@media (min-width:380px){.map-pins{grid-template-columns:repeat(4,1fr);}}
+.pin .pcost{display:block;font-size:10px;color:var(--ink2);font-weight:500;margin-top:2px;}
+.pin.cur{box-shadow:0 0 0 2px var(--ver);}
+.mode-work .vn-char{display:none !important;}
