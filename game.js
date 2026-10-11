@@ -2855,6 +2855,33 @@
     $('btn-career-back').addEventListener('click', showCreate);
     if ($('btn-create-back')) $('btn-create-back').addEventListener('click', showTitle);
     if ($('btn-create-next')) $('btn-create-next').addEventListener('click', showCareer);
+    // Safari：輸入時鍵盤遮住「確定」——捲動並釘住底部按鈕
+    (function bindCreateKb(){
+      var sc = $('screen-create');
+      var acts = $('create-actions');
+      if (!sc || !acts) return;
+      function pin(){
+        try {
+          acts.scrollIntoView({ block: 'end', behavior: 'smooth' });
+        } catch (e) {
+          acts.scrollIntoView(false);
+        }
+        sc.classList.add('create-kb');
+      }
+      function unpin(){ sc.classList.remove('create-kb'); }
+      ['create-name', 'create-goal'].forEach(function(id){
+        var el = $(id); if (!el) return;
+        el.addEventListener('focus', function(){ setTimeout(pin, 50); setTimeout(pin, 320); });
+        el.addEventListener('blur', function(){ setTimeout(unpin, 120); });
+      });
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', function(){
+          if (sc.hidden) return;
+          var ae = document.activeElement;
+          if (ae && (ae.id === 'create-name' || ae.id === 'create-goal')) pin();
+        });
+      }
+    })();
     document.querySelectorAll('[data-gender]').forEach((b) => {
       b.addEventListener('click', () => {
         window.__createDraft = window.__createDraft || {};

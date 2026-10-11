@@ -655,3 +655,17 @@ input,textarea,select{font-family:inherit;}
 .map-pins{max-height:52vh;overflow:auto;-webkit-overflow-scrolling:touch;}
 
 .village-scroll,.qin-meet,#ppl-list{max-height:42vh;overflow:auto;-webkit-overflow-scrolling:touch;}
+
+#screen-create{display:flex;flex-direction:column;min-height:100dvh;min-height:100svh;overflow:auto;-webkit-overflow-scrolling:touch;}
+#screen-create[hidden]{display:none!important;}
+#screen-create .create-wrap{flex:1;margin-bottom:0;padding-bottom:88px;max-height:none;overflow:visible;}
+#screen-create .create-actions{
+  position:sticky;bottom:0;z-index:30;
+  margin:0 -14px -18px;padding:12px 14px calc(12px + var(--sab));
+  background:linear-gradient(180deg,rgba(255,250,240,.55),#f7efe4 28%);
+  border-top:1px solid rgba(120,60,40,.15);
+  box-shadow:0 -8px 20px rgba(40,20,10,.08);
+}
+#screen-create.create-kb .create-actions{bottom:0;padding-bottom:12px;}
+@supports (height:100dvh){#screen-create{min-height:100dvh;}}
+
