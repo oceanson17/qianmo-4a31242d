@@ -2,7 +2,7 @@
 
 秦漢村野風大型單機手機 Safari 遊戲：星露谷式田莊生活 × 《青畦》AUTO × 《青囊·秦心》式 AI 對白。
 
-- **網址**：見 GitHub Pages（本 repo）
+- **網址**：https://oceanson17.github.io/qianmo-4a31242d/
 - **存檔鍵**：`qianmo_v1`（瀏覽器 localStorage）
 - **設定鍵**：`qianmo_settings_v1`（API Key 只存本機）
 
