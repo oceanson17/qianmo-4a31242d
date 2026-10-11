@@ -470,3 +470,26 @@ input,textarea,select{font-family:inherit;}
 @media (min-width:421px){
   #app{border-left:1px solid var(--gold);border-right:1px solid var(--gold);max-height:912px;top:50%;transform:translateY(-50%);height:min(100%,912px);}
 }
+
+
+/* ---- 勢力／來訪／結局 ---- */
+.world-line{
+  font-size:11px;color:var(--ink2);letter-spacing:.06em;line-height:1.45;
+  margin:4px 0 2px;padding:4px 2px;border-left:2px solid var(--gold);
+  padding-left:8px;opacity:.92;max-height:2.8em;overflow:hidden;
+}
+.event-body{white-space:pre-wrap;line-height:1.65;font-size:15px;margin:8px 0 14px;color:var(--ink);}
+.event-choices{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.event-choices .btn,.event-choice{
+  width:100%;text-align:left;padding:12px 14px;border-radius:10px;
+  border:1px solid rgba(201,163,90,.65);background:rgba(255,255,255,.7);
+  font-size:15px;letter-spacing:.08em;
+}
+.event-choices .btn:active,.event-choice:active{background:rgba(184,50,58,.1);border-color:var(--ver);}
+#meters .mt em#hud-faction{min-width:1.2em;text-align:center;}
+.hid-wide{opacity:.9}
+@media (max-width:360px){
+  .hid-wide{display:none}
+}
+#endings-body .quest-item:not(.done){opacity:.55;filter:grayscale(.2)}
+#endings-body .quest-item.done{opacity:1;border-color:var(--ver)}

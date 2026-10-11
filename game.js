@@ -1,8 +1,9 @@
 (() => {
   'use strict';
 
-  const SAVE_KEY = 'qianmo_v1';
-  const ASSET_V = '?v=2';
+  const SAVE_KEY = 'qianmo_v2';
+  const SAVE_KEY_OLD = 'qianmo_v1';
+  const ASSET_V = '?v=3';
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
 
@@ -61,7 +62,7 @@
     farm:    { webp: 'assets/bg_village.webp', jpg: 'assets/bg_village.jpg', alt: '田莊' },
     village: { webp: 'assets/bg_village.webp', jpg: 'assets/bg_village.jpg', alt: '村落' },
     market:  { webp: 'assets/bg_town.webp',    jpg: 'assets/bg_town.webp',   alt: '坊市' },
-    clinic:  { webp: 'assets/bg_pond.webp',    jpg: 'assets/bg_pond.webp',   alt: '藥廬' },
+    clinic:  { webp: 'assets/bg_clinic.webp',  jpg: 'assets/bg_clinic.jpg',  alt: '藥廬' },
     drill:   { webp: 'assets/bg_fields.webp',  jpg: 'assets/bg_fields.webp', alt: '校場' },
     wild:    { webp: 'assets/bg_dungeon.webp', jpg: 'assets/bg_dungeon.webp', alt: '山野' }
   };
@@ -216,8 +217,8 @@
       equipped[g.slot] = g.id;
     }
     const quest = Object.assign({ done: false, progress: 0 }, C.quest);
-    return {
-      v: 1,
+    const st = {
+      v: 2,
       career: careerId,
       name: '豆豆',
       day: 1,
@@ -244,8 +245,20 @@
       wins: 0,
       soldGold: 0,
       quest,
-      flags: {}
+      flags: {},
+      fame: Math.min(20, Math.floor(C.gold / 20)),
+      people: C.id === 'scholar' ? 14 : (C.id === 'healer' ? 12 : 8),
+      factions: { lu: 0, qin: C.id === 'soldier' ? 6 : 0, sai: C.id === 'merchant' ? 4 : 0 },
+      joined: null,
+      worldLine: '天下初定，邊野尚安。',
+      endings: [],
+      seenEvents: {},
+      dayActs: { farm: 0, sell: 0, gift: 0, heal: 0, fight: 0, trade: 0, order: 0 },
+      factionQuest: null,
+      pendingEvent: null
     };
+    if (window.QianFactions) window.QianFactions.ensure(st);
+    return st;
   }
 
   function rollOrder(day) {
@@ -253,16 +266,51 @@
     return JSON.parse(JSON.stringify(o));
   }
 
+  function migrateSave(o) {
+    if (!o) return null;
+    if (o.v === 2) {
+      if (window.QianFactions) window.QianFactions.ensure(o);
+      return o;
+    }
+    if (o.v === 1) {
+      o.v = 2;
+      o.fame = o.fame != null ? o.fame : Math.min(40, Math.floor((o.gold || 0) / 15) + Math.floor((o.soldGold || 0) / 30));
+      o.people = o.people != null ? o.people : 10;
+      o.factions = o.factions || { lu: 0, qin: 0, sai: 0 };
+      o.joined = o.joined !== undefined ? o.joined : null;
+      o.worldLine = o.worldLine || '舊檔續寫，天下局勢未明。';
+      o.endings = o.endings || [];
+      o.seenEvents = o.seenEvents || {};
+      o.dayActs = o.dayActs || { farm: 0, sell: 0, gift: 0, heal: 0, fight: 0, trade: 0, order: 0 };
+      o.factionQuest = o.factionQuest || null;
+      o.pendingEvent = o.pendingEvent || null;
+      o.flags = o.flags || {};
+      if (window.QianFactions) window.QianFactions.ensure(o);
+      return o;
+    }
+    return null;
+  }
   function save() {
     if (!S) return;
     S.auto = autoOn;
     S.directive = directive;
+    S.v = 2;
+    if (window.QianFactions) window.QianFactions.ensure(S);
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); toast('已存檔'); } catch (e) { toast('存檔失敗'); }
   }
   function load() {
     try {
-      const o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
-      if (!o || o.v !== 1) return false;
+      let o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+      if (!o) {
+        const old = JSON.parse(localStorage.getItem(SAVE_KEY_OLD) || 'null');
+        o = migrateSave(old);
+        if (o) {
+          try { localStorage.setItem(SAVE_KEY, JSON.stringify(o)); } catch (e) {}
+        }
+      } else {
+        o = migrateSave(o);
+      }
+      if (!o) return false;
       S = o;
       autoOn = !!S.auto;
       directive = S.directive || 'grain';
@@ -270,7 +318,12 @@
     } catch (e) { return false; }
   }
   function hasSave() {
-    try { const o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); return !!(o && o.v === 1); } catch (e) { return false; }
+    try {
+      const o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
+      if (o && (o.v === 1 || o.v === 2)) return true;
+      const old = JSON.parse(localStorage.getItem(SAVE_KEY_OLD) || 'null');
+      return !!(old && old.v === 1);
+    } catch (e) { return false; }
   }
 
   function gearBonus() {
@@ -334,6 +387,19 @@
     if ($('map-date')) $('map-date').textContent = dayStr();
     if ($('np-name') && !$('nameplate').classList.contains('npc')) {
       $('np-name').textContent = S.name || '你';
+    }
+    if (window.QianFactions) {
+      window.QianFactions.ensure(S);
+      window.QianFactions.recomputeFame(S);
+      if ($('hud-fame')) $('hud-fame').textContent = String(Math.floor(S.fame));
+      if ($('hud-people')) $('hud-people').textContent = String(Math.floor(S.people));
+      if ($('m-fame')) $('m-fame').style.width = Math.max(4, Math.min(100, S.fame)) + '%';
+      if ($('m-people')) $('m-people').style.width = Math.max(4, Math.min(100, S.people)) + '%';
+      if ($('world-line')) $('world-line').textContent = S.worldLine || '';
+      const F = window.QianFactions.FACTIONS;
+      if ($('hud-faction')) {
+        $('hud-faction').textContent = S.joined ? F[S.joined].short : '獨';
+      }
     }
   }
 
@@ -557,6 +623,7 @@
     if (crop.food) S.food += Math.floor(crop.food / 2);
     status('收成 ' + crop.name + ' ×' + bonus);
     p.crop = null; p.grow = 0; p.watered = false;
+    if (window.QianFactions) window.QianFactions.noteAct(S, 'farm');
     checkQuest();
   }
   function waterAll() {
@@ -592,6 +659,10 @@
       gained += gold;
     });
     toast(gained ? '賣得銀 ' + gained : '沒什麼可賣');
+    if (gained && window.QianFactions) {
+      window.QianFactions.noteAct(S, 'sell');
+      window.QianFactions.recomputeFame(S);
+    }
     checkQuest();
     renderHUD();
   }
@@ -618,6 +689,11 @@
   function nextDay() {
     if (battle) { toast('戰鬥中不可過日'); return; }
     growDay();
+    if (window.QianFactions) {
+      window.QianFactions.noteAct(S, 'farm');
+      const line = window.QianFactions.worldTick(S);
+      pushStory('天下大勢：' + line, 'sys');
+    }
     S.day++;
     S.orderDone = false;
     if ((S.day - 1) % 1 === 0) S.order = rollOrder(S.day);
@@ -632,10 +708,99 @@
     renderVillage();
     renderHUD();
     saveQuiet();
+    maybeTriggerVisit();
+  }
+  function maybeTriggerVisit() {
+    if (!S || !window.QianFactions) return;
+    if (S.pendingEvent) { openEventModal(S.pendingEvent); return; }
+    if (battle) return;
+    const ev = window.QianFactions.pickRecruitEvent(S);
+    if (ev) {
+      S.pendingEvent = ev;
+      openEventModal(ev);
+    }
+  }
+  function openEventModal(ev) {
+    if (!ev) return;
+    const title = $('event-title');
+    const body = $('event-body');
+    const choices = $('event-choices');
+    if (!title || !body || !choices) {
+      pushStory('【來訪】' + ev.title + '——' + ev.body.replace(/\n/g, ' '), 'sys');
+      return;
+    }
+    title.textContent = ev.title;
+    body.textContent = ev.body;
+    choices.innerHTML = (ev.choices || []).map((c) =>
+      '<button type="button" class="btn event-choice" data-eid="' + ev.id + '" data-cid="' + c.id + '">' + c.label + '</button>'
+    ).join('');
+    choices.querySelectorAll('[data-cid]').forEach((b) => {
+      b.addEventListener('click', () => resolveEventChoice(ev, b.dataset.cid));
+    });
+    $('modal-event').hidden = false;
+    pushStory('【來訪】' + ev.title, 'sys');
+  }
+  function resolveEventChoice(ev, choiceId) {
+    if (!window.QianFactions) return;
+    const r = window.QianFactions.applyChoice(S, ev, choiceId);
+    $('modal-event').hidden = true;
+    if (r.line) { status(r.line); pushStory(r.line, 'nar'); }
+    if (r.toast) toast(r.toast);
+    // 加入勢力後微調 AUTO 方針
+    if (S.joined === 'lu') {
+      directive = 'money';
+      document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === 'money'));
+    } else if (S.joined === 'qin') {
+      directive = 'expand';
+      document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === 'expand'));
+    } else if (S.joined === 'sai') {
+      directive = 'winter';
+      document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === 'winter'));
+    }
+    renderHUD();
+    renderVillage();
+    saveQuiet();
+  }
+  function openWorldModal() {
+    if (!S || !window.QianFactions) return;
+    window.QianFactions.ensure(S);
+    window.QianFactions.recomputeFame(S);
+    const F = window.QianFactions.FACTIONS;
+    const box = $('world-body');
+    if (!box) return;
+    const joined = S.joined ? F[S.joined].full : '無（獨立耕織）';
+    box.innerHTML =
+      '<div class="quest-item"><strong>天下大勢</strong><p>' + escapeHtml(S.worldLine || '') + '</p></div>' +
+      '<div class="quest-item"><strong>財富名聲</strong><div class="aff-bar"><i style="width:' + S.fame + '%"></i></div><p>' + S.fame + '／100 · 銀' + S.gold + '</p></div>' +
+      '<div class="quest-item"><strong>民心</strong><div class="aff-bar"><i style="width:' + S.people + '%"></i></div><p>' + S.people + '／100</p></div>' +
+      '<div class="quest-item"><strong>歸屬</strong><p>' + escapeHtml(joined) + '</p></div>' +
+      Object.keys(F).map((k) => {
+        const f = F[k];
+        const v = Math.floor(S.factions[k] || 0);
+        return '<div class="quest-item"><strong>' + f.name + '</strong> <span class="muted">' + f.full + '</span>' +
+          '<div class="aff-bar"><i style="width:' + v + '%;background:' + f.color + '"></i></div>' +
+          '<p>影響力 ' + v + ' · ' + escapeHtml(f.desc) + '</p></div>';
+      }).join('');
+    $('modal-world').hidden = false;
+  }
+  function openEndingsModal() {
+    if (!S || !window.QianFactions) return;
+    window.QianFactions.checkEndings(S);
+    const list = window.QianFactions.endingList(S);
+    const box = $('endings-body');
+    if (!box) return;
+    box.innerHTML = list.map((e) =>
+      '<div class="quest-item' + (e.unlocked ? ' done' : '') + '">' +
+      '<strong>' + (e.unlocked ? '✓ ' : '？ ') + e.name + '</strong>' +
+      '<span class="muted"> · ' + (e.tier === 'late' ? '遠途' : '中途') + '</span>' +
+      '<p>' + (e.unlocked ? escapeHtml(e.when) : '條件未顯……') + '</p></div>'
+    ).join('');
+    $('modal-endings').hidden = false;
   }
   function saveQuiet() {
     if (!S) return;
-    S.auto = autoOn; S.directive = directive;
+    S.auto = autoOn; S.directive = directive; S.v = 2;
+    if (window.QianFactions) window.QianFactions.ensure(S);
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {}
   }
 
@@ -720,6 +885,11 @@
     S.soldGold = (S.soldGold || 0) + gold;
     S.orderDone = true;
     toast('日令完成 +' + gold + '銀');
+    if (window.QianFactions) {
+      window.QianFactions.noteAct(S, 'order');
+      window.QianFactions.bump(S, 'people', 2);
+      window.QianFactions.recomputeFame(S);
+    }
     checkQuest();
     renderVillage();
     renderHUD();
@@ -745,6 +915,10 @@
     st.mem.push('曾受贈' + itemName(given));
     if (st.mem.length > 8) st.mem = st.mem.slice(-8);
     toast('贈' + n.name + itemName(given) + ' · 好感' + st.aff);
+    if (window.QianFactions) {
+      window.QianFactions.noteAct(S, 'gift');
+      window.QianFactions.bump(S, 'people', 1);
+    }
     checkQuest();
     renderVillage();
     renderHUD();
@@ -821,7 +995,8 @@
           npcName: npc.name, npcRole: npc.role, aff: st.aff,
           mem: st.mem.slice(-4).join('；'),
           mode: sayMode === 'cmd' ? 'cmd' : 'say',
-          text, career: CAREERS[S.career].name, dayStr: dayStr()
+          text, career: CAREERS[S.career].name, dayStr: dayStr(),
+          factionStance: window.QianFactions ? window.QianFactions.stanceText(S) : ''
         });
         // remove sys
         const log = $('talk-log');
@@ -877,6 +1052,12 @@
     }
     // healer bonus
     if (S.career === 'healer' && id === 'potion') addBag('potion', 1);
+    if (id === 'potion' && S.flags) S.flags.saiPotion = (S.flags.saiPotion || 0) + 1 + (S.career === 'healer' ? 1 : 0);
+    if (window.QianFactions) {
+      window.QianFactions.noteAct(S, id === 'potion' ? 'heal' : 'trade');
+      const fq = window.QianFactions.checkFactionQuest(S);
+      if (fq) toast('勢力差事完成：' + fq.title);
+    }
     toast('製成 ' + r.name);
     checkQuest();
     renderCraft();
@@ -895,6 +1076,7 @@
     const st = stats();
     S.hp = Math.min(st.maxHp, S.hp + 35);
     toast('服藥 · HP ' + S.hp);
+    if (window.QianFactions) window.QianFactions.noteAct(S, 'heal');
     renderHUD();
   }
 
@@ -999,6 +1181,11 @@
     if (Math.random() < 0.3) addBag('herb', 1);
     showLoot(gold, gear);
     endBattle(true);
+    if (window.QianFactions) {
+      window.QianFactions.noteAct(S, 'fight');
+      window.QianFactions.recomputeFame(S);
+      window.QianFactions.checkFactionQuest(S);
+    }
     checkQuest();
   }
   function rollDrop(where, floor) {
@@ -1093,12 +1280,23 @@
     $('modal-bag').hidden = false;
   }
   function openQuest() {
+    checkQuest();
+    if (window.QianFactions) window.QianFactions.checkFactionQuest(S);
     const q = S.quest;
     let body = '<div class="quest-item' + (q.done ? ' done' : '') + '"><strong>' + q.title + '</strong><p>' + q.desc + '</p>';
     if (q.done) body += '<p class="ok">已完成</p>';
     else body += '<p>酬：銀' + q.gold + ' · 糧' + q.food + '</p>';
     body += '</div>';
-    body += '<div class="quest-item"><strong>累計</strong><p>勝場 ' + (S.wins || 0) + ' · 賣銀 ' + (S.soldGold || 0) + ' · 最深山層 ' + S.wildBest + '</p></div>';
+    if (S.factionQuest) {
+      const fq = S.factionQuest;
+      body += '<div class="quest-item' + (fq.done ? ' done' : '') + '"><strong>【勢力】' + fq.title + '</strong><p>' + fq.desc + '</p>';
+      body += '<p>酬：銀' + fq.gold + (fq.food ? ' · 糧' + fq.food : '') + '</p></div>';
+    } else if (!S.joined) {
+      body += '<div class="quest-item"><strong>勢力</strong><p>尚未加入任何一方。聲名漸起時，呂黨／王府／邊市盟或將來訪。</p></div>';
+    }
+    body += '<div class="quest-item"><strong>累計</strong><p>勝場 ' + (S.wins || 0) + ' · 賣銀 ' + (S.soldGold || 0) + ' · 最深山層 ' + S.wildBest +
+      ' · 名' + Math.floor(S.fame || 0) + ' · 民' + Math.floor(S.people || 0) + '</p></div>';
+    if (S.worldLine) body += '<div class="quest-item"><strong>天下大勢</strong><p>' + escapeHtml(S.worldLine) + '</p></div>';
     $('quest-list').innerHTML = body;
     $('modal-quest').hidden = false;
   }
@@ -1119,7 +1317,15 @@
       S.gold += q.gold;
       S.food += q.food;
       toast('差事完成：' + q.title);
-      $('quest-dot').hidden = true;
+      if (window.QianFactions) {
+        window.QianFactions.bump(S, 'fame', 4);
+        window.QianFactions.bump(S, 'people', 2);
+      }
+      if ($('quest-dot')) $('quest-dot').hidden = true;
+    }
+    if (window.QianFactions) {
+      const fq = window.QianFactions.checkFactionQuest(S);
+      if (fq) toast('勢力差事完成：' + fq.title);
     }
   }
 
@@ -1159,7 +1365,13 @@
     if (!S || !autoOn) return;
     if (ts - lastTick < 900) return;
     lastTick = ts;
+    if (S.pendingEvent) return; // wait for player choice
     if (battle) { autoFightStep(); return; }
+    // faction AUTO bias: occasionally move to preferred scene
+    if (window.QianFactions && Math.random() < 0.04) {
+      const pref = window.QianFactions.autoPriority(S);
+      if (pref && pref !== mode) showMode(pref);
+    }
     if (mode === 'farm') autoFarmStep();
     else if (mode === 'village') autoVillageStep();
     else if (mode === 'market') autoMarketStep();
@@ -1244,7 +1456,7 @@
     $('screen-game').hidden = false;
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
     showMode('farm');
-    status('以' + CAREERS[careerId].name + '之身，立於青阡');
+    status('以' + CAREERS[careerId].name + '之身，立於青阡。聲名未起時，且耕且讀；名利漸顯，車馬或至。');
     toast('開局 · ' + CAREERS[careerId].name);
     saveQuiet();
     setTimeout(openActSheet, 350);
@@ -1257,6 +1469,8 @@
     showMode('farm');
     toast('繼續 · ' + dayStr());
     pushStory('續寫 · ' + dayStr(), 'sys');
+    if (S.worldLine) pushStory('天下大勢：' + S.worldLine, 'sys');
+    setTimeout(maybeTriggerVisit, 600);
   }
 
   function toggleAuto() {
@@ -1421,6 +1635,14 @@
     });
     if ($('btn-ppl-gift')) $('btn-ppl-gift').addEventListener('click', () => {
       giftNpc(); renderPplModal();
+    });
+    if ($('btn-world')) $('btn-world').addEventListener('click', () => { $('modal-menu').hidden = true; openWorldModal(); });
+    if ($('btn-endings')) $('btn-endings').addEventListener('click', () => { $('modal-menu').hidden = true; openEndingsModal(); });
+    if ($('btn-close-world')) $('btn-close-world').addEventListener('click', () => { $('modal-world').hidden = true; });
+    if ($('btn-close-endings')) $('btn-close-endings').addEventListener('click', () => { $('modal-endings').hidden = true; });
+    if ($('btn-close-event')) $('btn-close-event').addEventListener('click', () => {
+      // must pick a choice; if forced close, treat as refuse soft
+      if (S && S.pendingEvent) toast('請先選擇應對');
     });
   }
 
