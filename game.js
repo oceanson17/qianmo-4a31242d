@@ -20,7 +20,7 @@
       id: 'healer', name: '醫者', desc: '懸壺青廬，採藥救人。藥術與草藥較豐。',
       gold: 90, food: 12, hp: 75, atk: 5, def: 2,
       skills: { farm: 1, med: 3, trade: 1, mart: 0, lit: 1 },
-      bag: { herb: 5, rice: 2 },
+      bag: { herb: 5, rice: 2, flower: 3 },
       quest: { id: 'q_med', title: '青廬初診', desc: '煉成回春散 2 帖', need: { potion: 2 }, gold: 50, food: 2 }
     },
     merchant: {
@@ -232,6 +232,7 @@
     { id: 'seed', name: '種子包', desc: '稻2菜1麥1', gold: 15, buy: () => {} },
     { id: 'food', name: '糧包', desc: '存糧+6', gold: 10 },
     { id: 'herb', name: '草藥束', desc: '草藥×2', gold: 12 },
+    { id: 'flower', name: '山花束', desc: '花卉×2', gold: 10 },
     { id: 'ore', name: '礦石袋', desc: '礦石×2', gold: 18 },
     { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
     { id: 'hire', name: '僱長工', desc: '田莊人手+1', gold: 0 }
@@ -1876,26 +1877,37 @@
   }
 
   /* ---- Craft ---- */
+  function craftMissing(r) {
+    const miss = [];
+    Object.keys(r.needs).forEach((k) => {
+      const have = bagCount(k);
+      const need = r.needs[k];
+      if (have < need) miss.push(itemName(k) + '×' + (need - have));
+    });
+    return miss;
+  }
   function renderCraft() {
     const listId = mode === 'clinic' ? 'clinic-list' : 'craft-list';
     const list = $(listId);
     if (!list) return;
-    const recipes = RECIPES.filter((r) => r.scene === (mode === 'clinic' ? 'clinic' : 'market') || (mode === 'clinic' && r.id === 'potion'));
     const show = mode === 'clinic' ? RECIPES.filter((r) => r.scene === 'clinic') : RECIPES.filter((r) => r.scene === 'market');
     list.innerHTML = show.map((r) => {
-      const need = Object.keys(r.needs).map((k) => itemName(k) + bagCount(k) + '/' + r.needs[k]).join(' ');
-      return '<button type="button" class="craft-item" data-craft="' + r.id + '"><strong>' + r.name + '</strong><span>' + r.desc + '</span><span class="need">' + need + '</span></button>';
+      const need = Object.keys(r.needs).map((k) => itemName(k) + ' ' + bagCount(k) + '/' + r.needs[k]).join(' ');
+      const short = craftMissing(r).length > 0 || (r.id === 'anesthetic' && (S.skills.med || 0) < 1);
+      return '<button type="button" class="craft-item' + (short ? ' short' : '') + '" data-craft="' + r.id + '"><strong>' + r.name + '</strong><span>' + r.desc + '</span><span class="need">' + need + (short ? ' · 點按看缺料' : ' · 點按煉成') + '</span></button>';
     }).join('');
     list.querySelectorAll('[data-craft]').forEach((b) => {
-      b.addEventListener('click', () => doCraft(b.dataset.craft));
+      b.addEventListener('click', (ev) => { tapFeel(b, ev); doCraft(b.dataset.craft); });
     });
   }
   function doCraft(id) {
     const r = RECIPES.find((x) => x.id === id);
     if (!r) return;
     if (id === 'anesthetic' && (S.skills.med || 0) < 1) { toast('藥理尚淺，難成麻醉藥'); return; }
-    for (const k of Object.keys(r.needs)) {
-      if (bagCount(k) < r.needs[k]) { toast('材料不足'); return; }
+    const miss = craftMissing(r);
+    if (miss.length) {
+      toast('缺：' + miss.join('、') + (mode === 'clinic' ? '（可採花／市井買花礦）' : ''));
+      return;
     }
     Object.keys(r.needs).forEach((k) => addBag(k, -r.needs[k]));
     if (r.out) Object.keys(r.out).forEach((k) => {
@@ -1934,7 +1946,17 @@
   function gatherHerb() {
     const n = 1 + Math.floor(Math.random() * 2) + (S.skills.med > 1 ? 1 : 0);
     addBag('herb', n);
-    toast('採得草藥 ×' + n);
+    let msg = '採得草藥 ×' + n;
+    if (Math.random() < 0.28) { addBag('flower', 1); msg += ' · 山花×1'; }
+    toast(msg);
+    renderCraft();
+    renderClinicInv();
+    renderHUD();
+  }
+  function gatherFlower() {
+    const n = 1 + (Math.random() < 0.35 ? 1 : 0) + (S.skills.med > 2 ? 1 : 0);
+    addBag('flower', n);
+    toast('採得花卉 ×' + n);
     renderCraft();
     renderClinicInv();
     renderHUD();
@@ -1962,6 +1984,7 @@
       { id: 'seed', name: '種子包', desc: '稻2·菜1·麥1', gold: 15 },
       { id: 'food', name: '糧包', desc: '存糧+6', gold: 10 },
       { id: 'herb', name: '草藥束', desc: '草藥×2', gold: 12 },
+      { id: 'flower', name: '山花束', desc: '花卉×2', gold: 10 },
       { id: 'ore', name: '礦石袋', desc: '礦石×2', gold: 18 },
       { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
       { id: 'hire', name: '僱長工', desc: '人手+1', gold: hireCost }
@@ -1984,6 +2007,9 @@
     else if (id === 'herb') {
       if (S.gold < 12) { toast('銀不足'); return; }
       S.gold -= 12; addBag('herb', 2); toast('買得草藥×2');
+    } else if (id === 'flower') {
+      if (S.gold < 10) { toast('銀不足'); return; }
+      S.gold -= 10; addBag('flower', 2); toast('買得花卉×2');
     } else if (id === 'ore') {
       if (S.gold < 18) { toast('銀不足'); return; }
       S.gold -= 18; addBag('ore', 2); toast('買得礦石×2');
@@ -2004,6 +2030,7 @@
         ['草藥', bagCount('herb')],
         ['花卉', bagCount('flower')],
         ['回春散', bagCount('potion')],
+        ['麻醉藥', bagCount('anesthetic')],
         ['礦石', bagCount('ore')]
       ].map((x) => '<span class="chip">' + x[0] + ' ×' + x[1] + '</span>').join('');
     }
