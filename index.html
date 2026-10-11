@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#f6ebe4">
 <title>青阡</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E阡%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=11">
 </head>
 <body x-apple-data-detectors="false">
 <div id="app">
@@ -19,8 +19,8 @@
   <section id="screen-title" class="screen on">
     <div class="title-bg" aria-hidden="true">
       <picture>
-        <source srcset="assets/bg_village.webp?v=9" type="image/webp">
-        <img src="assets/bg_village.jpg?v=9" alt="" decoding="async">
+        <source srcset="assets/bg_village.webp?v=11" type="image/webp">
+        <img src="assets/bg_village.jpg?v=11" alt="" decoding="async">
       </picture>
       <div class="title-bg-shade"></div>
     </div>
@@ -93,8 +93,8 @@
     <!-- 全屏場景 -->
     <div class="vn-stage" id="adventure-scene">
       <picture id="scene-pic">
-        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=9" type="image/webp">
-        <img id="scene-img" src="assets/bg_busy_farm.webp?v=9" alt="場景" class="scene-img" decoding="async">
+        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=11" type="image/webp">
+        <img id="scene-img" src="assets/bg_busy_farm.webp?v=11" alt="場景" class="scene-img" decoding="async">
       </picture>
       <div class="season-tint" id="season-tint" data-season="0"></div>
       <canvas id="worker-layer" class="worker-layer" aria-hidden="true"></canvas>
@@ -112,7 +112,7 @@
           </div>
           <div class="wave-label" id="wave-label">第 1／3 波</div>
           <div class="hp-block player">
-            <img class="battle-hero" src="assets/char_hero.webp?v=9" alt="" decoding="async">
+            <img class="battle-hero" src="assets/char_hero.webp?v=11" alt="" decoding="async">
             <div class="hp-name">你</div>
             <div class="hp-bar"><div class="hp-fill player" id="player-hp-fill"></div></div>
             <div class="hp-num" id="player-hp-num">0/0</div>
@@ -207,6 +207,17 @@
       <button type="button" class="mode-tab" data-mode="ruins">廢墟</button>
       <button type="button" class="mode-tab" data-mode="crypt">古墓</button>
       <button type="button" class="mode-tab" data-mode="marsh">澤地</button>
+      <button type="button" class="mode-tab" data-mode="tea">云海茶寮</button>
+      <button type="button" class="mode-tab" data-mode="forge">鐵鋪</button>
+      <button type="button" class="mode-tab" data-mode="wood">木作坊</button>
+      <button type="button" class="mode-tab" data-mode="incense">香鋪</button>
+      <button type="button" class="mode-tab" data-mode="weave">織坊</button>
+      <button type="button" class="mode-tab" data-mode="study">書齋</button>
+      <button type="button" class="mode-tab" data-mode="yard">庭院</button>
+      <button type="button" class="mode-tab" data-mode="wish">祈願樹</button>
+      <button type="button" class="mode-tab" data-mode="persimmon">霜柿山居</button>
+      <button type="button" class="mode-tab" data-mode="canal">漕幫碼頭</button>
+      <button type="button" class="mode-tab" data-mode="bridge">長橋</button>
     </nav>
 
     <!-- 地圖羊皮紙 -->
@@ -246,8 +257,19 @@
           <button type="button" class="pin" data-mode="ruins"><span class="ps">墟</span><span class="pn">廢墟</span></button>
           <button type="button" class="pin" data-mode="crypt"><span class="ps">塚</span><span class="pn">古墓</span></button>
           <button type="button" class="pin" data-mode="marsh"><span class="ps">澤</span><span class="pn">澤地</span></button>
+          <button type="button" class="pin" data-mode="tea"><span class="ps">茶</span><span class="pn">云海茶寮</span></button>
+          <button type="button" class="pin" data-mode="forge"><span class="ps">鐵</span><span class="pn">鐵鋪</span></button>
+          <button type="button" class="pin" data-mode="wood"><span class="ps">木</span><span class="pn">木作坊</span></button>
+          <button type="button" class="pin" data-mode="incense"><span class="ps">香</span><span class="pn">香鋪</span></button>
+          <button type="button" class="pin" data-mode="weave"><span class="ps">織</span><span class="pn">織坊</span></button>
+          <button type="button" class="pin" data-mode="study"><span class="ps">齋</span><span class="pn">書齋</span></button>
+          <button type="button" class="pin" data-mode="yard"><span class="ps">庭</span><span class="pn">庭院</span></button>
+          <button type="button" class="pin" data-mode="wish"><span class="ps">祈</span><span class="pn">祈願樹</span></button>
+          <button type="button" class="pin" data-mode="persimmon"><span class="ps">柿</span><span class="pn">霜柿山居</span></button>
+          <button type="button" class="pin" data-mode="canal"><span class="ps">漕</span><span class="pn">漕幫碼頭</span></button>
+          <button type="button" class="pin" data-mode="bridge"><span class="ps">橋</span><span class="pn">長橋</span></button>
         </div>
-        <p class="note" id="map-note">秦王政元年輿圖。點選地點前往（耗體力）。AUTO 跟住當前場景做事。</p>
+        <p class="note" id="map-note">秦王政元年輿圖。點選前往（耗體力）。新開茶寮／工坊／庭院／碼頭等。人物會按晨午暮夜自主走動。</p>
       </div>
     </div>
 
@@ -259,7 +281,7 @@
       </div>
       <div class="sbody act-body">
         <div class="act-scene" id="act-scene">
-          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=9" alt="場景" class="act-scene-img" decoding="async">
+          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=11" alt="場景" class="act-scene-img" decoding="async">
           <canvas id="act-worker-layer" class="act-worker-layer" aria-hidden="true"></canvas>
           <div class="act-scene-cap" id="act-scene-cap">場景人物走動</div>
         </div>
@@ -548,6 +570,30 @@
         <div class="mode-panel" id="cimiao-panel" hidden></div>
         <div class="mode-panel" id="ying-panel" hidden></div>
 
+
+        <div class="mode-panel" id="tea-panel" hidden></div>
+        <div class="mode-panel" id="forge-panel" hidden></div>
+        <div class="mode-panel" id="wood-panel" hidden></div>
+        <div class="mode-panel" id="incense-panel" hidden></div>
+        <div class="mode-panel" id="weave-panel" hidden></div>
+        <div class="mode-panel" id="study-panel" hidden></div>
+        <div class="mode-panel" id="yard-panel" hidden></div>
+        <div class="mode-panel" id="wish-panel" hidden></div>
+        <div class="mode-panel" id="persimmon-panel" hidden></div>
+        <div class="mode-panel" id="canal-panel" hidden></div>
+        <div class="mode-panel" id="bridge-panel" hidden></div>
+
+        <div class="mode-panel" id="beauty-shared-panel" hidden>
+          <p class="mode-blurb" id="beauty-blurb">場景</p>
+          <p class="tiny" id="beauty-stat">體力 —</p>
+          <div class="controls qin-acts" id="beauty-acts"></div>
+          <div id="beauty-craft" class="beauty-craft"></div>
+          <div id="beauty-meet" class="qin-meet"></div>
+          <div class="controls">
+            <button type="button" class="btn auto-btn" id="btn-auto-beauty">AUTO</button>
+          </div>
+        </div>
+
         <div class="mode-panel" id="qin-shared-panel" hidden>
           <p class="mode-blurb" id="qin-blurb">秦都場景</p>
           <p class="tiny" id="qin-stat">體力 —</p>
@@ -737,11 +783,12 @@
     </div>
   </div>
 </div>
-<script src="ai.js?v=10"></script>
-<script src="factions.js?v=10"></script>
-<script src="world.js?v=10"></script>
-<script src="story.js?v=10"></script>
-<script src="workers.js?v=10"></script>
-<script src="game.js?v=10"></script>
+<script src="ai.js?v=11"></script>
+<script src="factions.js?v=11"></script>
+<script src="world.js?v=11"></script>
+<script src="story.js?v=11"></script>
+<script src="workers.js?v=11"></script>
+<script src="npc_ai.js?v=11"></script>
+<script src="game.js?v=11"></script>
 </body>
 </html>

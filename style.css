@@ -737,3 +737,15 @@ input,textarea,select{font-family:inherit;}
 .craft-item.short{opacity:.72;border-style:dashed;}
 .craft-item.short .need{color:#a04840;}
 .craft-item:active{transform:scale(.98);background:#fff3f0;}
+
+/* ---- 美化場景面板 ---- */
+.beauty-craft{margin:8px 0 10px;}
+.beauty-craft .craft-list{max-height:28vh;overflow:auto;-webkit-overflow-scrolling:touch;}
+#beauty-shared-panel .mode-blurb{line-height:1.55;margin:4px 0 8px;}
+#beauty-shared-panel .qin-acts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+#beauty-shared-panel .act-tip{display:block;font-size:10px;opacity:.75;font-weight:500;margin-top:2px;}
+.map-pins .pin .pn{font-size:11px;letter-spacing:0;}
+.pin[data-mode="tea"] .ps,.pin[data-mode="wish"] .ps{background:linear-gradient(145deg,#6a8f9a,#3d5c66);}
+.pin[data-mode="forge"] .ps{background:linear-gradient(145deg,#a06040,#6a3020);}
+.pin[data-mode="canal"] .ps,.pin[data-mode="bridge"] .ps{background:linear-gradient(145deg,#4a7a9a,#2a4a6a);}
+.sheet .sbody{padding-bottom:calc(12px + var(--sab));}

@@ -1,10 +1,11 @@
 (() => {
   'use strict';
 
-  const SAVE_KEY = 'qianmo_v3';
-  const SAVE_KEY_OLD = 'qianmo_v2';
-  const SAVE_KEY_OLDER = 'qianmo_v1';
-  const ASSET_V = '?v=9';
+  const SAVE_KEY = 'qianmo_v4';
+  const SAVE_KEY_OLD = 'qianmo_v3';
+  const SAVE_KEY_OLDER = 'qianmo_v2';
+  const SAVE_KEY_OLDEST = 'qianmo_v1';
+  const ASSET_V = '?v=11';
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
 
@@ -107,10 +108,21 @@
     hejin:    { webp: 'assets/bg_hejin.webp', jpg: 'assets/bg_hejin.webp', alt: '河津' },
     cimiao:   { webp: 'assets/bg_cimiao.webp', jpg: 'assets/bg_cimiao.webp', alt: '祠廟' },
     ying:     { webp: 'assets/bg_ying.webp', jpg: 'assets/bg_ying.webp', alt: '軍營' },
-    hut:      { webp: 'assets/bg_town.webp', jpg: 'assets/bg_town.webp', alt: '陋室' },
+    hut:      { webp: 'assets/bg_homestead.webp', jpg: 'assets/bg_homestead.webp', alt: '陋室' },
     ruins:    { webp: 'assets/bg_dungeon.webp', jpg: 'assets/bg_dungeon.webp', alt: '廢墟' },
     crypt:    { webp: 'assets/bg_cliff.webp', jpg: 'assets/bg_cliff.jpg', alt: '古墓' },
-    marsh:    { webp: 'assets/bg_pond.webp', jpg: 'assets/bg_pond.webp', alt: '澤地' }
+    marsh:    { webp: 'assets/bg_pond.webp', jpg: 'assets/bg_pond.webp', alt: '澤地' },
+    tea:      { webp: 'assets/bg_tea.webp', jpg: 'assets/bg_tea.webp', alt: '云海茶寮' },
+    forge:    { webp: 'assets/bg_forge.webp', jpg: 'assets/bg_forge.webp', alt: '鐵鋪' },
+    wood:     { webp: 'assets/bg_wood.webp', jpg: 'assets/bg_wood.webp', alt: '木作坊' },
+    incense:  { webp: 'assets/bg_incense.webp', jpg: 'assets/bg_incense.webp', alt: '香鋪' },
+    weave:    { webp: 'assets/bg_weave.webp', jpg: 'assets/bg_weave.webp', alt: '織坊' },
+    study:    { webp: 'assets/bg_study.webp', jpg: 'assets/bg_study.webp', alt: '書齋' },
+    yard:     { webp: 'assets/bg_yard.webp', jpg: 'assets/bg_yard.webp', alt: '庭院' },
+    wish:     { webp: 'assets/bg_wish.webp', jpg: 'assets/bg_wish.webp', alt: '祈願樹' },
+    persimmon:{ webp: 'assets/bg_persimmon.webp', jpg: 'assets/bg_persimmon.webp', alt: '霜柿山居' },
+    canal:    { webp: 'assets/bg_canal.webp', jpg: 'assets/bg_canal.webp', alt: '漕幫碼頭' },
+    bridge:   { webp: 'assets/bg_bridge.webp', jpg: 'assets/bg_bridge.webp', alt: '長橋' }
   };
   const MODE_LABELS = {
     farm: '田莊', village: '村落', market: '市井', clinic: '藥廬', drill: '校場', wild: '山野',
@@ -118,19 +130,25 @@
     mine: '礦坑', post: '驛道', tavern: '酒肆', academy: '書塾', frontier: '邊關',
     xianyang: '咸陽', palace: '宮城外', xiangbang: '相邦府', taihou: '太后宮外',
     guowei: '國尉府', keguan: '客館', guanshi: '關市', hejin: '河津', cimiao: '祠廟', ying: '軍營',
-    hut: '陋室', ruins: '廢墟', crypt: '古墓', marsh: '澤地'
+    hut: '陋室', ruins: '廢墟', crypt: '古墓', marsh: '澤地',
+    tea: '云海茶寮', forge: '鐵鋪', wood: '木作坊', incense: '香鋪', weave: '織坊',
+    study: '書齋', yard: '庭院', wish: '祈願樹', persimmon: '霜柿山居', canal: '漕幫碼頭', bridge: '長橋'
   };
   const ALL_MODES = ['hut','farm','village','market','clinic','drill','wild','garden','swim','moon','mine','post','tavern','academy','frontier',
-    'xianyang','palace','xiangbang','taihou','guowei','keguan','guanshi','hejin','cimiao','ying','ruins','crypt','marsh'];
-  const WORK_MODES = ['farm','market','clinic','drill','wild','mine','frontier','ying','guanshi','hejin','ruins','crypt','marsh'];
+    'xianyang','palace','xiangbang','taihou','guowei','keguan','guanshi','hejin','cimiao','ying','ruins','crypt','marsh',
+    'tea','forge','wood','incense','weave','study','yard','wish','persimmon','canal','bridge'];
+  const WORK_MODES = ['farm','market','clinic','drill','wild','mine','frontier','ying','guanshi','hejin','ruins','crypt','marsh','forge','wood','weave','canal'];
   const EXPLORE_MODES = ['ruins','crypt','marsh','mine','wild','frontier'];
-  const LEISURE_MODES = ['garden', 'swim', 'moon'];
+  const LEISURE_MODES = ['garden', 'swim', 'moon', 'tea', 'yard', 'wish', 'bridge', 'persimmon'];
+  const CRAFT_MODES = ['forge', 'wood', 'incense', 'weave', 'study', 'canal'];
+  const BEAUTY_MODES = ['tea','forge','wood','incense','weave','study','yard','wish','persimmon','canal','bridge'];
   const QIN_COURT_MODES = ['xianyang','palace','xiangbang','taihou','guowei','keguan','cimiao'];
   const TRAVEL_COST = {
     farm: 0, village: 2, market: 3, clinic: 2, drill: 3, wild: 4,
     garden: 2, swim: 2, moon: 3, mine: 4, post: 3, tavern: 2, academy: 2, frontier: 5,
     xianyang: 4, palace: 5, xiangbang: 4, taihou: 5, guowei: 4, keguan: 3, guanshi: 3, hejin: 3, cimiao: 2, ying: 4,
-    hut: 0, ruins: 4, crypt: 5, marsh: 4
+    hut: 0, ruins: 4, crypt: 5, marsh: 4,
+    tea: 2, forge: 2, wood: 2, incense: 2, weave: 2, study: 2, yard: 1, wish: 2, persimmon: 3, canal: 3, bridge: 2
   };
   const SCENE_CAPS = {
     farm: '工人喺田莊圖上走動', village: '鄉鄰沿街往來', market: '商販走街串巷',
@@ -141,7 +159,10 @@
     xianyang: '咸陽街巷車馬', palace: '宮牆外衛士巡戈', xiangbang: '門客進出相邦府',
     taihou: '宮婢與私門往來', guowei: '吏卒傳令奔走', keguan: '賓客使節投宿',
     guanshi: '關市賈人校秤', hejin: '津吏渡船往來', cimiao: '香客祠前祈禱', ying: '軍營操練換防',
-    hut: '陋室燈火微明', ruins: '廢墟遊魂遊走', crypt: '古墓陰風掠影', marsh: '澤地蟲豸潛行'
+    hut: '陋室燈火微明', ruins: '廢墟遊魂遊走', crypt: '古墓陰風掠影', marsh: '澤地蟲豸潛行',
+    tea: '茶客云海品茗', forge: '鐵匠錘火花濺', wood: '木作刨花飛揚', incense: '香煙裊裊升騰',
+    weave: '織娘機杼往來', study: '書生案前沉吟', yard: '庭院掃葉賞景', wish: '香客掛籤祈願',
+    persimmon: '山居摘柿晒果', canal: '漕幫裝船點貨', bridge: '橋上憑欄偶遇'
   };
   const PERIODS = ['晨', '午', '暮', '夜'];
   let storyLines = [];
@@ -264,7 +285,17 @@
     { id: 'potion', name: '回春散', scene: 'clinic', needs: { herb: 2, flower: 1 }, out: { potion: 1 }, heal: 0, desc: '藥劑 · 可服回血 35' },
     { id: 'pickaxe', name: '鐵鎬頭', scene: 'market', needs: { ore: 3, wheat: 1 }, out: { food: 0 }, gold: 20, desc: '換成銀20 · 工匠+5' },
     { id: 'salve', name: '金創膏', scene: 'clinic', needs: { herb: 3, ore: 1 }, out: { potion: 2 }, desc: '雙份藥劑' },
-    { id: 'anesthetic', name: '麻醉藥', scene: 'clinic', needs: { herb: 4, flower: 1 }, out: { anesthetic: 1 }, desc: '迷倒門衛 · 需藥理' }
+    { id: 'anesthetic', name: '麻醉藥', scene: 'clinic', needs: { herb: 4, flower: 1 }, out: { anesthetic: 1 }, desc: '迷倒門衛 · 需藥理' },
+    { id: 'blade', name: '百煉刃', scene: 'forge', needs: { ore: 4 }, out: {}, gold: 28, desc: '鍛刀換銀 · 工+機率' },
+    { id: 'armorKit', name: '皮甲片', scene: 'forge', needs: { ore: 2, wheat: 1 }, out: {}, gold: 18, desc: '甲片換銀' },
+    { id: 'stool', name: '桐木凳', scene: 'wood', needs: { wheat: 1, rice: 1 }, out: {}, gold: 14, desc: '傢什換銀' },
+    { id: 'chest', name: '樟木匣', scene: 'wood', needs: { wheat: 2, flower: 1 }, out: {}, gold: 22, desc: '精匣換銀' },
+    { id: 'incenseStick', name: '安神香', scene: 'incense', needs: { flower: 2, herb: 1 }, out: {}, heal: 12, desc: '燃香回體12' },
+    { id: 'spiritIncense', name: '清心香', scene: 'incense', needs: { flower: 3, herb: 2 }, out: {}, gold: 16, desc: '貢香換銀·名聲' },
+    { id: 'cloth', name: '粗布', scene: 'weave', needs: { flower: 1, wheat: 1 }, out: { cloth: 1 }, desc: '織布·可送禮' },
+    { id: 'silk', name: '絹帛', scene: 'weave', needs: { flower: 3, wheat: 2 }, out: { cloth: 2 }, gold: 12, desc: '細絹·銀與布' },
+    { id: 'scroll', name: '抄本', scene: 'study', needs: { flower: 1 }, out: {}, gold: 8, desc: '抄書換銀·文才' },
+    { id: 'canalOrder', name: '漕運單', scene: 'canal', needs: { rice: 2 }, out: {}, gold: 24, desc: '運糧交單' }
   ];
   const ORDER_POOL = [
     { need: { rice: 4 }, rewardGold: 40, rewardFood: 2, title: '糧行急單' },
@@ -573,6 +604,7 @@
         let old = JSON.parse(localStorage.getItem(SAVE_KEY_OLD) || 'null');
         if (!old && typeof SAVE_KEY_OLDER !== 'undefined') {
           old = JSON.parse(localStorage.getItem(SAVE_KEY_OLDER) || 'null');
+          if (!old && typeof SAVE_KEY_OLDEST !== 'undefined') old = JSON.parse(localStorage.getItem(SAVE_KEY_OLDEST) || 'null');
         }
         o = migrateSave(old);
         if (o) {
@@ -747,24 +779,38 @@
     hut: '陋室：免費歇息回體，體力過低請先回家。',
     ruins: '廢墟：探索遇怪，挑戰魁首可得佳裝。',
     crypt: '古墓：陰冷探墓，鎮墓獸掉落豐。',
-    marsh: '澤地：涉澤打怪，草藥與裝備並獲。'
+    marsh: '澤地：涉澤打怪，草藥與裝備並獲。',
+    tea: '云海茶寮：品茗歇息、聽謠、略提名聲。',
+    forge: '鐵鋪：耗礦打造兵刃／工具，可強化戰力。',
+    wood: '木作坊：耗糧木感製傢什，換銀或家居。',
+    incense: '香鋪：燃香靜心，回復與名聲。',
+    weave: '織坊：花麥織布，售賣或送人加好感。',
+    study: '書齋：研讀提升文才／輕功理論。',
+    yard: '庭院：掃庭歇息，偶遇鄉鄰。',
+    wish: '祈願樹：掛籤祈願，加民心與好感。',
+    persimmon: '霜柿山居：秋收柿子，季節風味。',
+    canal: '漕幫碼頭：接運單、運貨賺錢。',
+    bridge: '長橋：憑欄遠望，隨機偶遇。'
   };
   function showMode(m) {
     mode = m;
     document.querySelectorAll('.mode-tab').forEach((t) => t.classList.toggle('active', t.dataset.mode === m));
     document.querySelectorAll('#map-pins .pin').forEach((p) => p.classList.toggle('cur', p.dataset.mode === m));
     const isQinPanel = QIN_COURT_MODES.includes(m) || m === 'guanshi' || m === 'hejin' || m === 'ying';
+    const isBeauty = typeof BEAUTY_MODES !== 'undefined' && BEAUTY_MODES.includes(m);
     ALL_MODES.forEach((id) => {
       const el = $(id + '-panel');
       if (!el) return;
-      // Qin 場景共用 qin-shared-panel，空殼 panel 維持隱藏
       if (isQinPanel && (QIN_COURT_MODES.includes(id) || id === 'guanshi' || id === 'hejin' || id === 'ying')) {
+        el.hidden = true;
+      } else if (isBeauty && BEAUTY_MODES.includes(id)) {
         el.hidden = true;
       } else {
         el.hidden = id !== m;
       }
     });
     if ($('qin-shared-panel')) $('qin-shared-panel').hidden = !isQinPanel;
+    if ($('beauty-shared-panel')) $('beauty-shared-panel').hidden = !isBeauty;
     const plot = $('plot-card');
     if (plot) plot.style.display = m === 'farm' ? '' : 'none';
     const sheetAct = $('sheet-act');
@@ -795,6 +841,7 @@
     if (QIN_COURT_MODES.includes(m) || m === 'guanshi' || m === 'hejin' || m === 'ying') renderQinPanel(m);
     if (m === 'hut') renderHut();
     if (m === 'ruins' || m === 'crypt' || m === 'marsh') renderCombatPanel();
+    if (BEAUTY_MODES.includes(m)) renderBeauty(m);
     if (m === 'drill' || m === 'wild' || m === 'frontier' || m === 'mine' || m === 'ruins' || m === 'crypt' || m === 'marsh') {
       const scene = $('adventure-scene');
       if (scene) scene.classList.toggle('in-battle', !!(battle && battle.where === m));
@@ -1452,6 +1499,11 @@
       const chron = window.QianWorld.tick(S, window.QianFactions || null);
       if (chron) pushStory('〔天下動向〕' + chron, 'sys');
     }
+    if (window.QianNpcAI) {
+      const aiR = window.QianNpcAI.tick(S, { max: 12 });
+      if (aiR && aiR.summary) pushStory('〔人物動向〕' + aiR.summary, 'sys');
+      maybeNpcAIPolish(aiR && aiR.summary);
+    }
     S.orderDone = false;
     if ((S.day - 1) % 1 === 0) S.order = rollOrder(S.day);
     // light food drain
@@ -1546,6 +1598,10 @@
     if (!box) return;
     let html = '';
     if (window.QianWorld) html += window.QianWorld.worldModalHtml(S, escapeHtml);
+    if (window.QianNpcAI) {
+      window.QianNpcAI.ensure(S);
+      html += '<div class="quest-item"><strong>人物自主</strong>' + window.QianNpcAI.logHtml(S, escapeHtml) + '</div>';
+    }
     if (window.QianFactions) {
       const F = window.QianFactions.FACTIONS;
       const joined = S.joined ? F[S.joined].full : '無（獨立耕織）';
@@ -1656,6 +1712,7 @@
     if (k === 'herb') return '草藥';
     if (k === 'ore') return '礦石';
     if (k === 'potion') return '回春散';
+    if (k === 'cloth') return '粗布';
     if (k === 'anesthetic') return '麻醉藥';
     return k;
   }
@@ -1779,7 +1836,7 @@
         tapFeel(b);
         if (b.classList.contains('locked')) { toast(b.title || '尚未解鎖'); return; }
         const id = b.dataset.qid;
-        if (id === 'bye') { $('modal-talk').hidden = true; return; }
+        if (id === 'bye') { $('modal-talk').hidden = true; if (window.QianNpcAI && selectedNpc) window.QianNpcAI.resume(S, selectedNpc); return; }
         if (id === 'gift') { giftNpc(); openTalk(); return; }
         if (id === 'duel') {
           logNpcAct(n.id, '約戰', { respect: 1, fear: 1 });
@@ -1936,11 +1993,17 @@
       const fq = window.QianFactions.checkFactionQuest(S);
       if (fq) toast('勢力差事完成：' + fq.title);
     }
-    if (!r.gold) toast('製成 ' + r.name);
+    if (id === 'spiritIncense' && window.QianFactions) window.QianFactions.bump(S, 'fame', 2);
+    if ((id === 'blade' || id === 'scroll') && Math.random() < 0.45) {
+      if (id === 'blade') S.skills.craft = Math.min(8, (S.skills.craft || 0) + 1);
+      if (id === 'scroll') S.skills.lit = Math.min(8, (S.skills.lit || 0) + 1);
+    }
+    if (!r.gold && !r.heal) toast('製成 ' + r.name);
     checkQuest();
     renderCraft();
     if (mode === 'clinic') renderClinicInv();
     if (mode === 'market') renderShop();
+    if (typeof BEAUTY_MODES !== 'undefined' && BEAUTY_MODES.includes(mode)) renderBeauty(mode);
     renderHUD();
   }
   function gatherHerb() {
@@ -2778,13 +2841,289 @@
       else academyDebate();
     }
     else if (LEISURE_MODES.includes(mode) && Math.random() < 0.35) doLeisure(mode);
+    else if (CRAFT_MODES.includes(mode) && Math.random() < 0.4) autoBeautyStep(mode);
+    else if (BEAUTY_MODES.includes(mode) && Math.random() < 0.35) autoBeautyStep(mode);
     else if ((QIN_COURT_MODES.includes(mode) || mode === 'guanshi' || mode === 'hejin' || mode === 'ying') && Math.random() < 0.4) {
       const conf = QIN_PANEL[mode];
       if (conf && conf.acts.length) doQinAct(mode, conf.acts[Math.floor(Math.random() * conf.acts.length)].id);
     }
     // slow day advance while farming auto
     if (mode === 'farm' && Math.random() < 0.08) nextDay();
+    else if (BEAUTY_MODES.includes(mode) && Math.random() < 0.05) nextDay();
   }
+
+
+  /* ---- 美化場景：茶寮／工坊／庭院等 ---- */
+  const BEAUTY_PANEL = {
+    tea: { blurb: '云海茶寮：品茗歇息、聽謠、略提名聲。', acts: [
+      { id: 'sip', label: '品茗', tip: '銀3 · 回體' }, { id: 'gossip', label: '聽謠', tip: '體力-2' }, { id: 'tip', label: '賞茶博士', tip: '銀6 · 名' }
+    ]},
+    forge: { blurb: '鐵鋪爐火正旺。耗礦打造。', acts: [
+      { id: 'craft', label: '開爐打造', tip: '配方' }, { id: 'sparks', label: '幫錘', tip: '體力-3 · 工' }, { id: 'buyOre', label: '買礦', tip: '銀10 · 礦2' }
+    ]},
+    wood: { blurb: '木作坊刨花滿地。', acts: [
+      { id: 'craft', label: '製器', tip: '配方' }, { id: 'sand', label: '打磨', tip: '體力-2 · 銀' }, { id: 'learn', label: '學藝', tip: '體力-3 · 工' }
+    ]},
+    incense: { blurb: '香鋪煙篆。燃香靜心。', acts: [
+      { id: 'craft', label: '調香', tip: '配方' }, { id: 'burn', label: '靜坐燃香', tip: '銀4 · 回體' }, { id: 'offer', label: '貢香', tip: '花2 · 民心' }
+    ]},
+    weave: { blurb: '織坊機杼聲。', acts: [
+      { id: 'craft', label: '織布', tip: '配方' }, { id: 'dye', label: '染紗', tip: '花1 · 布' }, { id: 'giftCloth', label: '送布鄰里', tip: '布1 · 好感' }
+    ]},
+    study: { blurb: '書齋簡冊飄香。', acts: [
+      { id: 'craft', label: '抄書', tip: '配方' }, { id: 'read', label: '研讀', tip: '體力-3 · 文' }, { id: 'agi', label: '讀輕功殘篇', tip: '體力-4 · 輕功' }
+    ]},
+    yard: { blurb: '庭院深深。掃葉賞景。', acts: [
+      { id: 'sweep', label: '掃庭', tip: '回體' }, { id: 'meet', label: '偶遇', tip: '體力-2' }, { id: 'chess', label: '對弈', tip: '銀2 · 文' }
+    ]},
+    wish: { blurb: '祈願古樹，紅籤垂落。', acts: [
+      { id: 'tag', label: '掛籤祈願', tip: '銀5 · 民心' }, { id: 'incense', label: '添香', tip: '花1' }, { id: 'readTags', label: '讀他籤', tip: '體力-1 · 謠' }
+    ]},
+    persimmon: { blurb: '霜柿山居，秋色正濃。', acts: [
+      { id: 'pick', label: '摘柿', tip: '體力-3 · 糧' }, { id: 'dry', label: '晒柿餅', tip: '糧→銀' }, { id: 'chat', label: '閑話霜秋', tip: '好感' }
+    ]},
+    canal: { blurb: '漕幫碼頭，貨船往來。', acts: [
+      { id: 'craft', label: '接運單', tip: '配方' }, { id: 'load', label: '裝船幫工', tip: '體力-4 · 銀' }, { id: 'rumor', label: '聽漕謠', tip: '體力-2' }
+    ]},
+    bridge: { blurb: '長橋如龍，憑欄可遇各方人。', acts: [
+      { id: 'gaze', label: '憑欄', tip: '回體' }, { id: 'meet', label: '偶遇', tip: '體力-2' }, { id: 'toll', label: '助守橋', tip: '體力-3 · 銀' }
+    ]}
+  };
+
+  function renderBeauty(m) {
+    if (!S) return;
+    const conf = BEAUTY_PANEL[m];
+    const blurb = $('beauty-blurb');
+    const acts = $('beauty-acts');
+    const meet = $('beauty-meet');
+    const craft = $('beauty-craft');
+    const stat = $('beauty-stat');
+    if ($('beauty-shared-panel')) $('beauty-shared-panel').hidden = false;
+    // hide empty shells
+    BEAUTY_MODES.forEach((id) => { const el = $(id + '-panel'); if (el) el.hidden = true; });
+    if (stat) stat.textContent = '體力 ' + S.hp + '/' + S.maxHp + ' · 銀' + S.gold + (window.QianNpcAI ? ' · ' + window.QianNpcAI.periodName(S) : '');
+    if (blurb && conf) blurb.textContent = conf.blurb;
+    if (acts && conf) {
+      acts.innerHTML = conf.acts.map((a, i) =>
+        '<button type="button" class="btn' + (i === 0 ? ' primary' : '') + ' choice-tap" data-beauty="' + m + '" data-bact="' + a.id + '">' +
+        a.label + '<small class="act-tip">' + a.tip + '</small></button>'
+      ).join('');
+      acts.querySelectorAll('[data-beauty]').forEach((b) => {
+        b.addEventListener('click', (ev) => { tapFeel(b, ev); doBeautyAct(b.dataset.beauty, b.dataset.bact); });
+      });
+    }
+    if (craft) {
+      if (CRAFT_MODES.includes(m)) {
+        craft.hidden = false;
+        const show = RECIPES.filter((r) => r.scene === m);
+        craft.innerHTML = '<div class="panel-h-row"><span class="panel-h">本地製物</span></div><div class="craft-list">' +
+          show.map((r) => {
+            const need = Object.keys(r.needs).map((k) => itemName(k) + ' ' + bagCount(k) + '/' + r.needs[k]).join(' ');
+            const short = craftMissing(r).length > 0;
+            return '<button type="button" class="craft-item' + (short ? ' short' : '') + '" data-craft="' + r.id + '"><strong>' + r.name + '</strong><span>' + r.desc + '</span><span class="need">' + need + '</span></button>';
+          }).join('') + '</div>';
+        craft.querySelectorAll('[data-craft]').forEach((b) => {
+          b.addEventListener('click', (ev) => { tapFeel(b, ev); doCraft(b.dataset.craft); renderBeauty(m); });
+        });
+      } else {
+        craft.hidden = true;
+        craft.innerHTML = '';
+      }
+    }
+    if (meet) {
+      storyEnsure();
+      let allHere = [];
+      if (window.QianNpcAI) allHere = window.QianNpcAI.atLocation(S, m) || [];
+      if (!allHere.length) {
+        meet.innerHTML = '<p class="tiny muted">此刻此處無人——過日後人物會依日程到來。</p>';
+      } else {
+        meet.innerHTML = '<div class="panel-h-row"><span class="panel-h">可見之人</span><span class="tiny">' + allHere.length + '</span></div>' +
+          '<div class="face-grid">' + allHere.map((n) => {
+            if (!npcKnown(n.id)) {
+              return '<button type="button" class="face-cell unknown" data-meet-unk="' + n.id + '"><span class="face-q">？</span><span>？？？</span></button>';
+            }
+            const aff = (S.npcs[n.id] && S.npcs[n.id].aff) || 0;
+            return '<button type="button" class="face-cell" data-meet-npc="' + n.id + '">' +
+              faceThumbHtml(npcFaceKey(n), n.name) + '<span>' + n.name + '</span><span class="tiny muted">' + n.role + ' ·' + aff + '</span></button>';
+          }).join('') + '</div>';
+        meet.querySelectorAll('[data-meet-npc]').forEach((b) => {
+          b.addEventListener('click', () => {
+            tapFeel(b);
+            selectedNpc = b.dataset.meetNpc;
+            if (window.QianNpcAI) window.QianNpcAI.interrupt(S, selectedNpc);
+            openTalk();
+          });
+        });
+        meet.querySelectorAll('[data-meet-unk]').forEach((b) => {
+          b.addEventListener('click', () => toast('尚未相識'));
+        });
+      }
+    }
+  }
+
+  function doBeautyAct(m, act) {
+    if (!S || battle) { toast(battle ? '戰鬥中' : ''); return; }
+    const bump = (k, n) => { if (window.QianFactions) window.QianFactions.bump(S, k, n); };
+    const needHp = (n) => { if (S.hp < n) { toast('體力不足'); return false; } S.hp -= n; return true; };
+    const needGold = (n) => { if (S.gold < n) { toast('銀不足'); return false; } S.gold -= n; return true; };
+
+    if (act === 'craft') { renderBeauty(m); toast('揀下方配方'); return; }
+
+    if (m === 'tea') {
+      if (act === 'sip') {
+        if (!needGold(3)) return;
+        S.hp = Math.min(S.maxHp, S.hp + 10); bump('fame', 1);
+        toast('云海一盞 · 回體'); pushStory('茶煙與云海一色，你心神稍定。', 'nar');
+      } else if (act === 'gossip') {
+        if (!needHp(2)) return;
+        const lines = ['相邦府夜宴門客。', '漕幫要人手運糧。', '祈願樹新掛紅籤。', '鐵鋪新到精礦。'];
+        const L = lines[Math.floor(Math.random() * lines.length)];
+        toast('聽得：' + L); pushStory('茶寮偶語：' + L, 'nar');
+      } else if (act === 'tip') {
+        if (!needGold(6)) return;
+        bump('fame', 2); bump('people', 1); toast('賞茶博士 · 名↑');
+        pushStory('你多賞了茶博士，座中有人記住你的臉。', 'nar');
+      }
+    } else if (m === 'forge') {
+      if (act === 'sparks') {
+        if (!needHp(3)) return;
+        S.skills.craft = Math.min(8, (S.skills.craft || 0) + (Math.random() < 0.5 ? 1 : 0));
+        S.gold += 3; toast('幫錘 · 工藝有進'); pushStory('火花四濺，你幫打了數錘。', 'nar');
+      } else if (act === 'buyOre') {
+        if (!needGold(10)) return;
+        addBag('ore', 2); toast('買礦×2'); 
+      }
+    } else if (m === 'wood') {
+      if (act === 'sand') {
+        if (!needHp(2)) return;
+        S.gold += 4 + (S.skills.craft || 0); toast('打磨得銀'); pushStory('桐木清香，你打磨了一午後售出。', 'nar');
+      } else if (act === 'learn') {
+        if (!needHp(3)) return;
+        S.skills.craft = Math.min(8, (S.skills.craft || 0) + 1); toast('學藝 · 工+'); 
+      }
+    } else if (m === 'incense') {
+      if (act === 'burn') {
+        if (!needGold(4)) return;
+        S.hp = Math.min(S.maxHp, S.hp + 14); bump('fame', 1); toast('靜坐燃香'); 
+      } else if (act === 'offer') {
+        if (bagCount('flower') < 1) { toast('缺花卉'); return; }
+        addBag('flower', -1); bump('people', 2); toast('貢香 · 民心↑');
+      }
+    } else if (m === 'weave') {
+      if (act === 'dye') {
+        if (bagCount('flower') < 1) { toast('缺花'); return; }
+        addBag('flower', -1); addBag('cloth', 1); toast('染得粗布×1');
+      } else if (act === 'giftCloth') {
+        if (bagCount('cloth') < 1) { toast('無布'); return; }
+        addBag('cloth', -1);
+        const ns = liveNpcs().filter((n) => npcKnown(n.id));
+        const n = ns[Math.floor(Math.random() * Math.max(1, ns.length))];
+        if (n && S.npcs[n.id]) {
+          S.npcs[n.id].aff = Math.min(100, (S.npcs[n.id].aff || 0) + 5);
+          logNpcAct(n.id, '贈布', { gratitude: 2 });
+          toast('送布予' + n.name); pushStory('你將新織布疋贈予' + n.name + '。', 'nar');
+        } else toast('送布鄰里 · 無人在側');
+      }
+    } else if (m === 'study') {
+      if (act === 'read') {
+        if (!needHp(3)) return;
+        S.skills.lit = Math.min(8, (S.skills.lit || 0) + (Math.random() < 0.55 ? 1 : 0));
+        toast('研讀有所得'); pushStory('書齋燈下，你又翻過一冊。', 'nar');
+      } else if (act === 'agi') {
+        if (!needHp(4)) return;
+        S.skills.agi = Math.min(8, (S.skills.agi || 0) + (Math.random() < 0.5 ? 1 : 0));
+        toast('輕功殘篇'); 
+      }
+    } else if (m === 'yard') {
+      if (act === 'sweep') {
+        S.hp = Math.min(S.maxHp, S.hp + 8); toast('掃庭 · 回體'); 
+      } else if (act === 'meet') {
+        if (!needHp(2)) return;
+        gardenMeet(); return;
+      } else if (act === 'chess') {
+        if (!needGold(2)) return;
+        S.skills.lit = Math.min(8, (S.skills.lit || 0) + (Math.random() < 0.4 ? 1 : 0));
+        toast('對弈一局'); 
+      }
+    } else if (m === 'wish') {
+      if (act === 'tag') {
+        if (!needGold(5)) return;
+        bump('people', 3); bump('fame', 1); S.flags.wish_tag = 1;
+        toast('掛籤祈願'); pushStory('紅籤垂落，你默祝一事。', 'nar');
+      } else if (act === 'incense') {
+        if (bagCount('flower') < 1) { toast('缺花'); return; }
+        addBag('flower', -1); bump('people', 1); toast('添香');
+      } else if (act === 'readTags') {
+        if (!needHp(1)) return;
+        toast('他籤多祝豐年與安邊'); pushStory('你讀過幾枚他籤，字跡各異。', 'nar');
+      }
+    } else if (m === 'persimmon') {
+      if (act === 'pick') {
+        if (!needHp(3)) return;
+        const n = 2 + Math.floor(Math.random() * 3); S.food += n; toast('摘柿 · 糧+' + n);
+        S.flags.persimmon = 1;
+      } else if (act === 'dry') {
+        if (S.food < 3) { toast('糧不足'); return; }
+        S.food -= 3; const g = 10 + Math.floor(Math.random() * 8); S.gold += g; toast('晒柿餅售出 +' + g);
+      } else if (act === 'chat') {
+        const ns = (window.QianNpcAI ? window.QianNpcAI.atLocation(S, 'persimmon') : []).filter((n) => npcKnown(n.id));
+        if (ns.length && S.npcs[ns[0].id]) {
+          S.npcs[ns[0].id].aff = Math.min(100, (S.npcs[ns[0].id].aff || 0) + 3);
+          toast('與' + ns[0].name + '閑話'); 
+        } else toast('山風作伴，無人閑話');
+      }
+    } else if (m === 'canal') {
+      if (act === 'load') {
+        if (!needHp(4)) return;
+        const g = 8 + Math.floor(Math.random() * 10) + (S.skills.trade || 0) * 2;
+        S.gold += g; bump('lu', 1); toast('裝船 +' + g + '銀'); markNpcKnown('zhao', '碼頭');
+      } else if (act === 'rumor') {
+        if (!needHp(2)) return;
+        toast('漕謠：關東要糧'); pushStory('碼頭艄公說關東急徵軍糧。', 'nar');
+      }
+    } else if (m === 'bridge') {
+      if (act === 'gaze') {
+        S.hp = Math.min(S.maxHp, S.hp + 6); toast('憑欄遠望'); 
+      } else if (act === 'meet') {
+        if (!needHp(2)) return;
+        gardenMeet(); return;
+      } else if (act === 'toll') {
+        if (!needHp(3)) return;
+        S.gold += 5; bump('qin', 1); toast('助守橋 +5銀');
+      }
+    }
+    if (window.QianStory) window.QianStory.checkStoryQuests(S).forEach((q) => toast('差事完成：' + q.title));
+    renderBeauty(m); renderHUD(); saveQuiet();
+  }
+
+  function autoBeautyStep(m) {
+    const conf = BEAUTY_PANEL[m];
+    if (!conf) return;
+    if (CRAFT_MODES.includes(m) && Math.random() < 0.45) {
+      const rs = RECIPES.filter((r) => r.scene === m && craftMissing(r).length === 0);
+      if (rs.length) { doCraft(rs[Math.floor(Math.random() * rs.length)].id); renderBeauty(m); return; }
+    }
+    const a = conf.acts[Math.floor(Math.random() * conf.acts.length)];
+    if (a.id !== 'craft') doBeautyAct(m, a.id);
+  }
+
+  function maybeNpcAIPolish(summary) {
+    if (!summary || !window.QianAI || !window.QianAI.ready()) return;
+    if (S._npcAiPolishing) return;
+    S._npcAiPolishing = true;
+    const prompt = window.QianNpcAI.aiPrompt(S, summary);
+    window.QianAI.call([{ role: 'user', content: prompt }], { maxTok: 120, timeout: 25 }).then((res) => {
+      S._npcAiPolishing = false;
+      const txt = res && res.text;
+      if (!txt) return;
+      const line = String(txt).replace(/\s+/g, ' ').trim().slice(0, 80);
+      if (line && S.npcAI && S.npcAI.log && S.npcAI.log[0]) {
+        S.npcAI.log[0].text = line;
+        pushStory('〔AI潤色動向〕' + line, 'sys');
+      }
+    }).catch(() => { S._npcAiPolishing = false; });
+  }
+
 
   /* ---- Settings UI ---- */
   function openSettings() {
@@ -2934,7 +3273,13 @@
     }
     if (meet) {
       storyEnsure();
-      const allHere = allNpcs().filter((n) => n.meet === m && (!n.unlockDay || (S.day||1) >= n.unlockDay));
+      let allHere = allNpcs().filter((n) => n.meet === m && (!n.unlockDay || (S.day||1) >= n.unlockDay));
+      if (window.QianNpcAI) {
+        const aiHere = window.QianNpcAI.atLocation(S, m) || [];
+        const seen = {};
+        allHere.forEach((n) => { seen[n.id] = 1; });
+        aiHere.forEach((n) => { if (!seen[n.id]) allHere.push(n); });
+      }
       if (!allHere.length) {
         meet.innerHTML = '<p class="tiny muted">此處暫無面孔，可至人脈找秦人。</p>';
       } else {
@@ -3437,7 +3782,7 @@
 
     canvas().addEventListener('click', (e) => tapPlot(plotAt(e.clientX, e.clientY)));
 
-    ['btn-auto', 'btn-auto-v', 'btn-auto-mkt', 'btn-auto-clinic', 'btn-auto-drill', 'btn-auto-wild', 'btn-auto-garden', 'btn-auto-swim', 'btn-auto-moon', 'btn-auto-mine', 'btn-auto-post', 'btn-auto-tavern', 'btn-auto-academy', 'btn-auto-frontier', 'btn-auto-qin'].forEach((id) => {
+    ['btn-auto', 'btn-auto-v', 'btn-auto-mkt', 'btn-auto-clinic', 'btn-auto-drill', 'btn-auto-wild', 'btn-auto-garden', 'btn-auto-swim', 'btn-auto-moon', 'btn-auto-mine', 'btn-auto-post', 'btn-auto-tavern', 'btn-auto-academy', 'btn-auto-frontier', 'btn-auto-qin', 'btn-auto-beauty'].forEach((id) => {
       const el = $(id); if (el) el.addEventListener('click', toggleAuto);
     });
     $('btn-water-all').addEventListener('click', waterAll);
@@ -3462,7 +3807,7 @@
     if ($('btn-clinic-charity')) $('btn-clinic-charity').addEventListener('click', clinicCharity);
     $('btn-gift-npc').addEventListener('click', giftNpc);
     $('btn-submit-order').addEventListener('click', submitOrder);
-    $('btn-close-talk').addEventListener('click', () => { $('modal-talk').hidden = true; });
+    $('btn-close-talk').addEventListener('click', () => { $('modal-talk').hidden = true; if (window.QianNpcAI && selectedNpc) window.QianNpcAI.resume(S, selectedNpc); });
     $('btn-talk-send').addEventListener('click', sendTalk);
     $('talk-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendTalk(); });
     document.querySelectorAll('.talk-mode .seg').forEach((s) => {
