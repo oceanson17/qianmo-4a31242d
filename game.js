@@ -2,7 +2,7 @@
   'use strict';
 
   const SAVE_KEY = 'qianmo_v1';
-  const ASSET_V = '?v=1';
+  const ASSET_V = '?v=2';
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
 
@@ -65,6 +65,12 @@
     drill:   { webp: 'assets/bg_fields.webp',  jpg: 'assets/bg_fields.webp', alt: '校場' },
     wild:    { webp: 'assets/bg_dungeon.webp', jpg: 'assets/bg_dungeon.webp', alt: '山野' }
   };
+  const MODE_LABELS = {
+    farm: '田莊', village: '村落', market: '坊市', clinic: '藥廬', drill: '校場', wild: '山野'
+  };
+  const PERIODS = ['晨', '午', '暮', '夜'];
+  let storyLines = [];
+
   const RARITIES = {
     white:  { id: 'white',  name: '白', className: 'rarity-white',  mult: 1,   sell: 8 },
     green:  { id: 'green',  name: '綠', className: 'rarity-green',  mult: 1.4, sell: 18 },
@@ -153,6 +159,29 @@
   function status(msg) {
     const el = $('status-text');
     if (el) el.textContent = msg;
+    pushStory(msg, 'nar');
+  }
+  function pushStory(msg, cls) {
+    if (!msg) return;
+    storyLines.push({ t: msg, c: cls || 'nar', at: Date.now() });
+    if (storyLines.length > 80) storyLines = storyLines.slice(-80);
+    const log = $('story-log');
+    if (!log) return;
+    const div = document.createElement('div');
+    div.className = 'line ' + (cls || 'nar');
+    div.textContent = msg;
+    log.appendChild(div);
+    while (log.children.length > 6) log.removeChild(log.firstChild);
+    const box = $('txt');
+    if (box) box.scrollTop = box.scrollHeight;
+  }
+  function openLogReview() {
+    const body = $('log-body');
+    if (!body) return;
+    body.innerHTML = storyLines.slice().reverse().map((x) =>
+      '<div class="line ' + x.c + '">' + x.t.replace(/[<>&]/g, (c) => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c])) + '</div>'
+    ).join('') || '<div class="line nar">尚無記錄</div>';
+    $('modal-log').hidden = false;
   }
   function dayStr() {
     if (!S) return '';
@@ -276,17 +305,36 @@
   function renderHUD() {
     if (!S) return;
     const st = stats();
+    const season = SEASONS[seasonIdx()];
     $('hud-day').textContent = dayStr();
-    $('hud-gold').textContent = '銀 ' + S.gold;
-    $('hud-food').textContent = '糧 ' + S.food;
-    $('hud-combat').textContent = 'HP ' + st.hp + '/' + st.maxHp + ' · ATK ' + st.atk;
+    if ($('hDaySeal')) $('hDaySeal').textContent = season;
+    if ($('hPer')) $('hPer').textContent = PERIODS[S.day % 4];
+    $('hud-gold').textContent = String(S.gold);
+    $('hud-food').textContent = String(S.food);
+    $('hud-combat').textContent = st.hp + '/' + st.maxHp + ' ·' + st.atk;
     $('hud-career').textContent = CAREERS[S.career].name;
-    $('auto-label').textContent = autoOn ? 'AUTO 開' : 'AUTO 關';
-    $('auto-label').className = autoOn ? 'auto-on' : 'auto-off';
+    if ($('auto-label')) {
+      $('auto-label').textContent = autoOn ? 'AUTO 開' : 'AUTO 關';
+      $('auto-label').className = autoOn ? 'auto-on' : 'auto-off';
+    }
     document.querySelectorAll('.auto-btn').forEach((b) => b.classList.toggle('on', autoOn));
+    if ($('q-auto')) $('q-auto').classList.toggle('on', autoOn);
     $('season-tint').dataset.season = String(seasonIdx());
     const q = S.quest;
-    $('quest-dot').hidden = !q || q.done;
+    if ($('quest-dot')) $('quest-dot').hidden = !q || q.done;
+    // meters
+    const foodPct = Math.max(8, Math.min(100, (S.food / 40) * 100));
+    const hpPct = Math.max(4, Math.min(100, (st.hp / Math.max(1, st.maxHp)) * 100));
+    const atkPct = Math.max(8, Math.min(100, (st.atk / 30) * 100));
+    if ($('m-food')) $('m-food').style.width = foodPct + '%';
+    if ($('m-hp')) $('m-hp').style.width = hpPct + '%';
+    if ($('m-atk')) $('m-atk').style.width = atkPct + '%';
+    const mtHp = $('m-hp') && $('m-hp').closest('.mt');
+    if (mtHp) mtHp.classList.toggle('low', hpPct < 35);
+    if ($('map-date')) $('map-date').textContent = dayStr();
+    if ($('np-name') && !$('nameplate').classList.contains('npc')) {
+      $('np-name').textContent = S.name || '你';
+    }
   }
 
   function setSceneArt(m) {
@@ -308,20 +356,97 @@
   function showMode(m) {
     mode = m;
     document.querySelectorAll('.mode-tab').forEach((t) => t.classList.toggle('active', t.dataset.mode === m));
+    document.querySelectorAll('#map-pins .pin').forEach((p) => p.classList.toggle('cur', p.dataset.mode === m));
     ['farm', 'village', 'market', 'clinic', 'drill', 'wild'].forEach((id) => {
       const el = $(id + '-panel');
       if (el) el.hidden = id !== m;
     });
     const plot = $('plot-card');
     if (plot) plot.style.display = m === 'farm' ? '' : 'none';
+    if ($('act-title')) $('act-title').textContent = MODE_LABELS[m] || '行事';
     $('adventure-scene').classList.toggle('mode-farm', m === 'farm');
     $('adventure-scene').classList.toggle('in-battle', !!(battle && (m === 'drill' || m === 'wild')));
     setSceneArt(m);
+    updatePortraitForMode(m);
     if (m === 'farm') drawFarm();
     if (m === 'village') renderVillage();
     if (m === 'market' || m === 'clinic') renderCraft();
     if (m === 'drill' || m === 'wild') renderCombatPanel();
     renderHUD();
+  }
+  function updatePortraitForMode(m) {
+    const char = $('vn-char');
+    const plate = $('nameplate');
+    const np = $('np-name');
+    if (!char) return;
+    char.classList.remove('npc', 'tint-su', 'tint-zhao');
+    if (plate) plate.classList.remove('npc');
+    if (m === 'village' && selectedNpc) {
+      const n = NPCS.find((x) => x.id === selectedNpc);
+      if (n) {
+        char.classList.add('npc');
+        if (n.id === 'su') char.classList.add('tint-su');
+        if (n.id === 'zhao') char.classList.add('tint-zhao');
+        if (plate) plate.classList.add('npc');
+        if (np) np.textContent = n.name;
+        return;
+      }
+    }
+    if (np) np.textContent = (S && S.name) || '你';
+  }
+  function openSheet(id) {
+    ['sheet-map', 'sheet-act'].forEach((x) => { if ($(x)) $(x).hidden = true; });
+    if ($(id)) $(id).hidden = false;
+  }
+  function closeSheets() {
+    ['sheet-map', 'sheet-act'].forEach((x) => { if ($(x)) $(x).hidden = true; });
+  }
+  function openActSheet() {
+    if ($('act-title')) $('act-title').textContent = MODE_LABELS[mode] || '行事';
+    openSheet('sheet-act');
+    if (mode === 'farm') requestAnimationFrame(drawFarm);
+  }
+  function openMapSheet() {
+    if ($('map-date')) $('map-date').textContent = dayStr();
+    document.querySelectorAll('#map-pins .pin').forEach((p) => p.classList.toggle('cur', p.dataset.mode === mode));
+    openSheet('sheet-map');
+  }
+  function renderPplModal() {
+    const list = $('ppl-list');
+    if (!list || !S) return;
+    list.innerHTML = NPCS.map((n) => {
+      const st = S.npcs[n.id] || { aff: 0 };
+      const pct = Math.min(100, st.aff);
+      return '<button type="button" class="villager-card' + (selectedNpc === n.id ? ' active' : '') + '" data-npc="' + n.id + '">' +
+        '<b>' + n.name + '</b> <span class="muted">' + n.role + '</span>' +
+        '<div class="aff-bar"><i style="width:' + pct + '%"></i></div>' +
+        '<div class="aff-num">好感 ' + st.aff + '</div></button>';
+    }).join('');
+    list.querySelectorAll('[data-npc]').forEach((b) => {
+      b.addEventListener('click', () => {
+        selectedNpc = b.dataset.npc;
+        renderPplModal();
+        updatePortraitForMode(mode);
+      });
+    });
+  }
+  function freeSend() {
+    const input = $('free-input');
+    if (!input) return;
+    const text = (input.value || '').trim();
+    if (!text) { toast('請先輸入'); return; }
+    // sync say mode from chip
+    const chip = $('mode-chip');
+    if (chip) sayMode = chip.dataset.say || 'say';
+    // ensure village context for talk
+    if (mode !== 'village') {
+      showMode('village');
+    }
+    $('talk-input').value = text;
+    input.value = '';
+    // open talk UI lightly then send
+    if ($('modal-talk').hidden) openTalk();
+    sendTalk();
   }
 
   /* ---- Farm canvas ---- */
@@ -572,7 +697,7 @@
         '<span class="aff-num">好感 ' + st.aff + '</span></button>';
     }).join('');
     list.querySelectorAll('[data-npc]').forEach((b) => {
-      b.addEventListener('click', () => { selectedNpc = b.dataset.npc; renderVillage(); });
+      b.addEventListener('click', () => { selectedNpc = b.dataset.npc; renderVillage(); updatePortraitForMode('village'); });
     });
   }
   function itemName(k) {
@@ -629,6 +754,8 @@
   function openTalk() {
     const n = NPCS.find((x) => x.id === selectedNpc);
     $('talk-npc-name').textContent = n.name + ' · ' + n.role;
+    updatePortraitForMode('village');
+    pushStory('與' + n.name + '相對而坐……', 'sys');
     const log = $('talk-log');
     log.innerHTML = '<div class="talk-line sys">與' + n.name + '相對而坐……</div>';
     const st = S.npcs[selectedNpc];
@@ -653,6 +780,8 @@
     div.innerHTML = '<span class="who">' + who + '：</span> ' + escapeHtml(text);
     log.appendChild(div);
     log.scrollTop = log.scrollHeight;
+    const kind = cls === 'sys' ? 'sys' : (who === '你' || cls === 'you' || cls === 'me' ? 'me' : 'npc');
+    if (cls !== 'sys' || text !== '沉吟中') pushStory(who + '：' + text, kind);
   }
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -1088,6 +1217,7 @@
     $('screen-title').hidden = false;
     $('screen-career').hidden = true;
     $('screen-game').hidden = true;
+    closeSheets();
     $('btn-continue').hidden = !hasSave();
   }
   function showCareer() {
@@ -1117,6 +1247,7 @@
     status('以' + CAREERS[careerId].name + '之身，立於青阡');
     toast('開局 · ' + CAREERS[careerId].name);
     saveQuiet();
+    setTimeout(openActSheet, 350);
   }
   function continueGame() {
     if (!load()) { toast('無存檔'); return; }
@@ -1125,6 +1256,7 @@
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
     showMode('farm');
     toast('繼續 · ' + dayStr());
+    pushStory('續寫 · ' + dayStr(), 'sys');
   }
 
   function toggleAuto() {
@@ -1248,77 +1380,52 @@
       const a = e.target.closest('a');
       if (a && /^weixin:/i.test(a.getAttribute('href') || '')) { e.preventDefault(); toast('已攔截微信連結'); }
     }, true);
+
+    // Guofeng chrome
+    if ($('tab-map')) $('tab-map').addEventListener('click', openMapSheet);
+    if ($('q-act')) $('q-act').addEventListener('click', openActSheet);
+    if ($('hSeal')) $('hSeal').addEventListener('click', openActSheet);
+    if ($('map-x')) $('map-x').addEventListener('click', closeSheets);
+    if ($('act-x')) $('act-x').addEventListener('click', closeSheets);
+    document.querySelectorAll('#map-pins .pin').forEach((p) => {
+      p.addEventListener('click', () => {
+        showMode(p.dataset.mode);
+        closeSheets();
+        openActSheet();
+        pushStory('前往' + (MODE_LABELS[p.dataset.mode] || '') + '。', 'sys');
+      });
+    });
+    if ($('q-auto')) $('q-auto').addEventListener('click', toggleAuto);
+    if ($('q-save')) $('q-save').addEventListener('click', () => save());
+    if ($('q-log')) $('q-log').addEventListener('click', openLogReview);
+    if ($('btn-close-log')) $('btn-close-log').addEventListener('click', () => { $('modal-log').hidden = true; });
+    if ($('mode-chip')) $('mode-chip').addEventListener('click', () => {
+      const chip = $('mode-chip');
+      const next = chip.dataset.say === 'cmd' ? 'say' : 'cmd';
+      chip.dataset.say = next;
+      sayMode = next;
+      chip.textContent = next === 'cmd' ? '⚡指令' : '💬說';
+      chip.classList.toggle('cmd', next === 'cmd');
+      if ($('free-input')) $('free-input').placeholder = next === 'cmd' ? '指令（要對方做什麼）…' : '對眼前的人說…';
+    });
+    if ($('free-send')) $('free-send').addEventListener('click', freeSend);
+    if ($('free-input')) $('free-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') freeSend(); });
+    if ($('tab-ppl')) $('tab-ppl').addEventListener('click', () => {
+      if (mode !== 'village') showMode('village');
+      renderPplModal();
+      $('modal-ppl').hidden = false;
+    });
+    if ($('btn-close-ppl')) $('btn-close-ppl').addEventListener('click', () => { $('modal-ppl').hidden = true; });
+    if ($('btn-ppl-talk')) $('btn-ppl-talk').addEventListener('click', () => {
+      $('modal-ppl').hidden = true; openTalk();
+    });
+    if ($('btn-ppl-gift')) $('btn-ppl-gift').addEventListener('click', () => {
+      giftNpc(); renderPplModal();
+    });
   }
 
   // villager-card style inject if missing
-  function ensureExtraCss() {
-    if (document.getElementById('qq-extra')) return;
-    const s = document.createElement('style');
-    s.id = 'qq-extra';
-    s.textContent = `
-      .villager-card{display:block;width:100%;text-align:left;border:2px solid #c9a227;border-radius:10px;background:linear-gradient(180deg,#fff8e7,#f0e0b8);padding:10px;margin-bottom:6px;cursor:pointer}
-      .villager-card.active{box-shadow:0 0 0 2px #f0c14b}
-      .villager-card .muted{color:#8d6e63;font-size:12px}
-      .aff-bar{height:6px;background:#d7ccc8;border-radius:99px;margin:6px 0 2px;overflow:hidden}
-      .aff-bar i{display:block;height:100%;background:linear-gradient(90deg,#81c784,#43a047)}
-      .aff-num{font-size:11px;font-weight:700;color:#5d4037}
-      .craft-item{display:block;width:100%;text-align:left;border:2px solid #a1887f;border-radius:10px;background:#fff8e7;padding:10px;margin-bottom:6px;cursor:pointer}
-      .craft-item .need{display:block;font-size:11px;color:#8d6e63;margin-top:4px}
-      .gear-card{display:block;width:100%;text-align:left;border:2px solid #8d6e63;border-radius:8px;padding:8px;margin:4px 0;cursor:pointer;background:#faf6ea;font-size:12px}
-      .gear-card.on{border-color:#f0c14b;background:#fff3c4}
-      .rarity-white{border-color:#bdbdbd}.rarity-green{border-color:#66bb6a;color:#2e7d32}
-      .rarity-blue{border-color:#42a5f5;color:#1565c0}.rarity-purple{border-color:#ab47bc;color:#6a1b9a}
-      .rarity-gold{border-color:#f9a825;color:#f57f17;box-shadow:0 0 8px rgba(249,168,37,.4)}
-      .auto-btn.on{background:linear-gradient(180deg,#81c784,#2e7d32)!important;color:#fff!important;border-color:#1b5e20!important}
-      .auto-on{color:#2e7d32;font-weight:800}.auto-off{color:#8d6e63}
-      .equip-slot{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #d7ccc8;font-size:13px}
-      .bag-item{display:inline-block;background:#efebe9;border-radius:8px;padding:6px 10px;margin:3px;font-size:12px}
-      .quest-item{background:rgba(255,255,255,.5);border-radius:10px;padding:10px;margin-bottom:8px}
-      .quest-item.done{opacity:.7}
-      .parchment-mini{background:linear-gradient(180deg,#f7ecd4,#e8d4a8);border:2px solid #c9a227;border-radius:10px;padding:10px;margin-bottom:8px;font-size:12px}
-      .panel-h{margin:8px 0 6px;font-size:13px}
-      .village-scroll{max-height:160px;overflow-y:auto;margin-bottom:6px}
-      .craft-list{max-height:140px;overflow-y:auto;margin-bottom:6px}
-      .mode-blurb{font-size:12px;color:#ffe0a3;margin:0 0 6px;text-shadow:0 1px 2px #000}
-      .tiny-blurb{font-size:11px;opacity:.85}
-      .dungeon-stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
-      .dungeon-stats span{background:rgba(243,230,200,.9);border:1.5px solid #c9a227;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700}
-      .combat-summary{font-size:12px;margin:6px 0;font-weight:700}
-      .bag-section-title{font-size:13px;margin:10px 0 4px}
-      .muted{color:#8d6e63}
-      .ok{color:#2e7d32;font-weight:700}
-      .field{display:block;margin:8px 0;font-size:13px;font-weight:700}
-      .field input,.field select{display:block;width:100%;margin-top:4px;padding:10px;border:2px solid #8d6e63;border-radius:8px;font-size:14px;font-weight:500}
-      .tiny{font-size:11px;color:#8d6e63;line-height:1.4}
-      .status-bar{display:flex;justify-content:space-between;align-items:center;padding:4px 2px;font-size:12px;color:#ffe0a3;flex-shrink:0}
-      .directives{display:flex;gap:4px;margin-bottom:6px;overflow-x:auto}
-      .dir{appearance:none;border:2px solid #8d6e63;background:#5d4037;color:#d7ccc8;border-radius:8px;padding:6px 8px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}
-      .dir.active{background:linear-gradient(180deg,#f0c14b,#c9921a);color:#3e2723;border-color:#ffe082}
-      .controls{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}
-      .controls .btn{width:100%;min-width:0;padding:8px 6px;font-size:12px;min-height:38px}
-      .crop-pick{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-      .crop-pick .label{font-size:11px;color:#ffe0a3;font-weight:700}
-      .crop-btn{appearance:none;border:2px solid #8d6e63;background:#6d4c41;color:#fff;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:800;cursor:pointer}
-      .crop-btn.active{background:linear-gradient(180deg,#f0c14b,#c9921a);color:#3e2723;border-color:#ffe082}
-      .plot-card{border:3px solid #c9a227;border-radius:12px;overflow:hidden;background:#2a2118;flex-shrink:0}
-      .plot-card-head{display:flex;justify-content:space-between;padding:6px 10px;background:linear-gradient(180deg,#6d4c41,#3e2723);color:#ffe0a3;font-size:12px;font-weight:700}
-      .plot-canvas-wrap{position:relative}
-      .plot-bg{position:absolute;inset:0;opacity:.35;pointer-events:none}
-      .plot-bg img{width:100%;height:100%;object-fit:cover}
-      #farm{position:relative;z-index:1;width:100%;height:auto;display:block;touch-action:manipulation}
-      .modal{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;padding:12px}
-      .modal[hidden]{display:none!important}
-      .modal-card{width:100%;max-height:85%;overflow-y:auto;border-radius:14px;padding:16px;margin-bottom:var(--safe-bottom)}
-      .modal-card.wide{max-height:90%}
-      .parchment{background:linear-gradient(180deg,#f7ecd4,#e8d4a8);border:3px solid #c9a227;color:var(--ink)}
-      .parchment h2{margin:0 0 10px;font-size:18px;text-align:center}
-      .modal-actions.row{display:flex;gap:8px}
-      .modal-actions .btn{flex:1}
-      .loot-gear{margin:8px 0}
-      .battle-log{background:rgba(0,0,0,.45);color:#fff8e1;font-size:11px;padding:6px 8px;border-radius:8px;margin-top:8px;pointer-events:none}
-    `;
-    document.head.appendChild(s);
-  }
+  function ensureExtraCss() { /* guofeng styles live in style.css */ }
 
   ensureExtraCss();
   bind();
