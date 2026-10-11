@@ -3,7 +3,7 @@
 
   const SAVE_KEY = 'qianmo_v2';
   const SAVE_KEY_OLD = 'qianmo_v1';
-  const ASSET_V = '?v=3';
+  const ASSET_V = '?v=4';
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
 
@@ -255,7 +255,8 @@
       seenEvents: {},
       dayActs: { farm: 0, sell: 0, gift: 0, heal: 0, fight: 0, trade: 0, order: 0 },
       factionQuest: null,
-      pendingEvent: null
+      pendingEvent: null,
+      hands: 0
     };
     if (window.QianFactions) window.QianFactions.ensure(st);
     return st;
@@ -269,6 +270,7 @@
   function migrateSave(o) {
     if (!o) return null;
     if (o.v === 2) {
+      if (o.hands == null) o.hands = 0;
       if (window.QianFactions) window.QianFactions.ensure(o);
       return o;
     }
@@ -285,6 +287,7 @@
       o.factionQuest = o.factionQuest || null;
       o.pendingEvent = o.pendingEvent || null;
       o.flags = o.flags || {};
+      if (o.hands == null) o.hands = 0;
       if (window.QianFactions) window.QianFactions.ensure(o);
       return o;
     }
@@ -439,6 +442,7 @@
     if (m === 'market' || m === 'clinic') renderCraft();
     if (m === 'drill' || m === 'wild') renderCombatPanel();
     renderHUD();
+    paintWorkers(true);
   }
   function updatePortraitForMode(m) {
     const char = $('vn-char');
@@ -571,6 +575,8 @@
         g.fillText(crop.name, x + tw / 2, y + 12);
       }
     });
+    if (window.QianWorkers) window.QianWorkers.drawOnFarmCanvas(g, W, H, S, COLS, ROWS);
+    updateHandsHint();
   }
   function roundRect(g, x, y, w, h, r) {
     g.beginPath();
@@ -674,7 +680,11 @@
     S.gold -= cost;
     S.plots[locked].unlocked = true;
     S.plotCount++;
-    toast('開墾一畦（-' + cost + '銀）');
+    let hireMsg = '';
+    if (window.QianWorkers && window.QianWorkers.maybeHire(S)) {
+      hireMsg = ' · 多一名長工';
+    }
+    toast('開墾一畦（-' + cost + '銀）' + hireMsg);
     drawFarm(); renderHUD();
   }
   function growDay() {
@@ -1360,8 +1370,61 @@
     }
   }
 
+  let lastWorkerTs = 0;
+  let workerDripGold = 0;
+  function updateHandsHint() {
+    const el = $('plot-hint');
+    if (!el || !S || !window.QianWorkers) return;
+    const n = window.QianWorkers.count(S, 'farm');
+    el.textContent = '點畦操作 · 田上工人 ' + n + '／' + window.QianWorkers.MAX +
+      (S.hands ? '（僱' + S.hands + '）' : '');
+  }
+  function paintWorkers(force) {
+    if (!window.QianWorkers) return;
+    const cv = $('worker-layer');
+    if (!cv) return;
+    const gameOn = $('screen-game') && !$('screen-game').hidden;
+    if (!gameOn) {
+      const g = cv.getContext('2d');
+      if (g) g.clearRect(0, 0, cv.width, cv.height);
+      return;
+    }
+    window.QianWorkers.drawScene(cv, S, mode);
+    if (force && mode === 'farm') drawFarm();
+  }
   function tick(ts) {
     requestAnimationFrame(tick);
+    // 工人動畫（唔使開 AUTO 都會郁）
+    if (S && $('screen-game') && !$('screen-game').hidden) {
+      if (!lastWorkerTs) lastWorkerTs = ts;
+      let dt = Math.min(0.05, (ts - lastWorkerTs) / 1000);
+      lastWorkerTs = ts;
+      if (window.QianWorkers) {
+        const res = window.QianWorkers.update(dt, S, mode, COLS, ROWS);
+        if (res && res.drip > 0) {
+          workerDripGold += res.drip;
+          // 累滿約 3 銀先入帳，避免狂 toast
+          if (workerDripGold >= 3) {
+            const give = Math.floor(workerDripGold);
+            workerDripGold -= give;
+            S.gold += give;
+            if (Math.random() < 0.35) toast('長工零活 +' + give + '銀');
+            renderHUD();
+          }
+        }
+        // ~20fps 重畫夠 peasy；田畦 canvas 跟住刷新小人
+        if ((ts | 0) % 2 === 0) {
+          paintWorkers(false);
+          if (mode === 'farm') {
+            const sheet = $('sheet-act');
+            if (sheet && !sheet.hidden) drawFarm();
+          }
+        }
+      }
+    } else {
+      lastWorkerTs = ts;
+    }
+
     if (!S || !autoOn) return;
     if (ts - lastTick < 900) return;
     lastTick = ts;

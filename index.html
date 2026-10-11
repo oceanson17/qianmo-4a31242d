@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#f6ebe4">
 <title>青阡</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E阡%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body x-apple-data-detectors="false">
 <div id="app">
@@ -57,6 +57,7 @@
         <img id="scene-img" src="assets/bg_village.jpg?v=3" alt="場景" class="scene-img" decoding="async">
       </picture>
       <div class="season-tint" id="season-tint" data-season="0"></div>
+      <canvas id="worker-layer" class="worker-layer" aria-hidden="true"></canvas>
       <div class="vn-fx" aria-hidden="true"></div>
       <div class="vn-char" id="vn-char">
         <img id="portrait-img" src="assets/char_hero.webp?v=3" alt="" decoding="async">
@@ -176,7 +177,7 @@
         <div class="plot-card" id="plot-card">
           <div class="plot-card-head">
             <span class="plot-card-title">田畦</span>
-            <span class="plot-card-hint" id="plot-hint">點畦操作 · AUTO 亦會自動</span>
+            <span class="plot-card-hint" id="plot-hint">點畦操作 · 工人隨田與名聲增多</span>
           </div>
           <div class="plot-canvas-wrap">
             <picture class="plot-bg" aria-hidden="true">
@@ -432,8 +433,9 @@
     </div>
   </div>
 </div>
-<script src="ai.js?v=3"></script>
-<script src="factions.js?v=3"></script>
-<script src="game.js?v=3"></script>
+<script src="ai.js?v=4"></script>
+<script src="factions.js?v=4"></script>
+<script src="workers.js?v=4"></script>
+<script src="game.js?v=4"></script>
 </body>
 </html>
