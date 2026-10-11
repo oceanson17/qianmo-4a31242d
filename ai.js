@@ -132,7 +132,9 @@
       (ctx.bio ? '【人物小傳】' + ctx.bio : '') +
       (ctx.heroCtx ? '【玩家身世】' + ctx.heroCtx : '') +
       (ctx.worldMode ? '【世界模式】' + ctx.worldMode : '') +
-      (ctx.mem ? '已知記憶：' + ctx.mem : '') +
+      (ctx.mem ? '【往來全記】' + ctx.mem : '') +
+      (ctx.feel ? '【情感】' + ctx.feel : '') +
+      (ctx.disguise ? '【玩家扮相】' + ctx.disguise + '（若女扮男裝，可略疑，但勿一口咬定，除非懷疑很高）' : '') +
       (ctx.factionStance ? '【玩家勢力】' + ctx.factionStance : '');
     var user = (ctx.mode === 'cmd' ? '【指令】玩家要你執行：' : '【對白】玩家說：') + ctx.text +
       '\n玩家職業：' + ctx.career + '，紀年：' + ctx.dayStr;

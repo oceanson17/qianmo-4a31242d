@@ -276,7 +276,9 @@
     var h = S.hero || {};
     var o = originById(h.origin || 'farm');
     var g = h.gender === 'm' ? '男' : (h.gender === 'f' ? '女' : '不顯');
-    return '姓名' + (h.name || S.name || '旅人') + '，性別' + g + '，出身' + o.name +
+    return '姓名' + (h.name || S.name || '旅人') + '，性別' + g +
+      (h.disguise === 'male' && h.gender === 'f' ? '（現女扮男裝）' : '') +
+      '，出身' + o.name +
       (h.goal ? '，志向「' + h.goal + '」' : '') +
       '，世界模式：' + (S.worldMode === 'free' ? '高度自由' : '史實軌道');
   }

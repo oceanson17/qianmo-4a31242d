@@ -106,24 +106,31 @@
     guanshi:  { webp: 'assets/bg_guanshi.webp', jpg: 'assets/bg_guanshi.webp', alt: '關市' },
     hejin:    { webp: 'assets/bg_hejin.webp', jpg: 'assets/bg_hejin.webp', alt: '河津' },
     cimiao:   { webp: 'assets/bg_cimiao.webp', jpg: 'assets/bg_cimiao.webp', alt: '祠廟' },
-    ying:     { webp: 'assets/bg_ying.webp', jpg: 'assets/bg_ying.webp', alt: '軍營' }
+    ying:     { webp: 'assets/bg_ying.webp', jpg: 'assets/bg_ying.webp', alt: '軍營' },
+    hut:      { webp: 'assets/bg_town.webp', jpg: 'assets/bg_town.webp', alt: '陋室' },
+    ruins:    { webp: 'assets/bg_dungeon.webp', jpg: 'assets/bg_dungeon.webp', alt: '廢墟' },
+    crypt:    { webp: 'assets/bg_cliff.webp', jpg: 'assets/bg_cliff.jpg', alt: '古墓' },
+    marsh:    { webp: 'assets/bg_pond.webp', jpg: 'assets/bg_pond.webp', alt: '澤地' }
   };
   const MODE_LABELS = {
     farm: '田莊', village: '村落', market: '市井', clinic: '藥廬', drill: '校場', wild: '山野',
     garden: '園林', swim: '水塘', moon: '夜宴',
     mine: '礦坑', post: '驛道', tavern: '酒肆', academy: '書塾', frontier: '邊關',
     xianyang: '咸陽', palace: '宮城外', xiangbang: '相邦府', taihou: '太后宮外',
-    guowei: '國尉府', keguan: '客館', guanshi: '關市', hejin: '河津', cimiao: '祠廟', ying: '軍營'
+    guowei: '國尉府', keguan: '客館', guanshi: '關市', hejin: '河津', cimiao: '祠廟', ying: '軍營',
+    hut: '陋室', ruins: '廢墟', crypt: '古墓', marsh: '澤地'
   };
-  const ALL_MODES = ['farm','village','market','clinic','drill','wild','garden','swim','moon','mine','post','tavern','academy','frontier',
-    'xianyang','palace','xiangbang','taihou','guowei','keguan','guanshi','hejin','cimiao','ying'];
-  const WORK_MODES = ['farm','market','clinic','drill','wild','mine','frontier','ying','guanshi','hejin'];
+  const ALL_MODES = ['hut','farm','village','market','clinic','drill','wild','garden','swim','moon','mine','post','tavern','academy','frontier',
+    'xianyang','palace','xiangbang','taihou','guowei','keguan','guanshi','hejin','cimiao','ying','ruins','crypt','marsh'];
+  const WORK_MODES = ['farm','market','clinic','drill','wild','mine','frontier','ying','guanshi','hejin','ruins','crypt','marsh'];
+  const EXPLORE_MODES = ['ruins','crypt','marsh','mine','wild','frontier'];
   const LEISURE_MODES = ['garden', 'swim', 'moon'];
   const QIN_COURT_MODES = ['xianyang','palace','xiangbang','taihou','guowei','keguan','cimiao'];
   const TRAVEL_COST = {
     farm: 0, village: 2, market: 3, clinic: 2, drill: 3, wild: 4,
     garden: 2, swim: 2, moon: 3, mine: 4, post: 3, tavern: 2, academy: 2, frontier: 5,
-    xianyang: 4, palace: 5, xiangbang: 4, taihou: 5, guowei: 4, keguan: 3, guanshi: 3, hejin: 3, cimiao: 2, ying: 4
+    xianyang: 4, palace: 5, xiangbang: 4, taihou: 5, guowei: 4, keguan: 3, guanshi: 3, hejin: 3, cimiao: 2, ying: 4,
+    hut: 0, ruins: 4, crypt: 5, marsh: 4
   };
   const SCENE_CAPS = {
     farm: '工人喺田莊圖上走動', village: '鄉鄰沿街往來', market: '商販走街串巷',
@@ -133,7 +140,8 @@
     academy: '學子書塾誦讀', frontier: '戍卒邊牆巡邏',
     xianyang: '咸陽街巷車馬', palace: '宮牆外衛士巡戈', xiangbang: '門客進出相邦府',
     taihou: '宮婢與私門往來', guowei: '吏卒傳令奔走', keguan: '賓客使節投宿',
-    guanshi: '關市賈人校秤', hejin: '津吏渡船往來', cimiao: '香客祠前祈禱', ying: '軍營操練換防'
+    guanshi: '關市賈人校秤', hejin: '津吏渡船往來', cimiao: '香客祠前祈禱', ying: '軍營操練換防',
+    hut: '陋室燈火微明', ruins: '廢墟遊魂遊走', crypt: '古墓陰風掠影', marsh: '澤地蟲豸潛行'
   };
   const PERIODS = ['晨', '午', '暮', '夜'];
   let storyLines = [];
@@ -194,6 +202,32 @@
     { name: '狼主', hp: 95, atk: 15 },
     { name: '邊關妖物', hp: 120, atk: 17 }
   ];
+  const ENEMIES_RUINS = [
+    { name: '碎瓦怪', hp: 32, atk: 6 },
+    { name: '廢墟遊魂', hp: 48, atk: 9 },
+    { name: '銅戈俑', hp: 65, atk: 11 },
+    { name: '殘垣巨傀', hp: 90, atk: 14 }
+  ];
+  const ENEMIES_CRYPT = [
+    { name: '墓鼠', hp: 30, atk: 6 },
+    { name: '掛屍', hp: 52, atk: 10 },
+    { name: '青銅守卫', hp: 78, atk: 13 },
+    { name: '陰火狐', hp: 100, atk: 15 }
+  ];
+  const ENEMIES_MARSH = [
+    { name: '澤蛇', hp: 28, atk: 7 },
+    { name: '毒蟾', hp: 44, atk: 9 },
+    { name: '蘆影刺客', hp: 60, atk: 12 },
+    { name: '淤泥獸', hp: 88, atk: 14 }
+  ];
+  const BOSSES = {
+    ruins: { name: '廢墟魁首·石將軍', hp: 160, atk: 18 },
+    crypt: { name: '鎮墓獸·玄獒', hp: 190, atk: 20 },
+    marsh: { name: '澤中巨物·黿王', hp: 175, atk: 17 },
+    mine: { name: '礦脈主·岩魔', hp: 150, atk: 16 },
+    wild: { name: '山君·蒼獠王', hp: 170, atk: 19 },
+    frontier: { name: '邊關妖物·狼吞', hp: 200, atk: 21 }
+  };
   const SHOP_ITEMS = [
     { id: 'seed', name: '種子包', desc: '稻2菜1麥1', gold: 15, buy: () => {} },
     { id: 'food', name: '糧包', desc: '存糧+6', gold: 10 },
@@ -202,7 +236,7 @@
     { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
     { id: 'hire', name: '僱長工', desc: '田莊人手+1', gold: 0 }
   ];
-  const FACE_V = '9';
+  const FACE_V = '10';
   function allNpcs() {
     if (window.QianWorld && window.QianWorld.CAST) return window.QianWorld.CAST;
     return [];
@@ -228,7 +262,8 @@
     { id: 'vegSoup', name: '青菜湯', scene: 'market', needs: { veg: 2, wheat: 1 }, out: { food: 4 }, heal: 18, desc: '戰鬥回血 18' },
     { id: 'potion', name: '回春散', scene: 'clinic', needs: { herb: 2, flower: 1 }, out: { potion: 1 }, heal: 0, desc: '藥劑 · 可服回血 35' },
     { id: 'pickaxe', name: '鐵鎬頭', scene: 'market', needs: { ore: 3, wheat: 1 }, out: { food: 0 }, gold: 20, desc: '換成銀20 · 工匠+5' },
-    { id: 'salve', name: '金創膏', scene: 'clinic', needs: { herb: 3, ore: 1 }, out: { potion: 2 }, desc: '雙份藥劑' }
+    { id: 'salve', name: '金創膏', scene: 'clinic', needs: { herb: 3, ore: 1 }, out: { potion: 2 }, desc: '雙份藥劑' },
+    { id: 'anesthetic', name: '麻醉藥', scene: 'clinic', needs: { herb: 4, flower: 1 }, out: { anesthetic: 1 }, desc: '迷倒門衛 · 需藥理' }
   ];
   const ORDER_POOL = [
     { need: { rice: 4 }, rewardGold: 40, rewardFood: 2, title: '糧行急單' },
@@ -261,6 +296,56 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => { el.hidden = true; }, 2200);
   }
+  function tapFeel(el, ev) {
+    try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {}
+    if (!el) return;
+    if (ev && ev.clientX != null) {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--rx', ((ev.clientX - r.left) / Math.max(1, r.width) * 100) + '%');
+      el.style.setProperty('--ry', ((ev.clientY - r.top) / Math.max(1, r.height) * 100) + '%');
+    }
+    el.classList.add('pressed', 'ripple', 'choice-tap');
+    setTimeout(() => { el.classList.remove('pressed', 'ripple'); }, 180);
+  }
+  function bindTapFeel(root) {
+    const scope = root || document;
+    scope.querySelectorAll('.quick-replies button, .event-choice, .event-choices .btn, .choice-tap, #gate-choices .btn').forEach((b) => {
+      if (b.dataset.tapBound) return;
+      b.dataset.tapBound = '1';
+      b.addEventListener('click', (ev) => tapFeel(b, ev), { passive: true });
+    });
+  }
+  function storyEnsure() {
+    if (window.QianStory && S) window.QianStory.ensure(S);
+  }
+  function npcKnown(id) {
+    if (!S) return false;
+    if (window.QianStory) return window.QianStory.isKnown(S, id);
+    return true;
+  }
+  function markNpcKnown(id, why) {
+    if (window.QianStory) return window.QianStory.markKnown(S, id, why);
+    if (S.npcs[id]) S.npcs[id].known = true;
+  }
+  function logNpcAct(id, text, feels) {
+    if (!S || !id) return;
+    if (window.QianStory) {
+      window.QianStory.logNpc(S, id, text);
+      if (feels) Object.keys(feels).forEach((k) => window.QianStory.bumpFeel(S, id, k, feels[k]));
+    } else if (S.npcs[id]) {
+      S.npcs[id].mem = S.npcs[id].mem || [];
+      S.npcs[id].mem.push(text.slice(0, 24));
+    }
+  }
+  function disguiseOn() {
+    return !!(window.QianStory && window.QianStory.disguiseActive(S));
+  }
+  function heroPresentingMale() {
+    if (!S || !S.hero) return false;
+    if (S.hero.gender === 'm') return true;
+    return disguiseOn();
+  }
+
   function status(msg) {
     const el = $('status-text');
     if (el) el.textContent = msg;
@@ -324,7 +409,7 @@
     const quest = Object.assign({ done: false, progress: 0 }, C.quest);
     const cast = (window.QianWorld && window.QianWorld.CAST) || [];
     const st = {
-      v: 4,
+      v: 5,
       career: careerId,
       name: (window.__createDraft && window.__createDraft.name) || '旅人',
       day: 1,
@@ -335,12 +420,16 @@
       baseAtk: C.atk,
       baseDef: C.def,
       skills: Object.assign({}, C.skills),
-      bag: Object.assign({ rice: 0, veg: 0, flower: 0, wheat: 0, herb: 0, ore: 0, potion: 0 }, C.bag),
+      bag: Object.assign({ rice: 0, veg: 0, flower: 0, wheat: 0, herb: 0, ore: 0, potion: 0, anesthetic: 0 }, C.bag),
       plots: makePlots(8 + (C.skills.farm || 0)),
       plotCount: 8 + (C.skills.farm || 0),
       auto: false,
       directive: 'grain',
-      npcs: cast.reduce((a, n) => { a[n.id] = { aff: C.id === 'scholar' ? 8 : 0, mem: [], talked: 0 }; return a; }, {}),
+      npcs: cast.reduce((a, n) => {
+        a[n.id] = { aff: C.id === 'scholar' ? 8 : 0, mem: [], talked: 0, known: false,
+          feel: { respect: 0, fear: 0, suspicion: 0, gratitude: 0 }, log: [] };
+        return a;
+      }, {}),
       order: rollOrder(1),
       orderDone: false,
       gear,
@@ -378,8 +467,17 @@
       histFlags: {},
       diverged: [],
       seenChronicle: {},
-      eraYear: 1
+      eraYear: 1,
+      access: {},
+      quests: {},
+      explore: { ruins: 1, crypt: 1, marsh: 1, ruinsBest: 0, cryptBest: 0, marshBest: 0, bosses: {} }
     };
+    if (window.QianStory) {
+      window.QianStory.ensure(st);
+      if (window.__createDraft && window.__createDraft.disguise && st.hero.gender === 'f') {
+        st.hero.disguise = 'male';
+      }
+    }
     if (window.QianWorld) {
       window.QianWorld.ensure(st);
       window.QianWorld.applyOrigin(st, st.hero.origin);
@@ -414,7 +512,7 @@
       o.flags = o.flags || {};
       if (o.hands == null) o.hands = 0;
     }
-    if (o.v === 2 || o.v === 3 || o.v === 4) {
+    if (o.v === 2 || o.v === 3 || o.v === 4 || o.v === 5) {
       if (o.hands == null) o.hands = 0;
       if (o.mineFloor == null) o.mineFloor = 1;
       if (o.frontFloor == null) o.frontFloor = 1;
@@ -422,22 +520,38 @@
       if (o.fishSpot == null) o.fishSpot = 1;
       if (!o.skills) o.skills = {};
       if (o.skills.craft == null) o.skills.craft = 0;
+      if (o.skills.agi == null) o.skills.agi = Math.min(4, Math.floor((o.skills.mart || 0) / 2));
+      if (!o.bag) o.bag = {};
+      if (o.bag.anesthetic == null) o.bag.anesthetic = 0;
       if (!o.npcs) o.npcs = {};
       const cast = (window.QianWorld && window.QianWorld.CAST) || [];
       cast.forEach(function (n) {
-        if (!o.npcs[n.id]) o.npcs[n.id] = { aff: 0, mem: [], talked: 0 };
+        if (!o.npcs[n.id]) o.npcs[n.id] = { aff: 0, mem: [], talked: 0, known: false, feel: { respect: 0, fear: 0, suspicion: 0, gratitude: 0 }, log: [] };
+        if (o.npcs[n.id].known == null) o.npcs[n.id].known = false;
+        if (!o.npcs[n.id].feel) o.npcs[n.id].feel = { respect: 0, fear: 0, suspicion: 0, gratitude: 0 };
+        if (!o.npcs[n.id].log) o.npcs[n.id].log = [];
       });
       if (!CAREERS[o.career]) o.career = 'farmer';
       if (!o.hero) {
         o.hero = { name: o.name || '旅人', gender: 'x', origin: 'farm', goal: '' };
       }
+      if (o.hero.disguise === undefined) o.hero.disguise = null;
       if (!o.worldMode) o.worldMode = 'history';
       if (!o.chronicle) o.chronicle = [];
       if (!o.histFlags) o.histFlags = {};
       if (!o.diverged) o.diverged = [];
       if (!o.seenChronicle) o.seenChronicle = {};
-      o.v = 4;
+      if (!o.access) o.access = {};
+      if (!o.quests) o.quests = {};
+      if (!o.explore) o.explore = { ruins: 1, crypt: 1, marsh: 1, ruinsBest: 0, cryptBest: 0, marshBest: 0, bosses: {} };
+      ['ruins','crypt','marsh'].forEach(function (k) {
+        if (o.explore[k] == null) o.explore[k] = 1;
+        if (o.explore[k + 'Best'] == null) o.explore[k + 'Best'] = 0;
+      });
+      if (!o.explore.bosses) o.explore.bosses = {};
+      o.v = 5;
       if (window.QianWorld) window.QianWorld.ensure(o);
+      if (window.QianStory) window.QianStory.ensure(o);
       if (window.QianFactions) window.QianFactions.ensure(o);
       return o;
     }
@@ -447,7 +561,7 @@
     if (!S) return;
     S.auto = autoOn;
     S.directive = directive;
-    S.v = 4;
+    S.v = 5;
     if (window.QianFactions) window.QianFactions.ensure(S);
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); toast('已存檔'); } catch (e) { toast('存檔失敗'); }
   }
@@ -477,7 +591,7 @@
   function hasSave() {
     try {
       const o = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null');
-      if (o && (o.v === 1 || o.v === 2 || o.v === 3 || o.v === 4)) return true;
+      if (o && (o.v === 1 || o.v === 2 || o.v === 3 || o.v === 4 || o.v === 5)) return true;
       const old = JSON.parse(localStorage.getItem(SAVE_KEY_OLD) || 'null');
       if (old && (old.v === 1 || old.v === 2 || old.v === 3)) return true;
       if (typeof SAVE_KEY_OLDER !== 'undefined') {
@@ -628,7 +742,11 @@
     guanshi: '關市：互市買賣、校秤納稅、邊貨。',
     hejin: '河津：渡船、問水工、運糧。',
     cimiao: '祠廟：祈福、賽祭、安民心。',
-    ying: '軍營：操練、領餉差、準備出征。'
+    ying: '軍營：操練、領餉差、準備出征。',
+    hut: '陋室：免費歇息回體，體力過低請先回家。',
+    ruins: '廢墟：探索遇怪，挑戰魁首可得佳裝。',
+    crypt: '古墓：陰冷探墓，鎮墓獸掉落豐。',
+    marsh: '澤地：涉澤打怪，草藥與裝備並獲。'
   };
   function showMode(m) {
     mode = m;
@@ -666,7 +784,7 @@
     if (m === 'village') renderVillage();
     if (m === 'market') { renderShop(); renderCraft(); }
     if (m === 'clinic') { renderClinicInv(); renderCraft(); }
-    if (m === 'drill' || m === 'wild' || m === 'frontier' || m === 'mine' || m === 'ying') renderCombatPanel();
+    if (m === 'drill' || m === 'wild' || m === 'frontier' || m === 'mine' || m === 'ying' || m === 'ruins' || m === 'crypt' || m === 'marsh') renderCombatPanel();
     if (LEISURE_MODES.includes(m)) renderLeisure(m);
     if (m === 'post') renderPost();
     if (m === 'tavern') renderTavern();
@@ -674,6 +792,12 @@
     if (m === 'swim') renderFishSpots();
     if (m === 'garden') renderGardenAff();
     if (QIN_COURT_MODES.includes(m) || m === 'guanshi' || m === 'hejin' || m === 'ying') renderQinPanel(m);
+    if (m === 'hut') renderHut();
+    if (m === 'ruins' || m === 'crypt' || m === 'marsh') renderCombatPanel();
+    if (m === 'drill' || m === 'wild' || m === 'frontier' || m === 'mine' || m === 'ruins' || m === 'crypt' || m === 'marsh') {
+      const scene = $('adventure-scene');
+      if (scene) scene.classList.toggle('in-battle', !!(battle && battle.where === m));
+    }
     renderHUD();
     paintWorkers(true);
   }
@@ -691,18 +815,78 @@
     if (!S) return;
     if (battle) { toast('戰鬥中不可遠行'); return; }
     if (m === mode) { openActSheet(); return; }
+    storyEnsure();
+    if (window.QianStory && window.QianStory.gateInfo(m) && !window.QianStory.hasAccess(S, m)) {
+      openGateModal(m);
+      return;
+    }
     const cost = TRAVEL_COST[m] || 2;
-    if (S.hp <= cost) { toast('體力不足遠行（需留' + (cost + 1) + '）'); return; }
+    if (m !== 'hut' && S.hp <= cost) {
+      toast('體力過低 · 可先回陋室歇息');
+      if (m !== 'hut') highlightHutHint();
+      return;
+    }
     if (cost > 0) {
       S.hp = Math.max(1, S.hp - cost);
       toast('前往' + (MODE_LABELS[m] || '') + ' · 體力-' + cost);
     }
+    finishTravel(m);
+  }
+  function finishTravel(m) {
+    if (S.flags) S.flags['visited_' + m] = 1;
     showMode(m);
     closeSheets();
     openActSheet();
     pushStory('前往' + (MODE_LABELS[m] || '') + '。', 'sys');
+    if (window.QianStory) {
+      const done = window.QianStory.checkStoryQuests(S);
+      done.forEach((q) => toast('差事完成：' + q.title));
+    }
     renderHUD();
     saveQuiet();
+  }
+  function highlightHutHint() {
+    const note = $('map-note');
+    if (note) note.textContent = '體力過低！點「陋室」免費歇息回體。';
+  }
+  function openGateModal(m) {
+    const ST = window.QianStory;
+    if (!ST) return;
+    const g = ST.gateInfo(m);
+    $('gate-title').textContent = (g.name || MODE_LABELS[m]) + ' · 門禁';
+    $('gate-blurb').textContent = g.blurb + (disguiseOn() ? '（你正女扮男裝，門路略寬）' : '');
+    const sk = $('gate-skills');
+    if (sk) {
+      sk.innerHTML = '武' + (S.skills.mart||0) + ' · 輕功' + (S.skills.agi||0) +
+        ' · 藥理' + (S.skills.med||0) + ' · 麻醉藥×' + (S.bag.anesthetic||0) +
+        ' · 銀' + S.gold;
+    }
+    const box = $('gate-choices');
+    const opts = ST.gateOptions(S, m);
+    box.innerHTML = opts.map((o) =>
+      '<button type="button" class="btn event-choice' + (o.ok ? '' : ' locked') + '" data-gate="' + m + '" data-method="' + o.id + '"' +
+      (o.ok ? '' : ' title="' + o.reason + '"') + '>' + o.label +
+      '<small>' + o.tip + (o.ok ? '' : ' · ' + o.reason) + '</small></button>'
+    ).join('') + '<button type="button" class="btn ghost" data-gate-cancel="1">改去別處</button>';
+    box.querySelectorAll('[data-method]').forEach((b) => {
+      b.addEventListener('click', () => {
+        tapFeel(b);
+        if (b.classList.contains('locked')) { toast(b.title || '條件未足'); return; }
+        const r = ST.tryOpenGate(S, b.dataset.gate, b.dataset.method);
+        if (!r.ok) { toast(r.msg || '失敗'); return; }
+        toast(r.msg || '已入');
+        $('modal-gate').hidden = true;
+        const cost = TRAVEL_COST[m] || 2;
+        if (cost > 0) S.hp = Math.max(1, S.hp - cost);
+        finishTravel(m);
+      });
+    });
+    box.querySelectorAll('[data-gate-cancel]').forEach((b) => {
+      b.addEventListener('click', () => { $('modal-gate').hidden = true; openMapSheet(); });
+    });
+    bindTapFeel(box);
+    $('modal-gate').hidden = false;
+    closeSheets();
   }
   function renderLeisure(m) {
     if (!S) return;
@@ -791,6 +975,8 @@
     showFacePortrait(npcFaceKey(n), n.name, true);
     toast('偶遇' + n.name + ' · 好感' + st.aff);
     pushStory('園中小徑，遇' + n.name + '，寒暄片刻。', 'nar');
+    if (typeof markNpcKnown === 'function') markNpcKnown(n.id, '園林偶遇');
+    if (window.QianStory) window.QianStory.logNpc(S, n.id, '園林偶遇');
     renderHUD();
     saveQuiet();
   }
@@ -884,6 +1070,9 @@
     if (S.npcs[n.id]) S.npcs[n.id].aff = Math.min(100, (S.npcs[n.id].aff || 0) + 2);
     toast('義診施藥 · 民心↑');
     pushStory('藥廬門前，你為鄉鄰施了一劑回春散。', 'nar');
+    S.flags.charity = 1;
+    markNpcKnown('yiguan', '義診');
+    if (window.QianStory) window.QianStory.checkStoryQuests(S);
     renderCraft();
     renderHUD();
     saveQuiet();
@@ -987,6 +1176,8 @@
   }
   function openMapSheet() {
     if ($('map-date')) $('map-date').textContent = dayStr();
+    if (S && S.hp < Math.max(10, (S.maxHp || 80) * 0.3)) highlightHutHint();
+    else if ($('map-note')) $('map-note').textContent = '秦王政元年輿圖。點選地點前往（耗體力）。禁地需收買／輕功／麻醉。陋室可回體。';
     document.querySelectorAll('#map-pins .pin').forEach((p) => {
       p.classList.toggle('cur', p.dataset.mode === mode);
       let costEl = p.querySelector('.pcost');
@@ -1003,21 +1194,39 @@
   function renderPplModal() {
     if (!S) return;
     refreshNpcs();
+    storyEnsure();
     const list = $('ppl-list');
     if (!list || !S) return;
-    list.innerHTML = NPCS.map((n) => {
+    const cast = allNpcs().filter((n) => !n.unlockDay || (S.day || 1) >= n.unlockDay);
+    const known = cast.filter((n) => npcKnown(n.id));
+    const unknown = cast.filter((n) => !npcKnown(n.id)).slice(0, 8);
+    let html = '<div class="face-grid">';
+    html += known.map((n) => {
       const st = S.npcs[n.id] || { aff: 0 };
+      return '<button type="button" class="face-cell' + (selectedNpc === n.id ? ' active' : '') + '" data-npc="' + n.id + '">' +
+        faceThumbHtml(npcFaceKey(n), n.name) + '<span>' + n.name + '</span><span class="tiny muted">好感' + (st.aff||0) + '</span></button>';
+    }).join('');
+    html += unknown.map((n) =>
+      '<button type="button" class="face-cell unknown" disabled title="劇情見過才能相識"><span class="face-q">？</span><span>？？？</span><span class="tiny muted">未識</span></button>'
+    ).join('');
+    html += '</div>';
+    html += known.map((n) => {
+      const st = S.npcs[n.id] || { aff: 0, feel: {} };
       const pct = Math.min(100, st.aff);
       const where = n.meet ? (' · 常見於' + (MODE_LABELS[n.meet] || n.meet)) : '';
+      const feel = window.QianStory ? window.QianStory.feelLine(S, n.id) : '';
       return '<button type="button" class="villager-card' + (selectedNpc === n.id ? ' active' : '') + '" data-npc="' + n.id + '">' +
         '<div class="villager-row">' + faceThumbHtml(npcFaceKey(n), n.name) +
         '<div class="villager-meta"><b>' + n.name + '</b> <span class="muted">' + n.role + where + '</span>' +
         (n.bio ? '<div class="tiny muted">' + n.bio + '</div>' : '') +
+        (feel ? '<div class="tiny muted">' + feel + '</div>' : '') +
         '<div class="aff-bar"><i style="width:' + pct + '%"></i></div>' +
         '<div class="aff-num">好感 ' + st.aff + '</div></div></div></button>';
     }).join('');
+    list.innerHTML = html || '<p class="muted">尚無人脈</p>';
     list.querySelectorAll('[data-npc]').forEach((b) => {
       b.addEventListener('click', () => {
+        tapFeel(b);
         selectedNpc = b.dataset.npc;
         renderPplModal();
         updatePortraitForMode(mode);
@@ -1370,7 +1579,7 @@
   }
   function saveQuiet() {
     if (!S) return;
-    S.auto = autoOn; S.directive = directive; S.v = 4;
+    S.auto = autoOn; S.directive = directive; S.v = 5;
     if (window.QianFactions) window.QianFactions.ensure(S);
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {}
   }
@@ -1425,19 +1634,20 @@
       board.innerHTML = '<strong>' + S.order.title + '</strong><p>需：' + need + '</p><p>酬：銀' + S.order.rewardGold + (S.order.rewardFood ? ' · 糧' + S.order.rewardFood : '') + '</p>';
     }
     const list = $('npc-list');
-    list.innerHTML = NPCS.map((n) => {
+    storyEnsure();
+    const cast = allNpcs().filter((n) => !n.meet || n.meet === 'village' || !n.meet);
+    const local = allNpcs().filter((n) => {
+      if (n.unlockDay && (S.day||1) < n.unlockDay) return false;
+      return !n.meet || n.meet === 'village' || ['he','su','zhao','lin','wu','cheng','sefu'].includes(n.id);
+    });
+    list.innerHTML = '<div class="face-grid">' + local.map((n) => {
+      if (!npcKnown(n.id)) return '<button type="button" class="face-cell unknown" disabled><span class="face-q">？</span><span>？？？</span></button>';
       const st = S.npcs[n.id] || { aff: 0 };
-      const sel = n.id === selectedNpc ? ' active' : '';
-      const where = n.meet ? (' · 常見於' + (MODE_LABELS[n.meet] || n.meet)) : '';
-      return '<button type="button" class="villager-card' + sel + '" data-npc="' + n.id + '">' +
-        '<div class="villager-row">' + faceThumbHtml(npcFaceKey(n), n.name) +
-        '<div class="villager-meta"><strong>' + n.name + '</strong> <span class="muted">' + n.role + where + '</span>' +
-        (n.bio ? '<div class="tiny muted">' + n.bio + '</div>' : '') +
-        '<div class="aff-bar"><i style="width:' + Math.min(100, st.aff) + '%"></i></div>' +
-        '<span class="aff-num">好感 ' + st.aff + '</span></div></div></button>';
-    }).join('');
+      return '<button type="button" class="face-cell' + (n.id===selectedNpc?' active':'') + '" data-npc="' + n.id + '">' +
+        faceThumbHtml(npcFaceKey(n), n.name) + '<span>' + n.name + '</span><span class="tiny">好感' + (st.aff||0) + '</span></button>';
+    }).join('') + '</div>';
     list.querySelectorAll('[data-npc]').forEach((b) => {
-      b.addEventListener('click', () => { selectedNpc = b.dataset.npc; renderVillage(); updatePortraitForMode('village'); });
+      b.addEventListener('click', () => { tapFeel(b); selectedNpc = b.dataset.npc; renderVillage(); updatePortraitForMode('village'); });
     });
   }
   function itemName(k) {
@@ -1445,6 +1655,7 @@
     if (k === 'herb') return '草藥';
     if (k === 'ore') return '礦石';
     if (k === 'potion') return '回春散';
+    if (k === 'anesthetic') return '麻醉藥';
     return k;
   }
   function submitOrder() {
@@ -1490,6 +1701,8 @@
     st.mem.push('曾受贈' + itemName(given));
     if (st.mem.length > 8) st.mem = st.mem.slice(-8);
     toast('贈' + n.name + itemName(given) + ' · 好感' + st.aff);
+    logNpcAct(n.id, '受贈' + itemName(given), { gratitude: 3, respect: 1, suspicion: -1 });
+    markNpcKnown(n.id, '餽贈');
     if (window.QianFactions) {
       window.QianFactions.noteAct(S, 'gift');
       window.QianFactions.bump(S, 'people', 1);
@@ -1501,27 +1714,83 @@
 
   /* ---- Talk ---- */
   function openTalk() {
-    const n = NPCS.find((x) => x.id === selectedNpc);
+    refreshNpcs();
+    storyEnsure();
+    let n = NPCS.find((x) => x.id === selectedNpc) || allNpcs().find((x) => x.id === selectedNpc);
+    if (!n) { toast('無可談之人'); return; }
+    if (!npcKnown(n.id)) {
+      toast('尚未相識——須在劇情中見過');
+      return;
+    }
+    markNpcKnown(n.id, '對談');
     $('talk-npc-name').textContent = n.name + ' · ' + n.role;
     setTalkFace(n);
     showFacePortrait(npcFaceKey(n), n.name, true);
     pushStory('與' + n.name + '相對而坐……', 'sys');
     const log = $('talk-log');
     log.innerHTML = '<div class="talk-line sys">與' + n.name + '相對而坐……</div>';
-    const st = S.npcs[selectedNpc];
-    if (st.mem.length) {
+    const st = S.npcs[selectedNpc] || { aff: 0, mem: [], feel: {} };
+    if (window.QianStory) {
+      log.innerHTML += '<div class="talk-line sys">情感：好感' + (st.aff||0) + ' · ' + window.QianStory.feelLine(S, n.id) + '</div>';
+      const fm = window.QianStory.fullMem(S, n.id);
+      if (fm) log.innerHTML += '<div class="talk-line sys">往來：' + escapeHtml(fm) + '</div>';
+    } else if (st.mem && st.mem.length) {
       log.innerHTML += '<div class="talk-line sys">記憶：' + st.mem.slice(-3).join('；') + '</div>';
     }
-    $('quick-replies').innerHTML = [
-      '近日可好？', '村里可有新聞？', '請教生計', '告辭'
-    ].map((t) => '<button type="button" data-q="' + t + '">' + t + '</button>').join('');
-    $('quick-replies').querySelectorAll('[data-q]').forEach((b) => {
+    renderTalkPresent(n);
+    renderTalkChoices(n);
+    $('modal-talk').hidden = false;
+  }
+  function renderTalkPresent(cur) {
+    const row = $('talk-present');
+    if (!row) return;
+    const here = allNpcs().filter((x) => {
+      if (!npcKnown(x.id)) return false;
+      if (!x.meet) return mode === 'village' || mode === 'farm' || mode === 'hut';
+      return x.meet === mode;
+    }).slice(0, 12);
+    if (!here.length) { row.innerHTML = ''; return; }
+    row.innerHTML = here.map((x) =>
+      '<button type="button" class="present-chip' + (x.id === cur.id ? ' active' : '') + '" data-switch-npc="' + x.id + '">' +
+      faceThumbHtml(npcFaceKey(x), x.name) + '<span>' + x.name + '</span></button>'
+    ).join('');
+    row.querySelectorAll('[data-switch-npc]').forEach((b) => {
       b.addEventListener('click', () => {
+        tapFeel(b);
+        selectedNpc = b.dataset.switchNpc;
+        openTalk();
+      });
+    });
+  }
+  function renderTalkChoices(n) {
+    const ST = window.QianStory;
+    const choices = ST ? ST.talkChoices(S, n, mode) : [
+      { id: 'greet', label: '近日可好？', text: '近日可好？' },
+      { id: 'bye', label: '告辭', text: '告辭' }
+    ];
+    const box = $('quick-replies');
+    box.innerHTML = choices.map((c) =>
+      '<button type="button" class="choice-tap' + (c.locked ? ' locked' : '') + '" data-qid="' + c.id + '" data-q="' + escapeHtml(c.text) + '"' +
+      (c.locked ? ' title="' + escapeHtml(c.reason || '未解鎖') + '"' : '') + '>' + escapeHtml(c.label) + '</button>'
+    ).join('');
+    box.querySelectorAll('[data-qid]').forEach((b) => {
+      b.addEventListener('click', () => {
+        tapFeel(b);
+        if (b.classList.contains('locked')) { toast(b.title || '尚未解鎖'); return; }
+        const id = b.dataset.qid;
+        if (id === 'bye') { $('modal-talk').hidden = true; return; }
+        if (id === 'gift') { giftNpc(); openTalk(); return; }
+        if (id === 'duel') {
+          logNpcAct(n.id, '約戰', { respect: 1, fear: 1 });
+          $('modal-talk').hidden = true;
+          startBattle(mode === 'ying' ? 'drill' : (EXPLORE_MODES.includes(mode) ? mode : 'drill'));
+          return;
+        }
         $('talk-input').value = b.dataset.q;
         sendTalk();
       });
     });
-    $('modal-talk').hidden = false;
+    bindTapFeel(box);
   }
   function appendTalk(who, text, cls) {
     const log = $('talk-log');
@@ -1567,11 +1836,18 @@
       appendTalk('…', '沉吟中', 'sys');
       try {
         const st = S.npcs[selectedNpc];
+        let discNote = '';
+        if (disguiseOn() && (st.feel && st.feel.suspicion >= 18 || st.aff >= 40 && Math.random() < 0.12)) {
+          discNote = '（對方似乎在打量你的裝束……）';
+          if (window.QianStory) window.QianStory.bumpFeel(S, npc.id, 'suspicion', 3);
+        }
         const r = await AI.npcReply({
           npcName: npc.name, npcRole: npc.role, aff: st.aff,
-          mem: st.mem.slice(-4).join('；'),
+          mem: (window.QianStory ? window.QianStory.fullMem(S, npc.id) : st.mem.slice(-6).join('；')),
+          feel: window.QianStory ? window.QianStory.feelLine(S, npc.id) : '',
+          disguise: disguiseOn() ? '女扮男裝中' : (S.hero && S.hero.gender === 'f' ? '女裝' : (S.hero && S.hero.gender === 'm' ? '男子' : '不顯')),
           mode: sayMode === 'cmd' ? 'cmd' : 'say',
-          text, career: CAREERS[S.career].name, dayStr: dayStr(),
+          text: text + discNote, career: CAREERS[S.career].name, dayStr: dayStr(),
           bio: npc.bio || '',
           heroCtx: window.QianWorld ? window.QianWorld.heroContext(S) : '',
           worldMode: S.worldMode === 'free' ? '高度自由' : '史實軌道',
@@ -1582,9 +1858,9 @@
         if (log.lastChild && log.lastChild.classList.contains('sys')) log.removeChild(log.lastChild);
         appendTalk(npc.name, r.text);
         st.aff = Math.min(100, st.aff + (sayMode === 'cmd' ? 2 : 1));
-        st.mem.push((sayMode === 'cmd' ? '指令：' : '談：') + text.slice(0, 20));
-        if (st.mem.length > 8) st.mem = st.mem.slice(-8);
+        logNpcAct(npc.id, (sayMode === 'cmd' ? '指令：' : '談：') + text.slice(0, 24), { respect: sayMode === 'cmd' ? 1 : 0, gratitude: 0 });
         st.talked++;
+        markNpcKnown(npc.id, '對談');
       } catch (e) {
         const log = $('talk-log');
         if (log.lastChild && log.lastChild.classList.contains('sys')) log.removeChild(log.lastChild);
@@ -1617,6 +1893,7 @@
   function doCraft(id) {
     const r = RECIPES.find((x) => x.id === id);
     if (!r) return;
+    if (id === 'anesthetic' && (S.skills.med || 0) < 1) { toast('藥理尚淺，難成麻醉藥'); return; }
     for (const k of Object.keys(r.needs)) {
       if (bagCount(k) < r.needs[k]) { toast('材料不足'); return; }
     }
@@ -1638,6 +1915,10 @@
     if (S.career === 'healer' && id === 'potion') addBag('potion', 1);
     if (S.career === 'craftsman' && id === 'pickaxe') S.skills.craft = Math.min(8, (S.skills.craft || 0) + 1);
     if (id === 'potion' && S.flags) S.flags.saiPotion = (S.flags.saiPotion || 0) + 1 + (S.career === 'healer' ? 1 : 0);
+    if (id === 'anesthetic') {
+      S.flags.crafted_anesthetic = 1;
+      if (window.QianStory) window.QianStory.checkStoryQuests(S).forEach((q) => toast('差事完成：' + q.title));
+    }
     if (window.QianFactions) {
       window.QianFactions.noteAct(S, id === 'potion' ? 'heal' : 'trade');
       const fq = window.QianFactions.checkFactionQuest(S);
@@ -1791,7 +2072,7 @@
     if (window.QianFactions) window.QianFactions.bump(S, 'fame', 1);
     toast('打聽得新消息');
     pushStory('驛亭茶攤，你聽來一則江湖消息。', 'nar');
-    renderPost(); renderHUD(); saveQuiet();
+    renderPost(); renderHUD(); S.flags.post_rumor = 1; markNpcKnown('tingzhang', '驛站'); if (window.QianStory) window.QianStory.checkStoryQuests(S); saveQuiet();
   }
   function postCourier() {
     if (!S) return;
@@ -1864,7 +2145,7 @@
     if (chips) {
       const sk = S.skills;
       chips.innerHTML = [
-        ['農', sk.farm], ['醫', sk.med], ['商', sk.trade], ['武', sk.mart], ['文', sk.lit], ['工', sk.craft||0]
+        ['農', sk.farm], ['醫', sk.med], ['商', sk.trade], ['武', sk.mart], ['輕功', sk.agi||0], ['文', sk.lit], ['工', sk.craft||0]
       ].map((x) => '<span class="chip">' + x[0] + ' ' + x[1] + '</span>').join('');
     }
   }
@@ -1967,22 +2248,20 @@
     return '戰力 ATK' + st.atk + ' DEF' + st.def + ' HP' + st.hp;
   }
   function previewEnemyHtml(where) {
-    const floor = where === 'wild' ? (S.wildFloor || 1)
-      : where === 'mine' ? (S.mineFloor || 1)
-      : where === 'frontier' ? (S.frontFloor || 1) : 1;
-    const pool = where === 'wild' ? ENEMIES_WILD
-      : where === 'mine' ? ENEMIES_MINE
-      : where === 'frontier' ? ENEMIES_FRONT : ENEMIES_DRILL;
+    const floor = battleFloor(where);
+    const pool = enemyPool(where);
     const idx = Math.min(pool.length - 1, floor - 1);
     const e = pool[idx];
     const scale = (where === 'drill') ? 1 : 1 + (floor - 1) * 0.18;
+    const boss = BOSSES[where];
     if (battle && battle.where === where) {
       return '<strong>交戰中</strong> · ' + battle.enemy.name + ' HP ' + battle.enemy.hp + '/' + battle.enemy.maxHp +
-        '<br>波次 ' + battle.wave + '/' + battle.maxWave;
+        '<br>波次 ' + battle.wave + '/' + battle.maxWave + (battle.isBoss ? ' · Boss' : '');
     }
     return '<strong>可能遭遇</strong> · ' + e.name +
       '<br>約 HP' + Math.floor(e.hp * scale) + ' · ATK' + Math.floor(e.atk * scale) +
-      ' · 層/場 ' + floor;
+      ' · 層/場 ' + floor +
+      (boss ? '<br><strong>Boss</strong> · ' + boss.name + ' HP' + boss.hp : '');
   }
   function renderCombatPanel() {
     if (!S) return;
@@ -2011,10 +2290,22 @@
     if ($('front-gear')) $('front-gear').textContent = '裝備 ' + S.gear.length;
     if ($('front-power')) $('front-power').textContent = powerLine();
     if ($('front-enemy')) $('front-enemy').innerHTML = previewEnemyHtml('frontier');
+    if (S.explore) {
+      ['ruins','crypt','marsh'].forEach((k) => {
+        if ($(k + '-floor')) $(k + '-floor').textContent = ({ruins:'廢墟層 ',crypt:'墓層 ',marsh:'澤層 '}[k]) + (S.explore[k] || 1);
+        if ($(k + '-best')) $(k + '-best').textContent = '最深 ' + (S.explore[k + 'Best'] || 0);
+        if ($(k + '-gear')) $(k + '-gear').textContent = '裝備 ' + S.gear.length;
+        if ($(k + '-power')) $(k + '-power').textContent = powerLine();
+        if ($(k + '-enemy')) $(k + '-enemy').innerHTML = previewEnemyHtml(k);
+      });
+    }
     const inB = !!battle;
     if ($('btn-flee-drill')) $('btn-flee-drill').hidden = !(inB && battle.where === 'drill');
     if ($('btn-flee-wild')) $('btn-flee-wild').hidden = !(inB && battle.where === 'wild');
     if ($('btn-flee-front')) $('btn-flee-front').hidden = !(inB && battle.where === 'frontier');
+    if ($('btn-flee-ruins')) $('btn-flee-ruins').hidden = !(inB && battle.where === 'ruins');
+    if ($('btn-flee-crypt')) $('btn-flee-crypt').hidden = !(inB && battle.where === 'crypt');
+    if ($('btn-flee-marsh')) $('btn-flee-marsh').hidden = !(inB && battle.where === 'marsh');
     if ($('battle-hud')) $('battle-hud').hidden = !inB;
   }
 
@@ -2022,39 +2313,56 @@
     if (where === 'wild') return ENEMIES_WILD;
     if (where === 'mine') return ENEMIES_MINE;
     if (where === 'frontier') return ENEMIES_FRONT;
+    if (where === 'ruins') return ENEMIES_RUINS;
+    if (where === 'crypt') return ENEMIES_CRYPT;
+    if (where === 'marsh') return ENEMIES_MARSH;
     return ENEMIES_DRILL;
   }
   function battleFloor(where) {
     if (where === 'wild') return S.wildFloor || 1;
     if (where === 'mine') return S.mineFloor || 1;
     if (where === 'frontier') return S.frontFloor || 1;
+    if (where === 'ruins') return (S.explore && S.explore.ruins) || 1;
+    if (where === 'crypt') return (S.explore && S.explore.crypt) || 1;
+    if (where === 'marsh') return (S.explore && S.explore.marsh) || 1;
     return 1;
   }
-  function startBattle(where) {
+  function startBattle(where, asBoss) {
     if (battle) return;
-    if (S.hp < 8 && where !== 'drill') { toast('體力過低，先回復再戰'); return; }
+    if (S.hp < 8 && where !== 'drill') {
+      toast('體力過低 · 先回陋室歇息');
+      highlightHutHint();
+      return;
+    }
+    storyEnsure();
     const floor = battleFloor(where);
-    const pool = enemyPool(where);
-    const idx = Math.min(pool.length - 1, floor - 1 + Math.floor(Math.random() * 2));
-    const base = pool[idx];
-    const scale = where === 'drill' ? 1 : 1 + (floor - 1) * 0.18;
+    let base, scale, maxWave, isBoss = !!asBoss;
+    if (isBoss && BOSSES[where]) {
+      base = BOSSES[where];
+      scale = 1 + (floor - 1) * 0.12;
+      maxWave = 1;
+    } else {
+      const pool = enemyPool(where);
+      const idx = Math.min(pool.length - 1, floor - 1 + Math.floor(Math.random() * 2));
+      base = pool[idx];
+      scale = where === 'drill' ? 1 : 1 + (floor - 1) * 0.18;
+      maxWave = where === 'frontier' || where === 'crypt' ? 4 : (where === 'wild' || where === 'mine' || where === 'ruins' || where === 'marsh' ? 3 : 2);
+    }
     const st = stats();
     S.hp = Math.min(S.hp, st.maxHp);
-    const maxWave = where === 'frontier' ? 4 : (where === 'wild' || where === 'mine' ? 3 : 2);
     battle = {
       where,
       wave: 1,
       maxWave,
+      isBoss,
       enemy: { name: base.name, maxHp: Math.floor(base.hp * scale), hp: Math.floor(base.hp * scale), atk: Math.floor(base.atk * scale) },
       log: [],
       autoTimer: 0
     };
-    // switch scene if needed
-    if (where === 'mine' && mode !== 'mine') showMode('mine');
-    if (where === 'frontier' && mode !== 'frontier') showMode('frontier');
+    if (['mine','frontier','ruins','crypt','marsh','wild'].includes(where) && mode !== where) showMode(where);
     $('adventure-scene').classList.add('in-battle');
     $('battle-hud').hidden = false;
-    updateBattleHUD('遇敵：' + battle.enemy.name);
+    updateBattleHUD((isBoss ? 'Boss戰：' : '遇敵：') + battle.enemy.name);
     renderCombatPanel();
   }
   function updateBattleHUD(msg) {
@@ -2087,9 +2395,10 @@
     S.hp = Math.max(0, S.hp - dmg);
     updateBattleHUD(battle.enemy.name + '擊你 ' + dmg);
     if (S.hp <= 0) {
-      toast('戰敗…回村休養');
+      toast('戰敗…快回陋室休養');
       S.hp = Math.max(1, Math.floor(st.maxHp * 0.3));
       endBattle(false);
+      highlightHutHint();
     }
     renderHUD();
   }
@@ -2111,19 +2420,36 @@
     S.wins = (S.wins || 0) + 1;
     const where = battle.where;
     const floor = battleFloor(where);
+    const isBoss = !!battle.isBoss;
     let gold = 12 + floor * 6 + Math.floor(Math.random() * 10);
     if (where === 'frontier') gold = Math.floor(gold * 1.45);
     if (where === 'mine') gold = Math.floor(gold * 0.85);
+    if (where === 'ruins' || where === 'crypt') gold = Math.floor(gold * 1.25);
+    if (where === 'marsh') gold = Math.floor(gold * 1.1);
+    if (isBoss) gold = Math.floor(gold * 2.2) + 30;
     if (S.skills.trade) gold += S.skills.trade * 2;
     S.gold += gold;
     S.soldGold = (S.soldGold || 0) + gold;
-    const gear = rollDrop(where, floor);
+    let gear = rollDrop(where, floor, isBoss);
     if (gear) S.gear.push(gear);
+    if (isBoss) {
+      const g2 = rollDrop(where, floor + 2, true);
+      if (g2) { S.gear.push(g2); gear = gear || g2; }
+      if (!S.explore) S.explore = { bosses: {} };
+      if (!S.explore.bosses) S.explore.bosses = {};
+      S.explore.bosses[where] = (S.explore.bosses[where] || 0) + 1;
+      toast('Boss 討伐成功');
+    }
+    if (where === 'drill' && Math.random() < 0.35) S.skills.agi = Math.min(8, (S.skills.agi || 0) + 1);
     if (where === 'wild') S.wildBest = Math.max(S.wildBest || 0, S.wildFloor || 1);
     if (where === 'frontier') S.frontBest = Math.max(S.frontBest || 0, S.frontFloor || 1);
-    if (Math.random() < 0.4) addBag('ore', 1 + Math.floor(Math.random() * 2));
-    if (Math.random() < 0.3) addBag('herb', 1);
+    if (S.explore && (where === 'ruins' || where === 'crypt' || where === 'marsh')) {
+      S.explore[where + 'Best'] = Math.max(S.explore[where + 'Best'] || 0, S.explore[where] || 1);
+    }
+    if (Math.random() < 0.4 || isBoss) addBag('ore', 1 + Math.floor(Math.random() * 2) + (isBoss ? 2 : 0));
+    if (Math.random() < 0.3 || where === 'marsh') addBag('herb', 1 + (isBoss ? 1 : 0));
     if (where === 'mine' && Math.random() < 0.55) addBag('ore', 2);
+    if (where === 'crypt' && Math.random() < 0.35) addBag('flower', 1);
     showLoot(gold, gear);
     endBattle(true);
     if (window.QianFactions) {
@@ -2131,20 +2457,26 @@
       window.QianFactions.recomputeFame(S);
       window.QianFactions.checkFactionQuest(S);
     }
+    if (window.QianStory) window.QianStory.checkStoryQuests(S).forEach((q) => toast('差事完成：' + q.title));
     checkQuest();
   }
-  function rollDrop(where, floor) {
+  function rollDrop(where, floor, isBoss) {
     const roll = Math.random();
     let rarity = 'white';
     let bonus = 0;
     if (where === 'wild') bonus = floor * 0.03;
     if (where === 'frontier') bonus = floor * 0.045;
     if (where === 'mine') bonus = floor * 0.02;
+    if (where === 'ruins') bonus = floor * 0.04;
+    if (where === 'crypt') bonus = floor * 0.05;
+    if (where === 'marsh') bonus = floor * 0.035;
+    if (isBoss) bonus += 0.18;
     if (roll > 0.97 - bonus) rarity = 'gold';
     else if (roll > 0.90 - bonus) rarity = 'purple';
     else if (roll > 0.75 - bonus) rarity = 'blue';
     else if (roll > 0.50 - bonus) rarity = 'green';
     if (where === 'drill' && (rarity === 'gold' || rarity === 'purple')) rarity = 'blue';
+    if (isBoss && rarity === 'white') rarity = 'green';
     const slots = ['weapon', 'armor', 'accessory'];
     const slot = slots[Math.floor(Math.random() * slots.length)];
     const base = GEAR_BASE[slot][Math.min(GEAR_BASE[slot].length - 1, Math.floor(Math.random() * (1 + floor / 2)))];
@@ -2182,7 +2514,7 @@
   }
   function autoFightStep() {
     if (!battle) {
-      if (mode === 'drill' || mode === 'wild' || mode === 'frontier') startBattle(mode);
+      if (mode === 'drill' || mode === 'wild' || mode === 'frontier' || mode === 'ruins' || mode === 'crypt' || mode === 'marsh') startBattle(mode);
       else if (mode === 'mine') startBattle('mine');
       return;
     }
@@ -2246,6 +2578,16 @@
     body += '<div class="quest-item"><strong>累計</strong><p>勝場 ' + (S.wins || 0) + ' · 賣銀 ' + (S.soldGold || 0) + ' · 山層' + S.wildBest + ' · 邊層' + (S.frontBest||0) +
       ' · 名' + Math.floor(S.fame || 0) + ' · 民' + Math.floor(S.people || 0) + '</p></div>';
     if (S.worldLine) body += '<div class="quest-item"><strong>天下大勢</strong><p>' + escapeHtml(S.worldLine) + '</p></div>';
+    if (window.QianStory) {
+      window.QianStory.ensure(S);
+      window.QianStory.checkStoryQuests(S);
+      body += window.QianStory.questListHtml(S, escapeHtml);
+      if ($('quest-dot')) $('quest-dot').hidden = !window.QianStory.hasOpenStory(S) && (!S.quest || S.quest.done);
+    }
+    const sk = S.skills || {};
+    body += '<div class="quest-item"><strong>技能</strong><p>農' + (sk.farm||0) + ' 醫/藥理' + (sk.med||0) + ' 商' + (sk.trade||0) +
+      ' 武' + (sk.mart||0) + ' 輕功' + (sk.agi||0) + ' 文' + (sk.lit||0) + ' 工' + (sk.craft||0) +
+      (disguiseOn() ? ' · 女扮男裝中' : '') + '</p></div>';
     $('quest-list').innerHTML = body;
     $('modal-quest').hidden = false;
   }
@@ -2378,6 +2720,9 @@
     if (S.pendingEvent) return; // wait for player choice
     if (battle) { autoFightStep(); return; }
     // faction AUTO bias: occasionally move to preferred scene
+    if (S.hp < Math.max(10, S.maxHp * 0.28) && mode !== 'hut' && !battle) {
+      showMode('hut'); hutRest(false); return;
+    }
     if (window.QianFactions && Math.random() < 0.04) {
       const pref = window.QianFactions.autoPriority(S);
       if (pref && pref !== mode) showMode(pref);
@@ -2386,7 +2731,8 @@
     else if (mode === 'village') autoVillageStep();
     else if (mode === 'market') autoMarketStep();
     else if (mode === 'clinic') autoClinicStep();
-    else if (mode === 'drill' || mode === 'wild' || mode === 'frontier') autoFightStep();
+    else if (mode === 'drill' || mode === 'wild' || mode === 'frontier' || mode === 'ruins' || mode === 'crypt' || mode === 'marsh') autoFightStep();
+    else if (mode === 'hut') { if (S.hp < S.maxHp) hutRest(false); }
     else if (mode === 'mine') {
       if (Math.random() < 0.55) mineDig();
       else if (Math.random() < 0.25) mineDeeper();
@@ -2560,23 +2906,25 @@
       });
     }
     if (meet) {
-      const here = liveNpcs().filter((n) => n.meet === m).slice(0, 6);
-      if (!here.length) {
-        meet.innerHTML = '<p class="tiny muted">此處暫無熟面孔，可至人脈找秦人。</p>';
+      storyEnsure();
+      const allHere = allNpcs().filter((n) => n.meet === m && (!n.unlockDay || (S.day||1) >= n.unlockDay));
+      if (!allHere.length) {
+        meet.innerHTML = '<p class="tiny muted">此處暫無面孔，可至人脈找秦人。</p>';
       } else {
-        meet.innerHTML = '<div class="panel-h-row"><span class="panel-h">可見之人</span></div>' +
-          here.map((n) => {
+        meet.innerHTML = '<div class="panel-h-row"><span class="panel-h">可見之人</span><span class="tiny">' + allHere.length + '人影</span></div>' +
+          '<div class="face-grid">' + allHere.map((n) => {
+            if (!npcKnown(n.id)) {
+              return '<button type="button" class="face-cell unknown" data-meet-unk="' + n.id + '"><span class="face-q">？</span><span>？？？</span><span class="tiny muted">未識</span></button>';
+            }
             const aff = (S.npcs[n.id] && S.npcs[n.id].aff) || 0;
-            return '<button type="button" class="villager-card" data-meet-npc="' + n.id + '">' +
-              faceThumbHtml(npcFaceKey(n), n.name) +
-              '<div><strong>' + n.name + '</strong><span class="muted"> ' + n.role + '</span>' +
-              '<div class="aff-bar"><i style="width:' + Math.min(100, aff) + '%"></i></div></div></button>';
-          }).join('');
+            return '<button type="button" class="face-cell" data-meet-npc="' + n.id + '">' +
+              faceThumbHtml(npcFaceKey(n), n.name) + '<span>' + n.name + '</span><span class="tiny muted">' + n.role + ' ·' + aff + '</span></button>';
+          }).join('') + '</div>';
         meet.querySelectorAll('[data-meet-npc]').forEach((b) => {
-          b.addEventListener('click', () => {
-            selectedNpc = b.dataset.meetNpc;
-            openTalk();
-          });
+          b.addEventListener('click', () => { tapFeel(b); selectedNpc = b.dataset.meetNpc; openTalk(); });
+        });
+        meet.querySelectorAll('[data-meet-unk]').forEach((b) => {
+          b.addEventListener('click', () => toast('尚未相識——完成相關劇情或進入此處方能見面'));
         });
       }
     }
@@ -2608,6 +2956,7 @@
       if (act === 'rumor') {
         if (!needHp(3)) return;
         bump('qin', 1); toast('聞宮中語'); pushStory('宮牆外有人竊語：王年雖幼，目光已漸利。', 'nar');
+        markNpcKnown('yingzheng', '宮外傳聞');
       } else if (act === 'letter') {
         if (!needGold(12)) return;
         bump('qin', 4); bump('fame', 2); toast('投書內廷'); pushStory('一封書信送入內廷——不知是否有人拆閱。', 'nar');
@@ -2622,6 +2971,7 @@
       if (act === 'visit') {
         if (!needHp(3)) return;
         bump('lu', 3); bump('fame', 1); toast('拜謁相邦府'); pushStory('相邦府門客引你入側廳，茶香與算盤聲並起。', 'nar');
+        markNpcKnown('lubuwei', '拜謁'); markNpcKnown('menke', '拜謁');
       } else if (act === 'trade') {
         if (!needGold(10)) return;
         if (Math.random() < 0.6) { const w = 16 + Math.floor(Math.random()*12); S.gold += w; bump('lu', 2); toast('貨殖得利 +' + w); }
@@ -2641,9 +2991,10 @@
       } else if (act === 'spy') {
         if (!needHp(3)) return;
         if (Math.random() < 0.5) {
-          bump('fame', 2); toast('聽得宮爭影');
+          bump('fame', 2); toast('聽得宮爭影'); S.flags.taihou_spy = 1;
           diverge('laoai', '你探得太后宮私門養士之風');
           pushStory('宮婢低聲：私門養士，漸與相邦府分庭。', 'nar');
+          markNpcKnown('zhaoji', '宮爭傳聞');
         } else { bump('lu', -2); toast('險些惹禍'); pushStory('你打聽太過，被人冷眼逐出牆外。', 'nar'); }
       } else if (act === 'quiet') {
         bump('people', 1); toast('緘默而退'); pushStory('你拱手退開，不多一言。', 'nar');
@@ -2665,8 +3016,9 @@
     } else if (m === 'keguan') {
       if (act === 'banquet') {
         if (!needGold(15)) return;
-        bump('sai', 3); bump('fame', 2); bump('people', 1); toast('宴客成功');
+        bump('sai', 3); bump('fame', 2); bump('people', 1); toast('宴客成功'); S.flags.visited_keguan = 1;
         pushStory('客館夜宴，楚使與齊客舉杯。', 'nar');
+        markNpcKnown('changping', '宴客'); markNpcKnown('chu_envoy', '宴客');
       } else if (act === 'probe') {
         if (!needHp(3)) return;
         bump('sai', 1); bump('fame', 1); toast('刺探合縱傳聞');
@@ -2688,7 +3040,8 @@
         if (bagCount('ore') >= 1) { const n = Math.min(3, bagCount('ore')); addBag('ore', -n); g += n * 7; }
         if (bagCount('herb') >= 1) { const n = Math.min(2, bagCount('herb')); addBag('herb', -n); g += n * 5; }
         if (!g) { toast('無山貨可售'); return; }
-        S.gold += g; S.soldGold += g; bump('lu', 1); bump('sai', 1); toast('售出 +' + g + '銀');
+        S.gold += g; S.soldGold += g; bump('lu', 1); bump('sai', 1); toast('售出 +' + g + '銀'); S.flags.guanshi_deal = 1;
+        markNpcKnown('guren', '關市交易'); markNpcKnown('shili', '關市');
       } else if (act === 'tax') {
         if (!needHp(3)) return;
         bump('qin', 2); S.gold += 4; toast('助市吏 · +4銀'); pushStory('你協助市吏校秤半日。', 'nar');
@@ -2700,8 +3053,9 @@
       } else if (act === 'canal') {
         if (!needHp(3)) return;
         bump('fame', 1); bump('people', 1); toast('聞渠議');
-        diverge('zhengguo', '你過問鄭國渠議，影響農田輿論');
+        diverge('zhengguo', '你過問鄭國渠議，影響農田輿論'); S.flags.canal_ask = 1;
         pushStory('水工言：渠成則關中畝產可倍——亦或疲民。', 'nar');
+        markNpcKnown('zhengguo', '問渠');
         if (S.npcs.zhengguo) S.npcs.zhengguo.aff = Math.min(100, (S.npcs.zhengguo.aff || 0) + 3);
       } else if (act === 'haul') {
         if (S.food < 2) { toast('存糧不足'); return; }
@@ -2711,7 +3065,7 @@
     } else if (m === 'cimiao') {
       if (act === 'pray') {
         if (!needGold(5)) return;
-        bump('people', 3); toast('祈福 · 民心↑'); pushStory('祠廟香火，你默祝田稼平安。', 'nar');
+        bump('people', 3); toast('祈福 · 民心↑'); S.flags.cimiao_pray = 1; pushStory('祠廟香火，你默祝田稼平安。', 'nar');
       } else if (act === 'fest') {
         if (!needGold(10)) return;
         bump('people', 4); bump('fame', 2); toast('賽祭熱鬧'); pushStory('社祭鼓響，鄉鄰見你出銀，紛紛拱手。', 'nar');
@@ -2733,7 +3087,108 @@
         startBattle('drill'); return;
       }
     }
+    if (window.QianStory) window.QianStory.checkStoryQuests(S).forEach((q) => toast('差事完成：' + q.title));
     renderQinPanel(m); renderHUD(); saveQuiet();
+  }
+
+
+  /* ---- 陋室／探索層 ---- */
+  function renderHut() {
+    if (!S) return;
+    const st = $('hut-stat');
+    if (st) st.textContent = '體力 ' + S.hp + '/' + S.maxHp + ' · 糧' + S.food;
+    const hint = $('hut-hint');
+    if (hint) {
+      hint.textContent = S.hp < Math.max(12, S.maxHp * 0.35)
+        ? '體力偏低——建議立即歇息。'
+        : '可免費歇息回體，或小憩半日（過半日）。';
+    }
+    const btnD = $('btn-hut-disguise');
+    if (btnD) {
+      const show = S.hero && S.hero.gender === 'f';
+      btnD.hidden = !show;
+      if (show) btnD.textContent = disguiseOn() ? '卸下男裝' : '更衣：女扮男裝';
+    }
+    const blurb = $('hut-blurb');
+    if (blurb) {
+      blurb.textContent = disguiseOn()
+        ? '陋室燈下，男子裝束疊於床頭。外面仍當你是漢子。'
+        : '自家陋室。可免費歇息回體，亦可小憩半日。';
+    }
+  }
+  function hutRest(full) {
+    if (!S || battle) { toast(battle ? '戰鬥中' : ''); return; }
+    const st = stats();
+    S.hp = st.maxHp;
+    S.flags.hut_rest = 1;
+    if (full) {
+      /* 小憩：過半日 */
+      S.day = (S.day || 1) + 0; // keep day but mark period advance via nextDay soft
+      if (typeof nextDay === 'function' && Math.random() < 0.01) {}
+      // advance half: consume 0 food sometimes restore food feel
+      toast('小憩半日 · 體力已滿');
+      pushStory('你回陋室躺下半日，醒來精神尚可。', 'nar');
+      // light day progress without full nextDay penalties: bump chronicle chance tiny
+      if (window.QianWorld && Math.random() < 0.2) window.QianWorld.tick(S);
+    } else {
+      toast('歇息完畢 · 體力已滿');
+      pushStory('陋室一眠，氣力盡復。', 'nar');
+    }
+    if (window.QianStory) window.QianStory.checkStoryQuests(S).forEach((q) => toast('差事完成：' + q.title));
+    renderHut(); renderHUD(); saveQuiet();
+  }
+  function hutNap() {
+    if (!S || battle) return;
+    hutRest(true);
+    // skip half day: call nextDay but refund food if nextDay ate
+    const foodBefore = S.food;
+    const dayBefore = S.day;
+    if (typeof nextDay === 'function') {
+      nextDay();
+      // if nextDay consumed too much, soften: ensure at least foodBefore-1
+      if (S.food < foodBefore - 1) S.food = Math.max(0, foodBefore - 1);
+    }
+    S.hp = stats().maxHp;
+    toast('小憩過日 · 體力已滿');
+    renderHut(); renderHUD();
+  }
+  function hutEat() {
+    if (!S) return;
+    if (S.food < 1) { toast('存糧不足'); return; }
+    S.food -= 1;
+    S.hp = Math.min(stats().maxHp, S.hp + 20);
+    toast('進食 · 體力+20');
+    renderHut(); renderHUD(); saveQuiet();
+  }
+  function toggleDisguise() {
+    if (!S || !S.hero) return;
+    if (S.hero.gender !== 'f') { toast('僅女子可女扮男裝'); return; }
+    if (disguiseOn()) {
+      S.hero.disguise = null;
+      toast('已卸男裝，恢復女裝');
+      pushStory('你換回女裝。', 'sys');
+    } else {
+      S.hero.disguise = 'male';
+      toast('女扮男裝 · 禁地門路略寬，然有識破之險');
+      pushStory('你換上男子裝束，束髮改顏。', 'sys');
+    }
+    renderHut();
+    updateDisguiseMenu();
+    saveQuiet();
+  }
+  function updateDisguiseMenu() {
+    const b = $('btn-toggle-disguise');
+    if (!b || !S || !S.hero) return;
+    b.hidden = S.hero.gender !== 'f';
+    if (S.hero.gender === 'f') b.textContent = disguiseOn() ? '卸下男裝' : '女扮男裝';
+  }
+  function exploreDeeper(where) {
+    if (!S || battle) { toast(battle ? '戰鬥中' : ''); return; }
+    storyEnsure();
+    if (!S.explore) S.explore = { ruins: 1, crypt: 1, marsh: 1, ruinsBest: 0, cryptBest: 0, marshBest: 0, bosses: {} };
+    S.explore[where] = (S.explore[where] || 1) + 1;
+    toast('深入' + (MODE_LABELS[where] || '') + ' 層' + S.explore[where]);
+    renderCombatPanel(); saveQuiet();
   }
 
   /* ---- Screens ---- */
@@ -2760,6 +3215,8 @@
     document.querySelectorAll('[data-gender]').forEach((b) => b.classList.toggle('active', b.dataset.gender === d.gender));
     document.querySelectorAll('[data-origin]').forEach((b) => b.classList.toggle('active', b.dataset.origin === d.origin));
     document.querySelectorAll('[data-wmode]').forEach((b) => b.classList.toggle('active', b.dataset.wmode === d.worldMode));
+    if ($('disguise-field')) $('disguise-field').hidden = d.gender !== 'f';
+    if ($('create-disguise')) $('create-disguise').checked = !!d.disguise;
     const og = $('origin-grid');
     if (og && window.QianWorld && !og.dataset.ready) {
       og.innerHTML = window.QianWorld.ORIGINS.map((o) =>
@@ -2782,6 +3239,7 @@
     d.gender = d.gender || 'x';
     d.origin = d.origin || 'farm';
     d.worldMode = d.worldMode || 'history';
+    d.disguise = !!(d.gender === 'f' && $('create-disguise') && $('create-disguise').checked);
     window.__createDraft = d;
     return d;
   }
@@ -2821,11 +3279,13 @@
     $('screen-game').hidden = false;
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
     showMode('farm');
+    updateDisguiseMenu();
     const h = S.hero || {};
     const o = window.QianWorld ? window.QianWorld.originById(h.origin) : { name: '' };
     const modeTxt = S.worldMode === 'free' ? '高度自由世界' : '史實軌道';
-    status('秦王政元年。你是' + (h.name || '旅人') + '，出身' + (o.name || '') + '，以' + CAREERS[careerId].name + '立足青阡。（' + modeTxt + '）少年王即位，呂不韋為相邦——天下軌道可被你改寫。');
-    toast('開局 · ' + CAREERS[careerId].name);
+    status('秦王政元年。你是' + (h.name || '旅人') + '，出身' + (o.name || '') + '，以' + CAREERS[careerId].name + '立足青阡。（' + modeTxt + '）' +
+      (h.disguise === 'male' ? '女扮男裝潛行江湖。' : '') + '少年王即位，呂不韋為相邦——天下軌道可被你改寫。');
+    toast('開局 · ' + CAREERS[careerId].name + (h.disguise === 'male' ? ' · 男裝' : ''));
     saveQuiet();
     setTimeout(openActSheet, 350);
   }
@@ -2836,6 +3296,7 @@
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
     refreshNpcs();
     showMode('farm');
+    updateDisguiseMenu();
     toast('繼續 · ' + dayStr());
     pushStory('續寫 · ' + dayStr(), 'sys');
     if (S.worldLine) pushStory('天下大勢：' + S.worldLine, 'sys');
@@ -2886,7 +3347,10 @@
       b.addEventListener('click', () => {
         window.__createDraft = window.__createDraft || {};
         window.__createDraft.gender = b.dataset.gender;
-        document.querySelectorAll('[data-gender]').forEach((x) => x.classList.toggle('active', x === b));
+        document.querySelectorAll('#gender-row [data-gender]').forEach((x) => x.classList.toggle('active', x === b));
+        const df = $('disguise-field');
+        if (df) df.hidden = b.dataset.gender !== 'f';
+        if (b.dataset.gender !== 'f' && $('create-disguise')) $('create-disguise').checked = false;
       });
     });
     document.querySelectorAll('[data-wmode]').forEach((b) => {
@@ -2898,7 +3362,7 @@
     });
     $('btn-settings-title').addEventListener('click', openSettings);
     $('btn-settings-game').addEventListener('click', () => { $('modal-menu').hidden = true; openSettings(); });
-    $('btn-menu').addEventListener('click', () => { $('modal-menu').hidden = false; });
+    $('btn-menu').addEventListener('click', () => { updateDisguiseMenu(); $('modal-menu').hidden = false; });
     $('btn-close-menu').addEventListener('click', () => { $('modal-menu').hidden = true; });
     $('btn-save').addEventListener('click', () => { save(); $('modal-menu').hidden = true; });
     $('btn-title').addEventListener('click', () => { saveQuiet(); $('modal-menu').hidden = true; showTitle(); });
@@ -3085,6 +3549,38 @@
     if ($('btn-close-event')) $('btn-close-event').addEventListener('click', () => {
       // must pick a choice; if forced close, treat as refuse soft
       if (S && S.pendingEvent) toast('請先選擇應對');
+    });
+    if ($('btn-close-gate')) $('btn-close-gate').addEventListener('click', () => { $('modal-gate').hidden = true; });
+    if ($('btn-hut-rest')) $('btn-hut-rest').addEventListener('click', (e) => { tapFeel(e.currentTarget, e); hutRest(false); });
+    if ($('btn-hut-nap')) $('btn-hut-nap').addEventListener('click', (e) => { tapFeel(e.currentTarget, e); hutNap(); });
+    if ($('btn-hut-eat')) $('btn-hut-eat').addEventListener('click', (e) => { tapFeel(e.currentTarget, e); hutEat(); });
+    if ($('btn-hut-disguise')) $('btn-hut-disguise').addEventListener('click', (e) => { tapFeel(e.currentTarget, e); toggleDisguise(); });
+    if ($('btn-toggle-disguise')) $('btn-toggle-disguise').addEventListener('click', () => { $('modal-menu').hidden = true; toggleDisguise(); });
+    [['ruins','btn-ruins-fight','btn-ruins-boss','btn-ruins-deeper','btn-flee-ruins'],
+     ['crypt','btn-crypt-fight','btn-crypt-boss','btn-crypt-deeper','btn-flee-crypt'],
+     ['marsh','btn-marsh-fight','btn-marsh-boss','btn-marsh-deeper','btn-flee-marsh']].forEach((row) => {
+      const where = row[0];
+      if ($(row[1])) $(row[1]).addEventListener('click', () => startBattle(where));
+      if ($(row[2])) $(row[2]).addEventListener('click', () => startBattle(where, true));
+      if ($(row[3])) $(row[3]).addEventListener('click', () => exploreDeeper(where));
+      if ($(row[4])) $(row[4]).addEventListener('click', fleeBattle);
+    });
+    // mine / wild / frontier boss shortcuts if buttons exist later
+    document.querySelectorAll('.event-choices').forEach((box) => {
+      box.addEventListener('click', (e) => {
+        const b = e.target.closest('button');
+        if (b) tapFeel(b, e);
+      }, true);
+    });
+    // gender disguise field
+    document.querySelectorAll('#gender-row [data-gender]').forEach((b) => {
+      b.addEventListener('click', () => {
+        setTimeout(() => {
+          const g = document.querySelector('#gender-row .chip-card.active');
+          const f = $('disguise-field');
+          if (f) f.hidden = !(g && g.dataset.gender === 'f');
+        }, 0);
+      });
     });
   }
 

@@ -2,12 +2,12 @@
 (() => {
   'use strict';
 
-  const MAX = 12;
-  const ASSET_V = '9';
+  const MAX = 14;
+  const ASSET_V = '10';
   const SPRITE_KEYS = {
     farm: ['farmer_m', 'farmer_f', 'farmer_m', 'farmer_f'],
     market: ['merchant', 'merchant', 'farmer_m', 'farmer_f'],
-    clinic: ['doctor', 'doctor', 'farmer_f', 'scholar'],
+    clinic: ['doctor', 'doctor', 'farmer_f', 'farmer_m', 'scholar', 'farmer_f', 'doctor', 'merchant'],
     village: ['scholar', 'farmer_m', 'farmer_f', 'merchant'],
     drill: ['soldier', 'soldier', 'farmer_m'],
     wild: ['soldier', 'soldier', 'farmer_f'],
@@ -20,15 +20,19 @@
     academy: ['scholar', 'scholar', 'farmer_m', 'doctor'],
     frontier: ['soldier', 'soldier', 'farmer_m', 'merchant'],
     xianyang: ['merchant', 'scholar', 'soldier', 'farmer_m'],
-    palace: ['soldier', 'soldier', 'scholar', 'farmer_f'],
-    xiangbang: ['merchant', 'scholar', 'merchant', 'soldier'],
-    taihou: ['farmer_f', 'scholar', 'soldier', 'merchant'],
+    palace: ['soldier', 'soldier', 'scholar', 'farmer_f', 'soldier', 'merchant', 'scholar'],
+    xiangbang: ['merchant', 'scholar', 'merchant', 'soldier', 'farmer_m', 'scholar', 'merchant', 'farmer_f'],
+    taihou: ['farmer_f', 'scholar', 'soldier', 'merchant', 'farmer_f', 'scholar'],
     guowei: ['soldier', 'scholar', 'soldier', 'farmer_m'],
     keguan: ['scholar', 'merchant', 'farmer_f', 'soldier'],
     guanshi: ['merchant', 'merchant', 'farmer_m', 'soldier'],
     hejin: ['farmer_m', 'merchant', 'soldier', 'farmer_f'],
     cimiao: ['scholar', 'doctor', 'farmer_f', 'farmer_m'],
-    ying: ['soldier', 'soldier', 'farmer_m', 'merchant']
+    ying: ['soldier', 'soldier', 'farmer_m', 'merchant', 'soldier', 'farmer_m', 'soldier'],
+    hut: ['farmer_m', 'farmer_f', 'scholar'],
+    ruins: ['soldier', 'farmer_m', 'scholar', 'soldier', 'merchant'],
+    crypt: ['soldier', 'scholar', 'doctor', 'soldier'],
+    marsh: ['farmer_m', 'farmer_f', 'soldier', 'merchant']
   };
   const ROLES = [
     { id: 'hoe', label: '耕', carry: false },
@@ -57,7 +61,9 @@
     ],
     clinic: [
       [[0.18, 0.72], [0.35, 0.70], [0.55, 0.74], [0.72, 0.70], [0.50, 0.78], [0.28, 0.76]],
-      [[0.22, 0.62], [0.45, 0.60], [0.68, 0.64], [0.48, 0.68], [0.30, 0.66]]
+      [[0.22, 0.62], [0.45, 0.60], [0.68, 0.64], [0.48, 0.68], [0.30, 0.66]],
+      [[0.40, 0.55], [0.55, 0.58], [0.65, 0.55], [0.52, 0.62], [0.38, 0.60]],
+      [[0.25, 0.48], [0.38, 0.52], [0.50, 0.48], [0.42, 0.56], [0.28, 0.54]]
     ],
     village: [
       [[0.12, 0.68], [0.28, 0.72], [0.48, 0.68], [0.68, 0.74], [0.85, 0.70], [0.55, 0.66], [0.32, 0.70]],
@@ -113,7 +119,9 @@
     ],
     xiangbang: [
       [[0.14, 0.70], [0.35, 0.68], [0.58, 0.72], [0.80, 0.68], [0.55, 0.76], [0.32, 0.74]],
-      [[0.22, 0.58], [0.48, 0.56], [0.72, 0.60], [0.42, 0.64]]
+      [[0.22, 0.58], [0.48, 0.56], [0.72, 0.60], [0.42, 0.64]],
+      [[0.18, 0.48], [0.40, 0.46], [0.62, 0.50], [0.78, 0.46], [0.50, 0.54], [0.28, 0.52]],
+      [[0.30, 0.78], [0.50, 0.82], [0.70, 0.78], [0.55, 0.70], [0.38, 0.74]]
     ],
     taihou: [
       [[0.16, 0.72], [0.38, 0.70], [0.60, 0.74], [0.78, 0.70], [0.52, 0.78], [0.28, 0.76]],
@@ -142,6 +150,23 @@
     ying: [
       [[0.12, 0.72], [0.35, 0.70], [0.58, 0.74], [0.78, 0.70], [0.50, 0.78], [0.28, 0.76]],
       [[0.20, 0.60], [0.48, 0.58], [0.72, 0.62], [0.40, 0.66]]
+    ],
+    hut: [
+      [[0.30, 0.70], [0.50, 0.68], [0.65, 0.72], [0.45, 0.76]],
+      [[0.35, 0.58], [0.55, 0.56], [0.60, 0.62]]
+    ],
+    ruins: [
+      [[0.12, 0.74], [0.35, 0.70], [0.58, 0.76], [0.80, 0.72], [0.50, 0.80], [0.28, 0.78]],
+      [[0.20, 0.58], [0.48, 0.56], [0.72, 0.60], [0.40, 0.64]],
+      [[0.25, 0.48], [0.50, 0.46], [0.70, 0.50], [0.45, 0.54]]
+    ],
+    crypt: [
+      [[0.18, 0.72], [0.40, 0.70], [0.62, 0.74], [0.78, 0.70], [0.48, 0.78]],
+      [[0.28, 0.58], [0.52, 0.56], [0.70, 0.60], [0.42, 0.64]]
+    ],
+    marsh: [
+      [[0.14, 0.76], [0.38, 0.72], [0.60, 0.78], [0.82, 0.74], [0.50, 0.82], [0.30, 0.80]],
+      [[0.22, 0.62], [0.48, 0.60], [0.72, 0.64], [0.40, 0.68]]
     ]
   };
 
@@ -183,18 +208,23 @@
     n += Math.floor(fame / 18);
     n += Math.floor(gold / 220);
     n += Math.min(4, hands);
-    if (mode === 'market') n = Math.max(2, Math.floor(n * 0.55));
-    if (mode === 'clinic') n = Math.max(2, Math.floor(n * 0.4));
-    if (mode === 'village') n = Math.max(2, Math.floor(n * 0.5));
-    if (mode === 'drill' || mode === 'wild') n = Math.max(2, Math.min(6, Math.floor(n * 0.45)));
-    if (mode === 'garden' || mode === 'swim') n = Math.max(2, Math.floor(n * 0.45));
-    if (mode === 'moon') n = Math.max(3, Math.floor(n * 0.7));
-    if (mode === 'mine') n = Math.max(2, Math.floor(n * 0.4));
-    if (mode === 'post') n = Math.max(2, Math.floor(n * 0.45));
-    if (mode === 'tavern') n = Math.max(3, Math.floor(n * 0.55));
-    if (mode === 'academy') n = Math.max(2, Math.floor(n * 0.4));
-    if (mode === 'frontier') n = Math.max(2, Math.min(7, Math.floor(n * 0.5)));
-    return Math.max(2, Math.min(MAX, n));
+    if (mode === 'market') n = Math.max(5, Math.floor(n * 0.75));
+    if (mode === 'clinic') n = Math.max(6, Math.floor(n * 0.85)); /* 學徒＋病患 */
+    if (mode === 'village') n = Math.max(5, Math.floor(n * 0.7));
+    if (mode === 'drill' || mode === 'wild') n = Math.max(4, Math.min(10, Math.floor(n * 0.65)));
+    if (mode === 'garden' || mode === 'swim') n = Math.max(4, Math.floor(n * 0.6));
+    if (mode === 'moon') n = Math.max(5, Math.floor(n * 0.85));
+    if (mode === 'mine') n = Math.max(4, Math.floor(n * 0.55));
+    if (mode === 'post') n = Math.max(4, Math.floor(n * 0.6));
+    if (mode === 'tavern') n = Math.max(5, Math.floor(n * 0.75));
+    if (mode === 'academy') n = Math.max(4, Math.floor(n * 0.55));
+    if (mode === 'frontier') n = Math.max(4, Math.min(10, Math.floor(n * 0.7)));
+    if (mode === 'xiangbang' || mode === 'xianyang' || mode === 'guanshi') n = Math.max(7, Math.floor(n * 0.95));
+    if (mode === 'palace' || mode === 'taihou' || mode === 'guowei' || mode === 'ying') n = Math.max(6, Math.floor(n * 0.8));
+    if (mode === 'keguan' || mode === 'hejin' || mode === 'cimiao') n = Math.max(5, Math.floor(n * 0.7));
+    if (mode === 'hut') n = Math.max(2, Math.min(4, Math.floor(n * 0.35)));
+    if (mode === 'ruins' || mode === 'crypt' || mode === 'marsh') n = Math.max(5, Math.floor(n * 0.75));
+    return Math.max(4, Math.min(MAX, n));
   }
 
   function spawnOne(mode, i) {

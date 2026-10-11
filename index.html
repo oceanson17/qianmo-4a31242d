@@ -53,6 +53,10 @@
           <button type="button" class="chip-card active" data-gender="x">不顯</button>
         </div>
       </div>
+      <div class="field" id="disguise-field" hidden>
+        <span class="flabel">女扮男裝</span>
+        <label class="field check"><input type="checkbox" id="create-disguise"> 以男子裝束行走江湖（易入禁地，有識破風險）</label>
+      </div>
       <div class="field">
         <span class="flabel">出身</span>
         <div class="origin-grid" id="origin-grid"></div>
@@ -175,6 +179,7 @@
 
     <!-- 隱藏舊 mode-tab 供腳本切換狀態（地圖內按鈕會同步） -->
     <nav class="mode-tabs" role="tablist" aria-label="場景" hidden>
+      <button type="button" class="mode-tab" data-mode="hut">陋室</button>
       <button type="button" class="mode-tab active" data-mode="farm">田莊</button>
       <button type="button" class="mode-tab" data-mode="village">村落</button>
       <button type="button" class="mode-tab" data-mode="market">市井</button>
@@ -199,6 +204,9 @@
       <button type="button" class="mode-tab" data-mode="hejin">河津</button>
       <button type="button" class="mode-tab" data-mode="cimiao">祠廟</button>
       <button type="button" class="mode-tab" data-mode="ying">軍營</button>
+      <button type="button" class="mode-tab" data-mode="ruins">廢墟</button>
+      <button type="button" class="mode-tab" data-mode="crypt">古墓</button>
+      <button type="button" class="mode-tab" data-mode="marsh">澤地</button>
     </nav>
 
     <!-- 地圖羊皮紙 -->
@@ -210,6 +218,7 @@
       </div>
       <div class="sbody map-body">
         <div class="map-pins" id="map-pins">
+          <button type="button" class="pin" data-mode="hut"><span class="ps">陋</span><span class="pn">陋室</span></button>
           <button type="button" class="pin" data-mode="farm"><span class="ps">田</span><span class="pn">田莊</span></button>
           <button type="button" class="pin" data-mode="village"><span class="ps">村</span><span class="pn">村落</span></button>
           <button type="button" class="pin" data-mode="market"><span class="ps">井</span><span class="pn">市井</span></button>
@@ -234,6 +243,9 @@
           <button type="button" class="pin" data-mode="hejin"><span class="ps">津</span><span class="pn">河津</span></button>
           <button type="button" class="pin" data-mode="cimiao"><span class="ps">祠</span><span class="pn">祠廟</span></button>
           <button type="button" class="pin" data-mode="ying"><span class="ps">營</span><span class="pn">軍營</span></button>
+          <button type="button" class="pin" data-mode="ruins"><span class="ps">墟</span><span class="pn">廢墟</span></button>
+          <button type="button" class="pin" data-mode="crypt"><span class="ps">塚</span><span class="pn">古墓</span></button>
+          <button type="button" class="pin" data-mode="marsh"><span class="ps">澤</span><span class="pn">澤地</span></button>
         </div>
         <p class="note" id="map-note">秦王政元年輿圖。點選地點前往（耗體力）。AUTO 跟住當前場景做事。</p>
       </div>
@@ -457,6 +469,73 @@
           <p class="mode-blurb tiny-blurb">邊關怪強、掉落佳 · 需體力充足</p>
         </div>
 
+        
+        <div class="mode-panel" id="hut-panel" hidden>
+          <div class="panel-h-row"><span class="panel-h">陋室</span><span class="tiny" id="hut-stat">體力 —</span></div>
+          <p class="mode-blurb" id="hut-blurb">自家陋室。可免費歇息回體，亦可小憩半日。</p>
+          <div class="controls">
+            <button type="button" class="btn primary choice-tap" id="btn-hut-rest">歇息回體</button>
+            <button type="button" class="btn choice-tap" id="btn-hut-nap">小憩半日</button>
+            <button type="button" class="btn choice-tap" id="btn-hut-eat">進食（糧1）</button>
+            <button type="button" class="btn choice-tap" id="btn-hut-disguise" hidden>更衣扮相</button>
+          </div>
+          <p class="tiny muted" id="hut-hint">體力過低時記得回陋室。</p>
+        </div>
+
+        <div class="mode-panel" id="ruins-panel" hidden>
+          <div class="dungeon-stats">
+            <span id="ruins-floor">廢墟層 1</span>
+            <span id="ruins-best">最深 0</span>
+            <span id="ruins-gear">裝備 0</span>
+            <span id="ruins-power">戰力 —</span>
+          </div>
+          <div id="ruins-enemy" class="enemy-preview"></div>
+          <div class="controls">
+            <button type="button" class="btn auto-btn" id="btn-auto-ruins">AUTO</button>
+            <button type="button" class="btn primary" id="btn-ruins-fight">探索遇怪</button>
+            <button type="button" class="btn" id="btn-ruins-boss">挑戰魁首</button>
+            <button type="button" class="btn" id="btn-flee-ruins" hidden>撤退</button>
+            <button type="button" class="btn" id="btn-ruins-deeper">更深</button>
+          </div>
+          <p class="mode-blurb tiny-blurb">先秦廢墟 · 層深有 Boss · 掉落較佳</p>
+        </div>
+
+        <div class="mode-panel" id="crypt-panel" hidden>
+          <div class="dungeon-stats">
+            <span id="crypt-floor">墓層 1</span>
+            <span id="crypt-best">最深 0</span>
+            <span id="crypt-gear">裝備 0</span>
+            <span id="crypt-power">戰力 —</span>
+          </div>
+          <div id="crypt-enemy" class="enemy-preview"></div>
+          <div class="controls">
+            <button type="button" class="btn auto-btn" id="btn-auto-crypt">AUTO</button>
+            <button type="button" class="btn primary" id="btn-crypt-fight">探墓</button>
+            <button type="button" class="btn" id="btn-crypt-boss">鎮墓獸</button>
+            <button type="button" class="btn" id="btn-flee-crypt" hidden>撤退</button>
+            <button type="button" class="btn" id="btn-crypt-deeper">更深</button>
+          </div>
+          <p class="mode-blurb tiny-blurb">古墓陰冷 · Boss 掉紫金裝機率高</p>
+        </div>
+
+        <div class="mode-panel" id="marsh-panel" hidden>
+          <div class="dungeon-stats">
+            <span id="marsh-floor">澤層 1</span>
+            <span id="marsh-best">最深 0</span>
+            <span id="marsh-gear">裝備 0</span>
+            <span id="marsh-power">戰力 —</span>
+          </div>
+          <div id="marsh-enemy" class="enemy-preview"></div>
+          <div class="controls">
+            <button type="button" class="btn auto-btn" id="btn-auto-marsh">AUTO</button>
+            <button type="button" class="btn primary" id="btn-marsh-fight">涉澤</button>
+            <button type="button" class="btn" id="btn-marsh-boss">澤中巨物</button>
+            <button type="button" class="btn" id="btn-flee-marsh" hidden>撤退</button>
+            <button type="button" class="btn" id="btn-marsh-deeper">更深</button>
+          </div>
+          <p class="mode-blurb tiny-blurb">澤地濕毒 · 掉草藥與裝備</p>
+        </div>
+
         <div class="mode-panel" id="xianyang-panel" hidden></div>
         <div class="mode-panel" id="palace-panel" hidden></div>
         <div class="mode-panel" id="xiangbang-panel" hidden></div>
@@ -481,6 +560,18 @@
     </div>
   </section>
 
+
+  <!-- 門檻 -->
+  <div id="modal-gate" class="modal" hidden>
+    <div class="modal-card parchment">
+      <h2 id="gate-title">門禁</h2>
+      <p class="event-body" id="gate-blurb">此處不可隨意進入。</p>
+      <div class="gate-skills tiny" id="gate-skills"></div>
+      <div class="event-choices" id="gate-choices"></div>
+      <button type="button" class="btn ghost" id="btn-close-gate">作罷</button>
+    </div>
+  </div>
+
   <!-- 對白 -->
   <div id="modal-talk" class="modal" hidden>
     <div class="modal-card wide parchment talk-card">
@@ -488,6 +579,7 @@
         <img id="talk-face" class="talk-face" src="assets/face_scholar.webp?v=5" alt="" width="56" height="56" decoding="async">
         <h2 id="talk-npc-name">鄉鄰</h2>
       </div>
+      <div class="talk-present" id="talk-present" aria-label="在場之人"></div>
       <div class="talk-log" id="talk-log"></div>
       <div class="talk-mode">
         <button type="button" class="seg active" data-say="say">說</button>
@@ -556,7 +648,8 @@
     <div class="modal-card parchment">
       <h2>選單</h2>
       <button type="button" class="btn" id="btn-save">立即存檔</button>
-      <button type="button" class="btn" id="btn-world">天下大勢</button>
+      <button type="button" class="btn" id="btn-toggle-disguise" hidden>女扮男裝</button>
+        <button type="button" class="btn" id="btn-world">天下大勢</button>
       <button type="button" class="btn" id="btn-endings">結局冊</button>
       <button type="button" class="btn" id="btn-settings-game">設定</button>
       <button type="button" class="btn" id="btn-title">回標題</button>
@@ -643,10 +736,11 @@
     </div>
   </div>
 </div>
-<script src="ai.js?v=9"></script>
-<script src="factions.js?v=9"></script>
-<script src="world.js?v=9"></script>
-<script src="workers.js?v=9"></script>
-<script src="game.js?v=9"></script>
+<script src="ai.js?v=10"></script>
+<script src="factions.js?v=10"></script>
+<script src="world.js?v=10"></script>
+<script src="story.js?v=10"></script>
+<script src="workers.js?v=10"></script>
+<script src="game.js?v=10"></script>
 </body>
 </html>

@@ -492,10 +492,30 @@ input,textarea,select{font-family:inherit;}
   flex:1;min-width:0;height:40px;border:1px solid rgba(201,163,90,.8);border-radius:8px;
   background:#fffaf6;padding:0 10px;font-size:15px;
 }
-.quick-replies{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
-.quick-replies button{
-  height:32px;padding:0 10px;border-radius:16px;border:1px solid rgba(201,163,90,.7);
-  background:#fffaf4;font-size:12px;
+.quick-replies{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.quick-replies button,.choice-tap{
+  min-height:44px;padding:8px 12px;border-radius:14px;border:1.5px solid rgba(201,163,90,.75);
+  background:#fffaf4;font-size:13px;letter-spacing:.04em;position:relative;overflow:hidden;
+  transition:transform .08s ease,background .12s,border-color .12s,box-shadow .12s;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.quick-replies button:active,.choice-tap:active,.quick-replies button.pressed,.choice-tap.pressed{
+  transform:scale(.94);background:rgba(184,50,58,.12);border-color:var(--ver);
+  box-shadow:0 0 0 2px rgba(184,50,58,.25) inset;
+}
+.quick-replies button.locked,.choice-tap.locked{
+  opacity:.48;filter:grayscale(.25);
+}
+.quick-replies button.ripple::after,.choice-tap.ripple::after{
+  content:"";position:absolute;inset:0;background:radial-gradient(circle at var(--rx,50%) var(--ry,50%),rgba(201,163,90,.45),transparent 55%);
+  animation:tapRipple .35s ease-out;pointer-events:none;
+}
+@keyframes tapRipple{from{opacity:.9}to{opacity:0}}
+.event-choices .btn,.event-choice{
+  min-height:48px;
+}
+.event-choices .btn:active,.event-choice:active,.event-choices .btn.pressed,.event-choice.pressed{
+  transform:scale(.97);background:rgba(184,50,58,.12);border-color:var(--ver);
 }
 .log-body{max-height:55vh;overflow-y:auto;font-size:14px;line-height:1.75;}
 .log-body .line{padding:6px 2px;border-bottom:1px dashed rgba(201,163,90,.45);}
@@ -669,3 +689,47 @@ input,textarea,select{font-family:inherit;}
 #screen-create.create-kb .create-actions{bottom:0;padding-bottom:12px;}
 @supports (height:100dvh){#screen-create{min-height:100dvh;}}
 
+
+
+/* ---- 相識頭像格／在場切換／門檻 ---- */
+.talk-present{
+  display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  padding:4px 2px 8px;margin-bottom:4px;scrollbar-width:none;
+}
+.talk-present::-webkit-scrollbar{display:none}
+.talk-present .present-chip{
+  flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:2px;
+  min-width:52px;padding:4px;border:0;background:transparent;font-size:10px;color:var(--ink2);
+}
+.talk-present .present-chip img,.talk-present .present-chip .face-q{
+  width:44px;height:44px;border-radius:50%;object-fit:cover;
+  border:2px solid rgba(201,163,90,.65);background:#f3e6d0;
+}
+.talk-present .present-chip.active img,.talk-present .present-chip.active .face-q{
+  border-color:var(--ver);box-shadow:0 0 0 2px rgba(184,50,58,.25);
+}
+.talk-present .present-chip .face-q{
+  display:flex;align-items:center;justify-content:center;font-size:16px;color:#8a7a60;
+}
+.face-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;
+  margin:8px 0 12px;
+}
+.face-grid .face-cell{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:8px 4px;border-radius:12px;border:1px solid rgba(201,163,90,.45);
+  background:rgba(255,255,255,.55);min-height:88px;font-size:11px;color:var(--ink);
+}
+.face-grid .face-cell img,.face-grid .face-cell .face-q{
+  width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid rgba(201,163,90,.7);
+  background:#f3e6d0;
+}
+.face-grid .face-cell .face-q{display:flex;align-items:center;justify-content:center;font-size:18px;color:#8a7a60}
+.face-grid .face-cell.active{border-color:var(--ver);box-shadow:0 0 0 2px rgba(184,50,58,.2)}
+.face-grid .face-cell.unknown{opacity:.7}
+.qin-meet .face-grid{max-height:28vh;overflow:auto;-webkit-overflow-scrolling:touch}
+.gate-skills{margin:6px 0 10px;color:var(--ink2);line-height:1.5}
+.gate-skills b{color:var(--ink)}
+#gate-choices .btn small{display:block;font-size:11px;opacity:.75;margin-top:2px;font-weight:400}
+.btn,.mode-tab,.pin,.seg,.tbtn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn:active,.mode-tab:active,.pin:active,.seg:active,.tbtn:active{transform:scale(.96)}
