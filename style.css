@@ -556,3 +556,19 @@ input,textarea,select{font-family:inherit;}
 }
 .villager-row{display:flex;align-items:center;gap:10px;}
 .villager-meta{flex:1;min-width:0;}
+
+/* 行事面板內：忙碌田莊圖 + 圖上工人 */
+.act-farm-scene{
+  position:relative;margin:0 0 10px;border-radius:12px;overflow:hidden;
+  border:1px solid rgba(201,163,90,.85);aspect-ratio:16/10;
+  background:#2a2118;box-shadow:0 3px 10px rgba(80,40,30,.12);
+}
+.act-farm-img{width:100%;height:100%;object-fit:cover;object-position:center 45%;display:block;}
+.act-worker-layer{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;}
+.act-farm-cap{
+  position:absolute;left:8px;bottom:8px;z-index:3;
+  font-size:11px;letter-spacing:.08em;color:#fff8f0;
+  background:rgba(40,24,16,.55);border:1px solid rgba(201,163,90,.5);
+  border-radius:999px;padding:3px 10px;
+}
+#sheet-act:not([data-mode="farm"]) .act-farm-scene{display:none;}

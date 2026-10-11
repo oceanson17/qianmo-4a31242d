@@ -1509,6 +1509,9 @@
       return;
     }
     window.QianWorkers.drawScene(cv, S, mode);
+    const actCv = $('act-worker-layer');
+    if (actCv && mode === 'farm') window.QianWorkers.drawScene(actCv, S, 'farm');
+    const sheetAct = $('sheet-act'); if (sheetAct) sheetAct.dataset.mode = mode;
     if (force && mode === 'farm') drawFarm();
   }
   function tick(ts) {
