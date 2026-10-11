@@ -3,7 +3,7 @@
   'use strict';
 
   const MAX = 12;
-  const ASSET_V = '6';
+  const ASSET_V = '7';
   const SPRITE_KEYS = {
     farm: ['farmer_m', 'farmer_f', 'farmer_m', 'farmer_f'],
     market: ['merchant', 'merchant', 'farmer_m', 'farmer_f'],

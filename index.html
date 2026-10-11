@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#f6ebe4">
 <title>青阡</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E阡%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=7">
 </head>
 <body x-apple-data-detectors="false">
 <div id="app">
@@ -19,8 +19,8 @@
   <section id="screen-title" class="screen on">
     <div class="title-bg" aria-hidden="true">
       <picture>
-        <source srcset="assets/bg_village.webp?v=6" type="image/webp">
-        <img src="assets/bg_village.jpg?v=6" alt="" decoding="async">
+        <source srcset="assets/bg_village.webp?v=7" type="image/webp">
+        <img src="assets/bg_village.jpg?v=7" alt="" decoding="async">
       </picture>
       <div class="title-bg-shade"></div>
     </div>
@@ -52,14 +52,14 @@
     <!-- 全屏場景 -->
     <div class="vn-stage" id="adventure-scene">
       <picture id="scene-pic">
-        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=6" type="image/webp">
-        <img id="scene-img" src="assets/bg_busy_farm.webp?v=6" alt="場景" class="scene-img" decoding="async">
+        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=7" type="image/webp">
+        <img id="scene-img" src="assets/bg_busy_farm.webp?v=7" alt="場景" class="scene-img" decoding="async">
       </picture>
       <div class="season-tint" id="season-tint" data-season="0"></div>
       <canvas id="worker-layer" class="worker-layer" aria-hidden="true"></canvas>
       <div class="vn-fx" aria-hidden="true"></div>
-      <div class="vn-char" id="vn-char">
-        <img id="portrait-img" src="assets/char_hero.webp?v=6" alt="" decoding="async">
+      <div class="vn-char" id="vn-char" hidden>
+        <img id="portrait-img" alt="" decoding="async">
       </div>
       <div class="toast" id="toast" hidden></div>
       <div class="battle-hud" id="battle-hud" hidden>
@@ -71,7 +71,7 @@
           </div>
           <div class="wave-label" id="wave-label">第 1／3 波</div>
           <div class="hp-block player">
-            <img class="battle-hero" src="assets/char_hero.webp?v=6" alt="" decoding="async">
+            <img class="battle-hero" src="assets/char_hero.webp?v=7" alt="" decoding="async">
             <div class="hp-name">你</div>
             <div class="hp-bar"><div class="hp-fill player" id="player-hp-fill"></div></div>
             <div class="hp-num" id="player-hp-num">0/0</div>
@@ -219,6 +219,7 @@
         </div>
 
         <div class="mode-panel" id="village-panel" hidden>
+          <p class="mode-blurb">村落日令、鄉鄰對白送禮；勢力來訪時於差事／事件中回應。</p>
           <div class="order-board parchment-mini" id="order-board"></div>
           <div class="village-scroll">
             <h3 class="panel-h">鄉鄰</h3>
@@ -233,22 +234,25 @@
         </div>
 
         <div class="mode-panel" id="market-panel" hidden>
-          <p class="mode-blurb">京城坊市 · 買賣製物</p>
+          <p class="mode-blurb">京城坊市 · 買賣製物、僱工壯田</p>
           <div id="craft-list" class="craft-list"></div>
           <div class="controls">
             <button type="button" class="btn auto-btn" id="btn-auto-mkt">AUTO</button>
             <button type="button" class="btn" id="btn-sell-all">全賣材料</button>
-            <button type="button" class="btn" id="btn-buy-seed">買種子包（15銀）</button>
+            <button type="button" class="btn" id="btn-buy-seed">買種子（15銀）</button>
+            <button type="button" class="btn" id="btn-buy-food">買糧包（10銀）</button>
+            <button type="button" class="btn" id="btn-hire">僱長工</button>
           </div>
         </div>
 
         <div class="mode-panel" id="clinic-panel" hidden>
-          <p class="mode-blurb">採藥煉劑 · 醫者更能事半功倍</p>
+          <p class="mode-blurb">藥廬青煙 · 採藥煉劑、自服或義診</p>
           <div id="clinic-list" class="craft-list"></div>
           <div class="controls">
             <button type="button" class="btn auto-btn" id="btn-auto-clinic">AUTO</button>
             <button type="button" class="btn primary" id="btn-gather-herb">採藥</button>
             <button type="button" class="btn" id="btn-heal-self">服藥回血</button>
+            <button type="button" class="btn" id="btn-clinic-charity">義診施藥</button>
           </div>
         </div>
 
@@ -262,7 +266,7 @@
             <button type="button" class="btn primary" id="btn-drill-fight">對練</button>
             <button type="button" class="btn" id="btn-flee-drill" hidden>撤退</button>
           </div>
-          <p class="mode-blurb tiny-blurb">校場掉落較弱 · 適合練手與測試 AUTO</p>
+          <p class="mode-blurb tiny-blurb">校場對練掉落較弱裝備 · 練手與測 AUTO</p>
         </div>
 
         <div class="mode-panel" id="wild-panel" hidden>
@@ -274,30 +278,35 @@
           <div class="controls">
             <button type="button" class="btn auto-btn" id="btn-auto-wild">AUTO</button>
             <button type="button" class="btn primary" id="btn-wild-fight">入山</button>
+            <button type="button" class="btn" id="btn-forage">採集</button>
             <button type="button" class="btn" id="btn-flee-wild" hidden>撤退</button>
             <button type="button" class="btn" id="btn-deeper">更深</button>
           </div>
-          <p class="mode-blurb tiny-blurb">邊崖山野多怪 · 白→金裝備掉落 · AUTO 會自動作戰</p>
+          <p class="mode-blurb tiny-blurb">打怪掉裝備 · 採集得草藥礦石 · AUTO 會自動作戰</p>
         </div>
 
         <div class="mode-panel" id="garden-panel" hidden>
-          <p class="mode-blurb">園林閒步，可略復體力、增益民心。</p>
+          <p class="mode-blurb">園林閒步：復體、偶遇鄉鄰、賞花增民心。</p>
           <p class="tiny" id="leisure-stat-garden">體力 —</p>
           <div class="controls">
             <button type="button" class="btn auto-btn" id="btn-auto-garden">AUTO</button>
             <button type="button" class="btn primary" id="btn-garden" data-leisure="garden">閒步</button>
+            <button type="button" class="btn" id="btn-garden-meet">偶遇</button>
+            <button type="button" class="btn" id="btn-garden-flower">賞花</button>
           </div>
         </div>
         <div class="mode-panel" id="swim-panel" hidden>
-          <p class="mode-blurb">水塘濯洗，可復體力。</p>
+          <p class="mode-blurb">水塘濯洗復體，亦可試釣鮮魚換糧銀。</p>
           <p class="tiny" id="leisure-stat-swim">體力 —</p>
           <div class="controls">
             <button type="button" class="btn auto-btn" id="btn-auto-swim">AUTO</button>
             <button type="button" class="btn primary" id="btn-swim" data-leisure="swim">洗濯</button>
+            <button type="button" class="btn" id="btn-fish">釣魚</button>
           </div>
         </div>
         <div class="mode-panel" id="moon-panel" hidden>
-          <p class="mode-blurb">中秋夜宴／節慶聚飲，花費銀兩換名聲與人情。</p>
+          <p class="mode-blurb">夜宴聚飲：銀夠則辦，增名聲民心；銀不足會明示。</p>
+          <div class="moon-guests" id="moon-guests" aria-label="賓客"></div>
           <p class="tiny" id="leisure-stat-moon">體力 —</p>
           <div class="controls">
             <button type="button" class="btn auto-btn" id="btn-auto-moon">AUTO</button>
@@ -470,9 +479,9 @@
     </div>
   </div>
 </div>
-<script src="ai.js?v=6"></script>
-<script src="factions.js?v=6"></script>
-<script src="workers.js?v=6"></script>
-<script src="game.js?v=6"></script>
+<script src="ai.js?v=7"></script>
+<script src="factions.js?v=7"></script>
+<script src="workers.js?v=7"></script>
+<script src="game.js?v=7"></script>
 </body>
 </html>
