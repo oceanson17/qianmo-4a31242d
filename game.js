@@ -5,7 +5,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const ASSET_V = '?v=12';
+  const ASSET_V = '?v=13';
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
 
@@ -563,6 +563,8 @@
         if (o.npcs[n.id].known == null) o.npcs[n.id].known = false;
         if (!o.npcs[n.id].feel) o.npcs[n.id].feel = { respect: 0, fear: 0, suspicion: 0, gratitude: 0 };
         if (!o.npcs[n.id].log) o.npcs[n.id].log = [];
+        if (!Array.isArray(o.npcs[n.id].mem)) o.npcs[n.id].mem = [];
+        if (o.npcs[n.id].aff == null) o.npcs[n.id].aff = 0;
       });
       if (!CAREERS[o.career]) o.career = 'farmer';
       if (!o.hero) {
@@ -886,7 +888,7 @@
     }
     const cost = TRAVEL_COST[m] || 2;
     if (m !== 'hut' && S.hp <= cost) {
-      toast('體力過低 · 可先回陋室歇息');
+      toast('體力不足（需' + cost + '，現有' + S.hp + '）· 點地圖「陋室」免費歇息');
       if (m !== 'hut') highlightHutHint();
       return;
     }
@@ -2455,7 +2457,7 @@
     if (battle) return;
     if (Date.now() < battleLockUntil) { toast('剛脫戰 · 稍候再戰'); return; }
     if (S.hp < 8 && where !== 'drill') {
-      toast('體力過低 · 先回陋室歇息');
+      toast('體力過低難戰（需≥8）· 先回陋室歇息');
       highlightHutHint();
       return;
     }
@@ -2485,12 +2487,15 @@
       autoTimer: 0
     };
     if (['mine','frontier','ruins','crypt','marsh','wild'].includes(where) && mode !== where) showMode(where);
+    // close overlay sheets so battle HUD / 攻擊 are tappable on Safari
+    try { closeSheets(); } catch (e) {}
     const scene = $('adventure-scene');
     if (scene) scene.classList.add('in-battle');
     const hud = $('battle-hud');
     if (hud) hud.hidden = false;
-    updateBattleHUD((isBoss ? 'Boss戰：' : '遇敵：') + battle.enemy.name);
+    updateBattleHUD((isBoss ? 'Boss戰：' : '遇敵：') + battle.enemy.name + ' · 撳「攻擊」');
     renderCombatPanel();
+    toast((isBoss ? 'Boss：' : '遇敵：') + battle.enemy.name + ' · 撳攻擊／撤退');
   }
   function updateBattleHUD(msg) {
     if (!battle) return;
@@ -2633,6 +2638,9 @@
     $('modal-loot').hidden = false;
   }
   function forceClearBattle(reason) {
+    if (battle && battle.autoTimer) {
+      try { clearTimeout(battle.autoTimer); } catch (e) {}
+    }
     battle = null;
     const hud = $('battle-hud');
     if (hud) hud.hidden = true;
@@ -2641,6 +2649,7 @@
     document.querySelectorAll('[id^="btn-flee-"]').forEach((b) => { b.hidden = true; });
     const bar = $('map-battle-bar');
     if (bar) bar.hidden = true;
+    document.querySelectorAll('.mode-panel .combat-lock').forEach((el) => { el.hidden = true; });
     try { renderCombatPanel(); } catch (e) {}
     try { renderHUD(); } catch (e) {}
     if (reason) { /* optional toast handled by caller */ }
@@ -3928,9 +3937,24 @@
       renderCombatPanel();
     });
 
-    // manual attack while in battle: tap scene
+    // manual attack while in battle: tap scene OR HUD buttons
     $('adventure-scene').addEventListener('click', () => {
       if (battle && !autoOn) playerAttack();
+    });
+    if ($('btn-battle-atk')) $('btn-battle-atk').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (battle && !autoOn) playerAttack();
+    });
+    if ($('btn-battle-potion')) $('btn-battle-potion').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!battle) return;
+      if (bagCount('potion') <= 0) { toast('無回春散'); return; }
+      usePotion();
+      updateBattleHUD('服藥');
+    });
+    if ($('btn-battle-flee')) $('btn-battle-flee').addEventListener('click', (e) => {
+      e.stopPropagation();
+      fleeBattle();
     });
 
     if ($('btn-mine-dig')) $('btn-mine-dig').addEventListener('click', mineDig);

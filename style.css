@@ -265,8 +265,8 @@ input,textarea,select{font-family:inherit;}
 
 /* Toast */
 .toast,#toast{
-  position:fixed;left:50%;top:calc(var(--sat) + 72px);transform:translateX(-50%);
-  z-index:80;max-width:86%;padding:10px 16px;border-radius:18px;
+  position:absolute;left:50%;top:calc(var(--sat) + 72px);transform:translateX(-50%);
+  z-index:999;max-width:86%;padding:10px 16px;border-radius:18px;
   background:rgba(43,35,33,.92);color:#fbf4ee;font-size:14px;line-height:1.5;text-align:center;
   pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.28);
 }
@@ -274,10 +274,11 @@ input,textarea,select{font-family:inherit;}
 
 /* 戰鬥 HUD */
 .battle-hud{
-  position:absolute;left:10px;right:10px;top:calc(var(--sat) + 88px);z-index:4;
-  background:rgba(252,246,241,.9);background-image:var(--tex);
+  position:fixed;left:50%;transform:translateX(-50%);width:min(400px,calc(100% - 20px));
+  top:calc(var(--sat) + 72px);z-index:55;
+  background:rgba(252,246,241,.94);background-image:var(--tex);
   border:1px solid var(--gold);border-radius:12px;padding:10px;
-  box-shadow:0 6px 18px rgba(40,20,20,.25);
+  box-shadow:0 8px 24px rgba(40,20,20,.35);
 }
 .battle-hud[hidden]{display:none!important;}
 .battle-top{display:flex;align-items:flex-start;gap:8px;}
@@ -297,6 +298,9 @@ input,textarea,select{font-family:inherit;}
   margin-top:8px;max-height:72px;overflow-y:auto;font-size:12px;line-height:1.5;color:var(--ink2);
   border-top:1px dashed rgba(201,163,90,.5);padding-top:6px;
 }
+.battle-acts{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.battle-acts .btn{flex:1;min-width:4.8rem;min-height:48px;height:48px;font-size:15px;font-weight:700;}
+
 
 /* Sheets */
 .sheet{
@@ -410,7 +414,7 @@ input,textarea,select{font-family:inherit;}
 
 /* Buttons / parchment / modal */
 .btn{
-  height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--gold);
+  min-height:44px;height:44px;padding:0 14px;border-radius:20px;border:1px solid var(--gold);
   background:#fffaf4;font-size:14px;letter-spacing:.06em;
 }
 .btn.primary,.btn.pri{background:var(--ver);color:#fff6ef;border-color:var(--ver);}
@@ -773,7 +777,7 @@ input,textarea,select{font-family:inherit;}
   justify-content: center;
   flex-wrap: wrap;
 }
-.map-battle-acts .btn{ min-width: 7.2rem; }
+.map-battle-acts .btn{ min-width: 7.2rem; min-height:48px; height:48px; font-size:15px; }
 .pin.pin-art[data-art="farm"] .ps,
 .pin.pin-art[data-art="hut"] .ps{
   background-size: cover;
@@ -784,8 +788,8 @@ input,textarea,select{font-family:inherit;}
   box-shadow: inset 0 0 0 1px #0002, 0 2px 6px #0002;
 }
 .pin.pin-art[data-art="farm"] .ps{
-  background-image: url('assets/bg_busy_farm.webp?v=12');
+  background-image: url('assets/bg_busy_farm.webp?v=13');
 }
 .pin.pin-art[data-art="hut"] .ps{
-  background-image: url('assets/bg_homestead.webp?v=12');
+  background-image: url('assets/bg_homestead.webp?v=13');
 }
