@@ -5,7 +5,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const ASSET_V = '?v=11';
+  const ASSET_V = '?v=12';
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
 
@@ -108,7 +108,7 @@
     hejin:    { webp: 'assets/bg_hejin.webp', jpg: 'assets/bg_hejin.webp', alt: '河津' },
     cimiao:   { webp: 'assets/bg_cimiao.webp', jpg: 'assets/bg_cimiao.webp', alt: '祠廟' },
     ying:     { webp: 'assets/bg_ying.webp', jpg: 'assets/bg_ying.webp', alt: '軍營' },
-    hut:      { webp: 'assets/bg_homestead.webp', jpg: 'assets/bg_homestead.webp', alt: '陋室' },
+    hut:      { webp: 'assets/bg_homestead.webp', jpg: 'assets/bg_homestead.jpg', alt: '陋室' },
     ruins:    { webp: 'assets/bg_dungeon.webp', jpg: 'assets/bg_dungeon.webp', alt: '廢墟' },
     crypt:    { webp: 'assets/bg_cliff.webp', jpg: 'assets/bg_cliff.jpg', alt: '古墓' },
     marsh:    { webp: 'assets/bg_pond.webp', jpg: 'assets/bg_pond.webp', alt: '澤地' },
@@ -313,6 +313,7 @@
   let selectedNpc = 'he';
   let sayMode = 'say';
   let battle = null;
+  let battleLockUntil = 0; // after defeat/flee, block auto re-fight briefly
   let toastTimer = 0;
   let lastTick = 0;
 
@@ -861,7 +862,22 @@
   }
   function travelTo(m) {
     if (!S) return;
-    if (battle) { toast('戰鬥中不可遠行'); return; }
+    if (battle) {
+      // softlock escape: 陋室／過日類目的地可強制脫戰；否則提示地圖「結束戰鬥」
+      const hud = $('battle-hud');
+      const hudHidden = !hud || hud.hidden;
+      if (m === 'hut' || hudHidden || S.hp <= 1) {
+        autoOn = false; syncAutoUi();
+        battleLockUntil = Date.now() + 2500;
+        forceClearBattle();
+        toast('已結束戰鬥');
+      } else {
+        toast('戰鬥中不可遠行 · 可先「結束戰鬥／逃回」');
+        const bar = $('map-battle-bar');
+        if (bar) bar.hidden = false;
+        return;
+      }
+    }
     if (m === mode) { openActSheet(); return; }
     storyEnsure();
     if (window.QianStory && window.QianStory.gateInfo(m) && !window.QianStory.hasAccess(S, m)) {
@@ -1226,6 +1242,11 @@
     if ($('map-date')) $('map-date').textContent = dayStr();
     if (S && S.hp < Math.max(10, (S.maxHp || 80) * 0.3)) highlightHutHint();
     else if ($('map-note')) $('map-note').textContent = '秦王政元年輿圖。點選地點前往（耗體力）。禁地需收買／輕功／麻醉。陋室可回體。';
+    const bar = $('map-battle-bar');
+    if (bar) {
+      bar.hidden = !battle;
+      if (battle && $('map-note')) $('map-note').textContent = '戰鬥殘留中——請先結束戰鬥或逃回陋室，以免卡住。';
+    }
     document.querySelectorAll('#map-pins .pin').forEach((p) => {
       p.classList.toggle('cur', p.dataset.mode === mode);
       let costEl = p.querySelector('.pcost');
@@ -1236,6 +1257,11 @@
         p.appendChild(costEl);
       }
       costEl.textContent = cost ? ('體-' + cost) : '本處';
+      // soft mini preview thumbs for 田／陋
+      if (p.dataset.mode === 'farm' || p.dataset.mode === 'hut') {
+        p.classList.add('pin-art');
+        p.dataset.art = p.dataset.mode === 'farm' ? 'farm' : 'hut';
+      }
     });
     openSheet('sheet-map');
   }
@@ -1486,7 +1512,12 @@
     });
   }
   function nextDay() {
-    if (battle) { toast('戰鬥中不可過日'); return; }
+    if (battle) {
+      autoOn = false; syncAutoUi();
+      battleLockUntil = Date.now() + 2000;
+      forceClearBattle();
+      toast('已結束殘留戰鬥 · 過日');
+    }
     growDay();
     if (window.QianFactions) {
       window.QianFactions.noteAct(S, 'farm');
@@ -2396,7 +2427,10 @@
     if ($('btn-flee-ruins')) $('btn-flee-ruins').hidden = !(inB && battle.where === 'ruins');
     if ($('btn-flee-crypt')) $('btn-flee-crypt').hidden = !(inB && battle.where === 'crypt');
     if ($('btn-flee-marsh')) $('btn-flee-marsh').hidden = !(inB && battle.where === 'marsh');
+    if ($('btn-flee-mine')) $('btn-flee-mine').hidden = !(inB && battle.where === 'mine');
     if ($('battle-hud')) $('battle-hud').hidden = !inB;
+    const bar = $('map-battle-bar');
+    if (bar && !$('sheet-map').hidden) bar.hidden = !inB;
   }
 
   function enemyPool(where) {
@@ -2419,6 +2453,7 @@
   }
   function startBattle(where, asBoss) {
     if (battle) return;
+    if (Date.now() < battleLockUntil) { toast('剛脫戰 · 稍候再戰'); return; }
     if (S.hp < 8 && where !== 'drill') {
       toast('體力過低 · 先回陋室歇息');
       highlightHutHint();
@@ -2450,8 +2485,10 @@
       autoTimer: 0
     };
     if (['mine','frontier','ruins','crypt','marsh','wild'].includes(where) && mode !== where) showMode(where);
-    $('adventure-scene').classList.add('in-battle');
-    $('battle-hud').hidden = false;
+    const scene = $('adventure-scene');
+    if (scene) scene.classList.add('in-battle');
+    const hud = $('battle-hud');
+    if (hud) hud.hidden = false;
     updateBattleHUD((isBoss ? 'Boss戰：' : '遇敵：') + battle.enemy.name);
     renderCombatPanel();
   }
@@ -2487,8 +2524,14 @@
     if (S.hp <= 0) {
       toast('戰敗…快回陋室休養');
       S.hp = Math.max(1, Math.floor(st.maxHp * 0.3));
-      endBattle(false);
+      autoOn = false;
+      syncAutoUi();
+      battleLockUntil = Date.now() + 4000;
+      forceClearBattle();
       highlightHutHint();
+      const bar = $('map-battle-bar');
+      if (bar) bar.hidden = true;
+      saveQuiet();
     }
     renderHUD();
   }
@@ -2589,20 +2632,51 @@
     } else box.innerHTML = '';
     $('modal-loot').hidden = false;
   }
-  function endBattle() {
+  function forceClearBattle(reason) {
     battle = null;
-    $('battle-hud').hidden = true;
-    $('adventure-scene').classList.remove('in-battle');
-    renderCombatPanel();
-    renderHUD();
+    const hud = $('battle-hud');
+    if (hud) hud.hidden = true;
+    const scene = $('adventure-scene');
+    if (scene) scene.classList.remove('in-battle');
+    document.querySelectorAll('[id^="btn-flee-"]').forEach((b) => { b.hidden = true; });
+    const bar = $('map-battle-bar');
+    if (bar) bar.hidden = true;
+    try { renderCombatPanel(); } catch (e) {}
+    try { renderHUD(); } catch (e) {}
+    if (reason) { /* optional toast handled by caller */ }
+  }
+  function endBattle(won) {
+    forceClearBattle();
     saveQuiet();
+    return !!won;
   }
   function fleeBattle() {
-    if (!battle) return;
-    toast('撤退');
-    endBattle();
+    if (!battle) { forceClearBattle(); return; }
+    toast('撤退 · 逃離戰陣');
+    autoOn = false;
+    syncAutoUi();
+    battleLockUntil = Date.now() + 2500;
+    endBattle(false);
+  }
+  function escapeBattleToHut() {
+    autoOn = false;
+    syncAutoUi();
+    battleLockUntil = Date.now() + 2500;
+    forceClearBattle();
+    toast('逃回陋室 · 戰鬥已結束');
+    finishTravel('hut');
+    saveQuiet();
+  }
+  function syncAutoUi() {
+    if ($('auto-label')) {
+      $('auto-label').textContent = autoOn ? 'AUTO 開' : 'AUTO 關';
+      $('auto-label').className = autoOn ? 'auto-on' : 'auto-off';
+    }
+    document.querySelectorAll('.auto-btn').forEach((b) => b.classList.toggle('on', autoOn));
+    if ($('q-auto')) $('q-auto').classList.toggle('on', autoOn);
   }
   function autoFightStep() {
+    if (Date.now() < battleLockUntil) return;
     if (!battle) {
       if (mode === 'drill' || mode === 'wild' || mode === 'frontier' || mode === 'ruins' || mode === 'crypt' || mode === 'marsh') startBattle(mode);
       else if (mode === 'mine') startBattle('mine');
@@ -3489,7 +3563,13 @@
     }
   }
   function hutRest(full) {
-    if (!S || battle) { toast(battle ? '戰鬥中' : ''); return; }
+    if (!S) return;
+    if (battle) {
+      autoOn = false; syncAutoUi();
+      battleLockUntil = Date.now() + 2500;
+      forceClearBattle();
+      toast('回陋室 · 戰鬥已解除');
+    }
     const st = stats();
     S.hp = st.maxHp;
     S.flags.hut_rest = 1;
@@ -3510,7 +3590,12 @@
     renderHut(); renderHUD(); saveQuiet();
   }
   function hutNap() {
-    if (!S || battle) return;
+    if (!S) return;
+    if (battle) {
+      autoOn = false; syncAutoUi();
+      battleLockUntil = Date.now() + 2500;
+      forceClearBattle();
+    }
     hutRest(true);
     // skip half day: call nextDay but refund food if nextDay ate
     const foodBefore = S.food;
@@ -3831,6 +3916,11 @@
     $('btn-wild-fight').addEventListener('click', () => startBattle('wild'));
     $('btn-flee-drill').addEventListener('click', fleeBattle);
     $('btn-flee-wild').addEventListener('click', fleeBattle);
+    if ($('btn-flee-mine')) $('btn-flee-mine').addEventListener('click', fleeBattle);
+    if ($('btn-map-end-battle')) $('btn-map-end-battle').addEventListener('click', () => {
+      autoOn = false; syncAutoUi(); battleLockUntil = Date.now() + 2500; forceClearBattle(); toast('已結束戰鬥'); openMapSheet();
+    });
+    if ($('btn-map-flee-hut')) $('btn-map-flee-hut').addEventListener('click', escapeBattleToHut);
     $('btn-deeper').addEventListener('click', () => {
       if (battle) { toast('戰鬥中'); return; }
       S.wildFloor++;

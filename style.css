@@ -749,3 +749,43 @@ input,textarea,select{font-family:inherit;}
 .pin[data-mode="forge"] .ps{background:linear-gradient(145deg,#a06040,#6a3020);}
 .pin[data-mode="canal"] .ps,.pin[data-mode="bridge"] .ps{background:linear-gradient(145deg,#4a7a9a,#2a4a6a);}
 .sheet .sbody{padding-bottom:calc(12px + var(--sab));}
+
+
+/* ---- 地圖戰鬥脫困 + 田／陋軟萌預覽 ---- */
+.map-battle-bar{
+  margin: .6rem .4rem .2rem;
+  padding: .65rem .75rem;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fff4e8, #f7e2c8);
+  border: 1px solid #c9895a55;
+  box-shadow: 0 4px 14px #8b451320;
+}
+.map-battle-warn{
+  margin: 0 0 .45rem;
+  font-size: .86rem;
+  color: #8b3a1a;
+  font-weight: 600;
+  text-align: center;
+}
+.map-battle-acts{
+  display: flex;
+  gap: .5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.map-battle-acts .btn{ min-width: 7.2rem; }
+.pin.pin-art[data-art="farm"] .ps,
+.pin.pin-art[data-art="hut"] .ps{
+  background-size: cover;
+  background-position: center;
+  color: transparent;
+  text-shadow: none;
+  border: 2px solid #fff8;
+  box-shadow: inset 0 0 0 1px #0002, 0 2px 6px #0002;
+}
+.pin.pin-art[data-art="farm"] .ps{
+  background-image: url('assets/bg_busy_farm.webp?v=12');
+}
+.pin.pin-art[data-art="hut"] .ps{
+  background-image: url('assets/bg_homestead.webp?v=12');
+}
