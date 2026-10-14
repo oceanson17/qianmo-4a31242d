@@ -5,7 +5,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const ASSET_V = '?v=13';
+  const ASSET_V = '?v=14';
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
 
@@ -671,14 +671,17 @@
     if (!S) return;
     const st = stats();
     const season = SEASONS[seasonIdx()];
-    $('hud-day').textContent = dayStr();
+    const per = PERIODS[S.day % 4];
+    // 頂欄精簡：印已有年號，日期只顯示「季 · 第N日 · 時」
+    const dIn = ((S.day - 1) % 28) + 1;
+    $('hud-day').textContent = season + ' · 第' + dIn + '日 · ' + per;
     if ($('hDaySeal')) {
       if (window.QianWorld) {
         const y = window.QianWorld.yearNum(S.day);
         $('hDaySeal').textContent = y <= 1 ? '政元' : ('政' + y);
       } else $('hDaySeal').textContent = season;
     }
-    if ($('hPer')) $('hPer').textContent = PERIODS[S.day % 4];
+    if ($('hPer')) $('hPer').textContent = per;
     $('hud-gold').textContent = String(S.gold);
     $('hud-food').textContent = String(S.food);
     $('hud-combat').textContent = st.hp + '/' + st.maxHp + ' ·' + st.atk;
@@ -697,7 +700,10 @@
     const hpPct = Math.max(4, Math.min(100, (st.hp / Math.max(1, st.maxHp)) * 100));
     const atkPct = Math.max(8, Math.min(100, (st.atk / 30) * 100));
     if ($('m-food')) $('m-food').style.width = foodPct + '%';
-    if ($('m-hp')) $('m-hp').style.width = hpPct + '%';
+    if ($('m-hp')) {
+      $('m-hp').style.width = hpPct + '%';
+      $('m-hp').style.height = hpPct + '%';
+    }
     if ($('m-atk')) $('m-atk').style.width = atkPct + '%';
     const mtHp = $('m-hp') && $('m-hp').closest('.mt');
     if (mtHp) mtHp.classList.toggle('low', hpPct < 35);
@@ -826,6 +832,7 @@
       scene.classList.toggle('in-battle', !!(battle && (m === 'drill' || m === 'wild' || m === 'mine' || m === 'frontier')));
     }
     setSceneArt(m);
+    if ($('place-chip-label')) $('place-chip-label').textContent = MODE_LABELS[m] || '';
     updateActScene(m);
     updatePortraitForMode(m);
     if ($('status-text') && MODE_BLURB[m]) $('status-text').textContent = MODE_BLURB[m];
