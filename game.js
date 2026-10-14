@@ -5,7 +5,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '17';
+  const GAME_VERSION = '18';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -2877,7 +2877,7 @@
         hp: Math.round((gear.hp || 0) * r.mult),
         wu: gear.wu, hu: gear.hu, shen: gear.shen, zhi: gear.zhi, bian: gear.bian, yun: gear.yun
       }) : ('ATK+' + Math.round(gear.atk * r.mult) + ' DEF+' + Math.round(gear.def * r.mult) + ' HP+' + Math.round(gear.hp * r.mult));
-      box.innerHTML = '<div class="gear-card ' + r.className + '"><img class="eq-ico" src="' + ico + ASSET_V + " alt=""><div class="eq-txt"><b>【' + r.name + '】' + gear.name + '</b><span>' + (SLOT_LABEL[gear.slot] || '') + ' · ' + statsTxt + '</span></div></div>';
+      box.innerHTML = '<div class="gear-card ' + r.className + '"><img class="eq-ico" src="' + ico + ASSET_V + '" alt=""><div class="eq-txt"><b>【' + r.name + '】' + gear.name + '</b><span>' + (SLOT_LABEL[gear.slot] || '') + ' · ' + statsTxt + '</span></div></div>';
     } else box.innerHTML = '';
     $('modal-loot').hidden = false;
   }
@@ -2962,7 +2962,7 @@
       const id = S.equipped[slot];
       const g = id && S.gear.find((x) => x.id === id);
       if (!g) {
-        return '<div class="equip-slot"><img class="eq-ico" src="assets/equip/' + (slot==='weapon'?'jian':slot==='armor'?'jia':'pei') + '.webp' + ASSET_V + " alt="" style="opacity:.35"><div class="eq-meta"><strong>' + (SLOT_LABEL[slot] || slot) + '</strong><small>空</small></div></div>';
+        return '<div class="equip-slot"><img class="eq-ico" src="assets/equip/' + (slot==='weapon'?'jian':slot==='armor'?'jia':'pei') + '.webp' + ASSET_V + '" alt="" style="opacity:.35"><div class="eq-meta"><strong>' + (SLOT_LABEL[slot] || slot) + '</strong><small>空</small></div></div>';
       }
       const r = RARITIES[g.rarity] || RARITIES.white;
       const statsTxt = window.QianEquip ? window.QianEquip.formatStats(g) : ('攻+' + g.atk + ' 防+' + g.def);
@@ -3003,7 +3003,7 @@
         const rKey = window.QianEquip.normalizeRarity(def.rarity);
         const r = RARITIES[rKey] || RARITIES.white;
         return '<div class="gear-card ' + r.className + '" style="opacity:' + (have ? '1' : '.45') + ';cursor:default">' +
-          '<img class="eq-ico" src="' + window.QianEquip.iconPath(def.icon) + ASSET_V + " alt="">' +
+          '<img class="eq-ico" src="' + window.QianEquip.iconPath(def.icon) + ASSET_V + '" alt="">' +
           '<div class="eq-txt"><b>【' + r.name + '】' + def.name + '</b><span>' + (have ? '已入庫 · ' : '未得 · ') + (window.QianEquip.SLOT_LABEL[def.slot] || def.slot) + '</span></div></div>';
       }).join('') + '</div>';
     } else {

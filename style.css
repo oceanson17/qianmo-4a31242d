@@ -38,7 +38,7 @@ input,textarea,select{font-family:inherit;}
 
 /* ---------- 標題 ---------- */
 #screen-title{background:var(--paper);overflow:hidden;}
-.title-bg{position:absolute;inset:0;}
+.title-bg{position:absolute;inset:0;pointer-events:none;}
 .title-bg picture,.title-bg img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 40%;}
 .title-bg-shade{
   position:absolute;inset:0;pointer-events:none;
@@ -867,10 +867,10 @@ input,textarea,select{font-family:inherit;}
   box-shadow: inset 0 0 0 1px #0002, 0 2px 6px #0002;
 }
 .pin.pin-art[data-art="farm"] .ps{
-  background-image: url('assets/bg_busy_farm.webp?v=17');
+  background-image: url('assets/bg_busy_farm.webp?v=18');
 }
 .pin.pin-art[data-art="hut"] .ps{
-  background-image: url('assets/bg_homestead.webp?v=17');
+  background-image: url('assets/bg_homestead.webp?v=18');
 }
 
 
