@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#f6ebe4">
 <title>青阡</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E阡%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=16">
+<link rel="stylesheet" href="style.css?v=17">
 </head>
 <body x-apple-data-detectors="false">
 <div id="app">
@@ -19,8 +19,8 @@
   <section id="screen-title" class="screen on">
     <div class="title-bg" aria-hidden="true">
       <picture>
-        <source srcset="assets/bg_village.webp?v=16" type="image/webp">
-        <img src="assets/bg_village.jpg?v=16" alt="" decoding="async">
+        <source srcset="assets/bg_village.webp?v=17" type="image/webp">
+        <img src="assets/bg_village.jpg?v=17" alt="" decoding="async">
       </picture>
       <div class="title-bg-shade"></div>
     </div>
@@ -34,6 +34,7 @@
         <button type="button" class="tbtn" id="btn-settings-title"><b>設定</b><small>AI·文字</small></button>
       </div>
       <p class="tfoot">國風文字介面 · 秦廷場景 · 史實／自由軌道 · AUTO·AI</p>
+      <p class="tver" id="game-version">版本 v17</p>
     </div>
   </section>
 
@@ -93,8 +94,8 @@
     <!-- 全屏場景 -->
     <div class="vn-stage" id="adventure-scene">
       <picture id="scene-pic">
-        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=16" type="image/webp">
-        <img id="scene-img" src="assets/bg_busy_farm.webp?v=16" alt="場景" class="scene-img" decoding="async">
+        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=17" type="image/webp">
+        <img id="scene-img" src="assets/bg_busy_farm.webp?v=17" alt="場景" class="scene-img" decoding="async">
       </picture>
       <div class="season-tint" id="season-tint" data-season="0"></div>
       <canvas id="worker-layer" class="worker-layer" aria-hidden="true"></canvas>
@@ -129,6 +130,7 @@
         <div class="mt tmp mt-combat" title="戰況／勢力"><em id="hud-faction">獨</em><span id="hud-combat">HP 80</span></div>
         <div class="mt mt-attrs" title="主角屬性" id="hud-attrs-wrap"><em>屬</em><span id="hud-attrs">武0 護0 身0 智0 辯0 運0</span></div>
       </div>
+      <div id="hud-ver" class="hud-ver" title="版本">v17</div>
     </header>
     <div id="place-chip" aria-live="polite"><span id="place-chip-label">田莊</span></div>
 
@@ -310,7 +312,7 @@
       </div>
       <div class="sbody act-body">
         <div class="act-scene" id="act-scene">
-          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=16" alt="場景" class="act-scene-img" decoding="async">
+          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=17" alt="場景" class="act-scene-img" decoding="async">
           <canvas id="act-worker-layer" class="act-worker-layer" aria-hidden="true"></canvas>
           <div class="act-scene-cap" id="act-scene-cap">場景人物走動</div>
         </div>
@@ -758,6 +760,7 @@
   <div id="modal-menu" class="modal" hidden>
     <div class="modal-card parchment">
       <h2>選單</h2>
+      <p class="ver-line" id="menu-version">版本 v17</p>
       <button type="button" class="btn" id="btn-save">立即存檔</button>
       <button type="button" class="btn" id="btn-toggle-disguise" hidden>女扮男裝</button>
         <button type="button" class="btn" id="btn-world">天下大勢</button>
@@ -833,6 +836,7 @@
       <button type="button" class="btn" id="btn-test-ai">試連線</button>
       <p class="tiny" id="ai-test-result"></p>
       <p class="tiny">Key 只存本機 localStorage，不上傳。無 Key 時對白走離線劇本。</p>
+      <p class="ver-line" id="set-version">版本 v17</p>
       <button type="button" class="btn primary" id="btn-save-settings">儲存</button>
       <button type="button" class="btn ghost" id="btn-close-settings">關閉</button>
     </div>
@@ -858,7 +862,7 @@
       </div>
       <div class="wave-label" id="wave-label">第 1／3 波</div>
       <div class="hp-block player">
-        <img class="battle-hero" src="assets/char_hero.webp?v=16" alt="" decoding="async">
+        <img class="battle-hero" src="assets/char_hero.webp?v=17" alt="" decoding="async">
         <div class="hp-name">你</div>
         <div class="hp-bar"><div class="hp-fill player" id="player-hp-fill"></div></div>
         <div class="hp-num" id="player-hp-num">0/0</div>
@@ -873,14 +877,14 @@
   </div>
 
 </div>
-<script src="equip.js?v=16"></script>
-<script src="plots.js?v=16"></script>
-<script src="ai.js?v=16"></script>
-<script src="factions.js?v=16"></script>
-<script src="world.js?v=16"></script>
-<script src="story.js?v=16"></script>
-<script src="workers.js?v=16"></script>
-<script src="npc_ai.js?v=16"></script>
-<script src="game.js?v=16"></script>
+<script src="equip.js?v=17"></script>
+<script src="plots.js?v=17"></script>
+<script src="ai.js?v=17"></script>
+<script src="factions.js?v=17"></script>
+<script src="world.js?v=17"></script>
+<script src="story.js?v=17"></script>
+<script src="workers.js?v=17"></script>
+<script src="npc_ai.js?v=17"></script>
+<script src="game.js?v=17"></script>
 </body>
 </html>

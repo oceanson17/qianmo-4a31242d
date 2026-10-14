@@ -79,6 +79,22 @@ input,textarea,select{font-family:inherit;}
 .tbtn:active{transform:scale(.97)}.tbtn:active b{color:var(--ver);}
 .tfoot{margin:0;font-size:11px;color:var(--ink2);letter-spacing:.08em;opacity:.85;line-height:1.5;max-width:92%;}
 
+.tver{
+  margin:8px 0 0;font-size:12px;letter-spacing:.18em;color:var(--ver);
+  opacity:.9;font-weight:600;
+}
+.ver-line{
+  margin:0 0 10px;text-align:center;font-size:12px;letter-spacing:.14em;
+  color:var(--ink2);opacity:.9;
+}
+.hud-ver{
+  flex:0 0 auto;align-self:center;
+  font-size:10px;letter-spacing:.06em;color:var(--ink2);
+  background:rgba(251,244,238,.78);border:1px solid rgba(201,163,90,.55);
+  border-radius:999px;padding:2px 7px;pointer-events:none;
+  box-shadow:0 1px 4px rgba(60,20,30,.08);white-space:nowrap;
+}
+
 /* ---------- 擇業 ---------- */
 #screen-career{background:var(--paper);background-image:var(--tex),var(--fiber);overflow:auto;-webkit-overflow-scrolling:touch;}
 .career-wrap{margin:calc(var(--sat)+16px) 14px calc(var(--sab)+16px);padding:18px 14px;border-radius:14px;}
@@ -851,10 +867,10 @@ input,textarea,select{font-family:inherit;}
   box-shadow: inset 0 0 0 1px #0002, 0 2px 6px #0002;
 }
 .pin.pin-art[data-art="farm"] .ps{
-  background-image: url('assets/bg_busy_farm.webp?v=14');
+  background-image: url('assets/bg_busy_farm.webp?v=17');
 }
 .pin.pin-art[data-art="hut"] .ps{
-  background-image: url('assets/bg_homestead.webp?v=14');
+  background-image: url('assets/bg_homestead.webp?v=17');
 }
 
 
