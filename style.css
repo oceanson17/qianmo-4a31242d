@@ -1,4 +1,4 @@
-/* v20 shanhe title splash */
+/* v21 user poster title splash */
 /* ===== 墨夢莊周：國風文字 RPG 殼（宣紙・金線・朱砂） ===== */
 :root{
   --paper:#fbf4ee;--paper2:#f4e7dd;--paper3:#ead8c8;
@@ -976,8 +976,8 @@ input,textarea,select{font-family:inherit;}
 .bag-attrs-hint,.tiny.muted{opacity:.75;font-size:12px;margin:.2rem 0;}
 
 
-/* —— 標題頁山河氣勢主視覺 v20 · 墨夢莊周 —— */
-#screen-title .title-bg img{object-position:center 42%;}
+/* —— 標題頁用戶主視覺 v21 · 墨夢莊周 —— */
+#screen-title .title-bg img{object-position:42% 36%;}
 #screen-title .title-bg-shade{
   background:
     linear-gradient(90deg, rgba(8,5,3,.78) 0%, rgba(8,5,3,.48) 38%, rgba(8,5,3,.10) 62%, rgba(8,5,3,.22) 100%),
