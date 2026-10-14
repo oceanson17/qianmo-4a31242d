@@ -367,9 +367,11 @@
 
   // 場景擴充預留（梯田／鐵盟／觀星）
   const SCENE_HOOKS = {
-    terraces: { id: 'terraces', name: '梯田', bg: 'assets/bg_terraces.webp', status: 'pending' },
-    iron_league: { id: 'iron_league', name: '鐵盟', bg: 'assets/bg_forge.webp', status: 'hook' },
-    stargaze: { id: 'stargaze', name: '觀星隱廬', bg: 'assets/bg_stargaze.webp', status: 'pending' }
+    terraces: { id: 'terraces', name: '層田', bg: 'assets/bg_terraces.webp', status: 'live' },
+    iron_league: { id: 'iron_league', name: '鐵盟坊', bg: 'assets/bg_iron_league.webp', status: 'live' },
+    stargaze: { id: 'stargaze', name: '觀星隱廬', bg: 'assets/bg_stargaze.webp', status: 'live' },
+    gorge: { id: 'gorge', name: '雲縫谷', bg: 'assets/bg_gorge.webp', status: 'live' },
+    stone_forest: { id: 'stone_forest', name: '石林', bg: 'assets/bg_stone_forest.webp', status: 'live' }
   };
 
   global.QianEquip = {

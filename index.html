@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#f6ebe4">
 <title>青阡</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E阡%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=15">
+<link rel="stylesheet" href="style.css?v=16">
 </head>
 <body x-apple-data-detectors="false">
 <div id="app">
@@ -19,8 +19,8 @@
   <section id="screen-title" class="screen on">
     <div class="title-bg" aria-hidden="true">
       <picture>
-        <source srcset="assets/bg_village.webp?v=15" type="image/webp">
-        <img src="assets/bg_village.jpg?v=15" alt="" decoding="async">
+        <source srcset="assets/bg_village.webp?v=16" type="image/webp">
+        <img src="assets/bg_village.jpg?v=16" alt="" decoding="async">
       </picture>
       <div class="title-bg-shade"></div>
     </div>
@@ -93,8 +93,8 @@
     <!-- 全屏場景 -->
     <div class="vn-stage" id="adventure-scene">
       <picture id="scene-pic">
-        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=15" type="image/webp">
-        <img id="scene-img" src="assets/bg_busy_farm.webp?v=15" alt="場景" class="scene-img" decoding="async">
+        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=16" type="image/webp">
+        <img id="scene-img" src="assets/bg_busy_farm.webp?v=16" alt="場景" class="scene-img" decoding="async">
       </picture>
       <div class="season-tint" id="season-tint" data-season="0"></div>
       <canvas id="worker-layer" class="worker-layer" aria-hidden="true"></canvas>
@@ -127,6 +127,7 @@
         <div class="mt mt-fame" title="名"><em>名</em><i><b id="m-fame" style="width:10%"></b></i></div>
         <div class="mt mt-people" title="民"><em>民</em><i><b id="m-people" style="width:10%"></b></i></div>
         <div class="mt tmp mt-combat" title="戰況／勢力"><em id="hud-faction">獨</em><span id="hud-combat">HP 80</span></div>
+        <div class="mt mt-attrs" title="主角屬性" id="hud-attrs-wrap"><em>屬</em><span id="hud-attrs">武0 護0 身0 智0 辯0 運0</span></div>
       </div>
     </header>
     <div id="place-chip" aria-live="polite"><span id="place-chip-label">田莊</span></div>
@@ -203,6 +204,24 @@
       <button type="button" class="mode-tab" data-mode="persimmon">霜柿山居</button>
       <button type="button" class="mode-tab" data-mode="canal">漕幫碼頭</button>
       <button type="button" class="mode-tab" data-mode="bridge">長橋</button>
+      <button type="button" class="mode-tab" data-mode="terraces">層田</button>
+      <button type="button" class="mode-tab" data-mode="iron_league">鐵盟坊</button>
+      <button type="button" class="mode-tab" data-mode="stargaze">觀星隱廬</button>
+      <button type="button" class="mode-tab" data-mode="poplar">胡楊洲</button>
+      <button type="button" class="mode-tab" data-mode="dragon_bridge">雙龍橋</button>
+      <button type="button" class="mode-tab" data-mode="canal_hq">漕幫總壇</button>
+      <button type="button" class="mode-tab" data-mode="tea_master">品茗室</button>
+      <button type="button" class="mode-tab" data-mode="sword_wash">浣劍居</button>
+      <button type="button" class="mode-tab" data-mode="gorge">雲縫谷</button>
+      <button type="button" class="mode-tab" data-mode="paper">紙坊</button>
+      <button type="button" class="mode-tab" data-mode="rain_hut">聽雨廬</button>
+      <button type="button" class="mode-tab" data-mode="ink_pool">墨池齋</button>
+      <button type="button" class="mode-tab" data-mode="dye">染坊</button>
+      <button type="button" class="mode-tab" data-mode="rainy_tea">雨亭茶寮</button>
+      <button type="button" class="mode-tab" data-mode="brewery">酒坊</button>
+      <button type="button" class="mode-tab" data-mode="pharmacy">藥鋪</button>
+      <button type="button" class="mode-tab" data-mode="stone_forest">石林</button>
+      <button type="button" class="mode-tab" data-mode="garden_water">水榭園</button>
     </nav>
 
     <!-- 地圖羊皮紙 -->
@@ -253,6 +272,24 @@
           <button type="button" class="pin" data-mode="persimmon"><span class="ps">柿</span><span class="pn">霜柿山居</span></button>
           <button type="button" class="pin" data-mode="canal"><span class="ps">漕</span><span class="pn">漕幫碼頭</span></button>
           <button type="button" class="pin" data-mode="bridge"><span class="ps">橋</span><span class="pn">長橋</span></button>
+          <button type="button" class="pin" data-mode="terraces"><span class="ps">層</span><span class="pn">層田</span></button>
+          <button type="button" class="pin" data-mode="iron_league"><span class="ps">盟</span><span class="pn">鐵盟坊</span></button>
+          <button type="button" class="pin" data-mode="stargaze"><span class="ps">星</span><span class="pn">觀星隱廬</span></button>
+          <button type="button" class="pin" data-mode="poplar"><span class="ps">楊</span><span class="pn">胡楊洲</span></button>
+          <button type="button" class="pin" data-mode="dragon_bridge"><span class="ps">龍</span><span class="pn">雙龍橋</span></button>
+          <button type="button" class="pin" data-mode="canal_hq"><span class="ps">壇</span><span class="pn">漕幫總壇</span></button>
+          <button type="button" class="pin" data-mode="tea_master"><span class="ps">茗</span><span class="pn">品茗室</span></button>
+          <button type="button" class="pin" data-mode="sword_wash"><span class="ps">浣</span><span class="pn">浣劍居</span></button>
+          <button type="button" class="pin" data-mode="gorge"><span class="ps">縫</span><span class="pn">雲縫谷·副本</span></button>
+          <button type="button" class="pin" data-mode="paper"><span class="ps">紙</span><span class="pn">紙坊</span></button>
+          <button type="button" class="pin" data-mode="rain_hut"><span class="ps">雨</span><span class="pn">聽雨廬</span></button>
+          <button type="button" class="pin" data-mode="ink_pool"><span class="ps">墨</span><span class="pn">墨池齋</span></button>
+          <button type="button" class="pin" data-mode="dye"><span class="ps">染</span><span class="pn">染坊</span></button>
+          <button type="button" class="pin" data-mode="rainy_tea"><span class="ps">亭</span><span class="pn">雨亭茶寮</span></button>
+          <button type="button" class="pin" data-mode="brewery"><span class="ps">釀</span><span class="pn">酒坊</span></button>
+          <button type="button" class="pin" data-mode="pharmacy"><span class="ps">鋪</span><span class="pn">藥鋪</span></button>
+          <button type="button" class="pin" data-mode="stone_forest"><span class="ps">石</span><span class="pn">石林·副本</span></button>
+          <button type="button" class="pin" data-mode="garden_water"><span class="ps">榭</span><span class="pn">水榭園</span></button>
         </div>
         <div id="map-battle-bar" class="map-battle-bar" hidden>
           <p class="map-battle-warn">⚠ 戰鬥未結束——會卡住遠行</p>
@@ -273,7 +310,7 @@
       </div>
       <div class="sbody act-body">
         <div class="act-scene" id="act-scene">
-          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=15" alt="場景" class="act-scene-img" decoding="async">
+          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=16" alt="場景" class="act-scene-img" decoding="async">
           <canvas id="act-worker-layer" class="act-worker-layer" aria-hidden="true"></canvas>
           <div class="act-scene-cap" id="act-scene-cap">場景人物走動</div>
         </div>
@@ -576,6 +613,40 @@
         <div class="mode-panel" id="canal-panel" hidden></div>
         <div class="mode-panel" id="bridge-panel" hidden></div>
 
+        <div class="mode-panel" id="gorge-panel" hidden>
+          <div class="dungeon-stats">
+            <span id="gorge-floor">谷層 1</span>
+            <span id="gorge-best">最深 0</span>
+            <span id="gorge-gear">裝備 0</span>
+            <span id="gorge-power">戰力 —</span>
+          </div>
+          <div id="gorge-enemy" class="enemy-preview"></div>
+          <div class="controls">
+            <button type="button" class="btn primary" id="btn-gorge-fight">入谷</button>
+            <button type="button" class="btn" id="btn-gorge-boss">縫底Boss</button>
+            <button type="button" class="btn" id="btn-flee-gorge" hidden>撤退</button>
+            <button type="button" class="btn" id="btn-gorge-deeper">更深</button>
+          </div>
+          <p class="mode-blurb tiny-blurb">雲縫谷副本 · 掉落秦風裝備</p>
+        </div>
+
+        <div class="mode-panel" id="stone_forest-panel" hidden>
+          <div class="dungeon-stats">
+            <span id="stone_forest-floor">石林層 1</span>
+            <span id="stone_forest-best">最深 0</span>
+            <span id="stone_forest-gear">裝備 0</span>
+            <span id="stone_forest-power">戰力 —</span>
+          </div>
+          <div id="stone_forest-enemy" class="enemy-preview"></div>
+          <div class="controls">
+            <button type="button" class="btn primary" id="btn-stone-fight">入林</button>
+            <button type="button" class="btn" id="btn-stone-boss">石精Boss</button>
+            <button type="button" class="btn" id="btn-flee-stone" hidden>撤退</button>
+            <button type="button" class="btn" id="btn-stone-deeper">更深</button>
+          </div>
+          <p class="mode-blurb tiny-blurb">石林副本 · 掉落裝備</p>
+        </div>
+
         <div class="mode-panel" id="beauty-shared-panel" hidden>
           <p class="mode-blurb" id="beauty-blurb">場景</p>
           <p class="tiny" id="beauty-stat">體力 —</p>
@@ -787,7 +858,7 @@
       </div>
       <div class="wave-label" id="wave-label">第 1／3 波</div>
       <div class="hp-block player">
-        <img class="battle-hero" src="assets/char_hero.webp?v=15" alt="" decoding="async">
+        <img class="battle-hero" src="assets/char_hero.webp?v=16" alt="" decoding="async">
         <div class="hp-name">你</div>
         <div class="hp-bar"><div class="hp-fill player" id="player-hp-fill"></div></div>
         <div class="hp-num" id="player-hp-num">0/0</div>
@@ -802,13 +873,14 @@
   </div>
 
 </div>
-<script src="equip.js?v=15"></script>
-<script src="ai.js?v=15"></script>
-<script src="factions.js?v=15"></script>
-<script src="world.js?v=15"></script>
-<script src="story.js?v=15"></script>
-<script src="workers.js?v=15"></script>
-<script src="npc_ai.js?v=15"></script>
-<script src="game.js?v=15"></script>
+<script src="equip.js?v=16"></script>
+<script src="plots.js?v=16"></script>
+<script src="ai.js?v=16"></script>
+<script src="factions.js?v=16"></script>
+<script src="world.js?v=16"></script>
+<script src="story.js?v=16"></script>
+<script src="workers.js?v=16"></script>
+<script src="npc_ai.js?v=16"></script>
+<script src="game.js?v=16"></script>
 </body>
 </html>

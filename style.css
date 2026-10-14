@@ -945,3 +945,15 @@ input,textarea,select{font-family:inherit;}
   background:rgba(255,250,240,.8);border:1px solid rgba(201,163,90,.45);
 }
 .loot-gear .gear-card{width:100%;}
+
+
+/* v16 hero attrs + locked plot choices */
+.mt-attrs{flex:1.4;min-width:0;font-size:10px;line-height:1.2;}
+.mt-attrs em{display:none;}
+#hud-attrs{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.9;letter-spacing:-.02em;}
+@media (max-width:420px){
+  #hud-attrs{font-size:9px;}
+  .mt-attrs{max-width:42vw;}
+}
+.event-choice.locked,.event-choice[disabled]{opacity:.45;filter:grayscale(.3);cursor:not-allowed;}
+.bag-attrs-hint,.tiny.muted{opacity:.75;font-size:12px;margin:.2rem 0;}

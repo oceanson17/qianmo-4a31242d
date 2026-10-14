@@ -166,6 +166,36 @@
       reward: { gold: 40, fame: 3 },
       unlockNpc: ['youxia']
     },
+        {
+      id: 'sq_lu_fate',
+      title: '相邦府外夜圍',
+      desc: '若入呂黨（或呂好感高），日深後或遇嬴政圍捕呂不韋——屬性足夠可改其結局。',
+      type: 'side',
+      check: function (S) { return !!(S.plotFlags && (S.plotFlags.lu_saved || S.plotFlags.lu_betrayed || S.seenEvents && S.seenEvents.lu_hunt)); },
+      reward: { gold: 40, fame: 5 },
+      unlockNpc: ['lubuwei']
+    },
+    {
+      id: 'sq_gorge',
+      title: '雲縫谷試煉',
+      desc: '於雲縫谷戰勝或擊敗Boss。',
+      type: 'side',
+      check: function (S) { return !!(S.explore && ((S.explore.gorgeBest||0)>=1 || (S.explore.bosses && S.explore.bosses.gorge))); },
+      reward: { gold: 35, fame: 3 },
+      unlockNpc: ['youxia']
+    },
+    {
+      id: 'sq_attrs',
+      title: '六維初成',
+      desc: '任一大屬性（武／智／辯等合計含裝備）達到 6。',
+      type: 'side',
+      check: function (S) {
+        var a = (global.QianPlots && global.QianPlots.attrsOf(S)) || {};
+        return ['wu','hu','shen','zhi','bian','yun'].some(function(k){ return (a[k]||0) >= 6; });
+      },
+      reward: { gold: 25, fame: 2 },
+      unlockNpc: []
+    },
     {
       id: 'sq_hut_rest',
       title: '陋室歇息',

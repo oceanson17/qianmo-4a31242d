@@ -5,7 +5,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const ASSET_V = '?v=14';
+  const ASSET_V = '?v=16';
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
 
@@ -122,7 +122,25 @@
     wish:     { webp: 'assets/bg_wish.webp', jpg: 'assets/bg_wish.webp', alt: '祈願樹' },
     persimmon:{ webp: 'assets/bg_persimmon.webp', jpg: 'assets/bg_persimmon.webp', alt: '霜柿山居' },
     canal:    { webp: 'assets/bg_canal.webp', jpg: 'assets/bg_canal.webp', alt: '漕幫碼頭' },
-    bridge:   { webp: 'assets/bg_bridge.webp', jpg: 'assets/bg_bridge.webp', alt: '長橋' }
+    bridge:   { webp: 'assets/bg_bridge.webp', jpg: 'assets/bg_bridge.webp', alt: '長橋' },
+    terraces: { webp: 'assets/bg_terraces.webp', jpg: 'assets/bg_terraces.webp', alt: '層田' },
+    iron_league: { webp: 'assets/bg_iron_league.webp', jpg: 'assets/bg_iron_league.webp', alt: '鐵盟坊' },
+    stargaze: { webp: 'assets/bg_stargaze.webp', jpg: 'assets/bg_stargaze.webp', alt: '觀星隱廬' },
+    poplar: { webp: 'assets/bg_poplar.webp', jpg: 'assets/bg_poplar.webp', alt: '胡楊洲' },
+    dragon_bridge: { webp: 'assets/bg_dragon_bridge.webp', jpg: 'assets/bg_dragon_bridge.webp', alt: '雙龍橋' },
+    canal_hq: { webp: 'assets/bg_canal_hq.webp', jpg: 'assets/bg_canal_hq.webp', alt: '漕幫總壇' },
+    tea_master: { webp: 'assets/bg_tea_master.webp', jpg: 'assets/bg_tea_master.webp', alt: '品茗室' },
+    sword_wash: { webp: 'assets/bg_sword_wash.webp', jpg: 'assets/bg_sword_wash.webp', alt: '浣劍居' },
+    gorge: { webp: 'assets/bg_gorge.webp', jpg: 'assets/bg_gorge.webp', alt: '雲縫谷' },
+    paper: { webp: 'assets/bg_paper.webp', jpg: 'assets/bg_paper.webp', alt: '紙坊' },
+    rain_hut: { webp: 'assets/bg_rain_hut.webp', jpg: 'assets/bg_rain_hut.webp', alt: '聽雨廬' },
+    ink_pool: { webp: 'assets/bg_ink_pool.webp', jpg: 'assets/bg_ink_pool.webp', alt: '墨池齋' },
+    dye: { webp: 'assets/bg_dye.webp', jpg: 'assets/bg_dye.webp', alt: '染坊' },
+    rainy_tea: { webp: 'assets/bg_rainy_tea.webp', jpg: 'assets/bg_rainy_tea.webp', alt: '雨亭茶寮' },
+    brewery: { webp: 'assets/bg_brewery.webp', jpg: 'assets/bg_brewery.webp', alt: '酒坊' },
+    pharmacy: { webp: 'assets/bg_pharmacy.webp', jpg: 'assets/bg_pharmacy.webp', alt: '藥鋪' },
+    stone_forest: { webp: 'assets/bg_stone_forest.webp', jpg: 'assets/bg_stone_forest.webp', alt: '石林' },
+    garden_water: { webp: 'assets/bg_garden_water.webp', jpg: 'assets/bg_garden_water.webp', alt: '水榭園' },
   };
   const MODE_LABELS = {
     farm: '田莊', village: '村落', market: '市井', clinic: '藥廬', drill: '校場', wild: '山野',
@@ -132,23 +150,33 @@
     guowei: '國尉府', keguan: '客館', guanshi: '關市', hejin: '河津', cimiao: '祠廟', ying: '軍營',
     hut: '陋室', ruins: '廢墟', crypt: '古墓', marsh: '澤地',
     tea: '云海茶寮', forge: '鐵鋪', wood: '木作坊', incense: '香鋪', weave: '織坊',
-    study: '書齋', yard: '庭院', wish: '祈願樹', persimmon: '霜柿山居', canal: '漕幫碼頭', bridge: '長橋'
+    study: '書齋', yard: '庭院', wish: '祈願樹', persimmon: '霜柿山居', canal: '漕幫碼頭', bridge: '長橋',
+    terraces: '層田', iron_league: '鐵盟坊', stargaze: '觀星隱廬', poplar: '胡楊洲',
+    dragon_bridge: '雙龍橋', canal_hq: '漕幫總壇', tea_master: '品茗室', sword_wash: '浣劍居',
+    gorge: '雲縫谷', paper: '紙坊', rain_hut: '聽雨廬', ink_pool: '墨池齋', dye: '染坊',
+    rainy_tea: '雨亭茶寮', brewery: '酒坊', pharmacy: '藥鋪', stone_forest: '石林', garden_water: '水榭園'
   };
   const ALL_MODES = ['hut','farm','village','market','clinic','drill','wild','garden','swim','moon','mine','post','tavern','academy','frontier',
     'xianyang','palace','xiangbang','taihou','guowei','keguan','guanshi','hejin','cimiao','ying','ruins','crypt','marsh',
-    'tea','forge','wood','incense','weave','study','yard','wish','persimmon','canal','bridge'];
-  const WORK_MODES = ['farm','market','clinic','drill','wild','mine','frontier','ying','guanshi','hejin','ruins','crypt','marsh','forge','wood','weave','canal'];
-  const EXPLORE_MODES = ['ruins','crypt','marsh','mine','wild','frontier'];
-  const LEISURE_MODES = ['garden', 'swim', 'moon', 'tea', 'yard', 'wish', 'bridge', 'persimmon'];
-  const CRAFT_MODES = ['forge', 'wood', 'incense', 'weave', 'study', 'canal'];
-  const BEAUTY_MODES = ['tea','forge','wood','incense','weave','study','yard','wish','persimmon','canal','bridge'];
+    'tea','forge','wood','incense','weave','study','yard','wish','persimmon','canal','bridge',
+    'terraces','iron_league','stargaze','poplar','dragon_bridge','canal_hq','tea_master','sword_wash',
+    'gorge','paper','rain_hut','ink_pool','dye','rainy_tea','brewery','pharmacy','stone_forest','garden_water'];
+  const WORK_MODES = ['farm','market','clinic','drill','wild','mine','frontier','ying','guanshi','hejin','ruins','crypt','marsh','forge','wood','weave','canal','terraces','gorge','stone_forest','iron_league'];
+  const EXPLORE_MODES = ['ruins','crypt','marsh','mine','wild','frontier','gorge','stone_forest'];
+  const DUNGEON_MODES = ['ruins','crypt','marsh','mine','wild','frontier','gorge','stone_forest','drill'];
+  const LEISURE_MODES = ['garden', 'swim', 'moon', 'tea', 'yard', 'wish', 'bridge', 'persimmon', 'stargaze', 'rain_hut', 'sword_wash', 'garden_water', 'poplar', 'dragon_bridge'];
+  const CRAFT_MODES = ['forge', 'wood', 'incense', 'weave', 'study', 'canal', 'iron_league', 'paper', 'dye', 'brewery', 'pharmacy'];
+  const BEAUTY_MODES = ['tea','forge','wood','incense','weave','study','yard','wish','persimmon','canal','bridge','terraces','iron_league','stargaze','poplar','dragon_bridge','canal_hq','tea_master','sword_wash','paper','rain_hut','ink_pool','dye','rainy_tea','brewery','pharmacy','garden_water'];
   const QIN_COURT_MODES = ['xianyang','palace','xiangbang','taihou','guowei','keguan','cimiao'];
   const TRAVEL_COST = {
     farm: 0, village: 2, market: 3, clinic: 2, drill: 3, wild: 4,
     garden: 2, swim: 2, moon: 3, mine: 4, post: 3, tavern: 2, academy: 2, frontier: 5,
     xianyang: 4, palace: 5, xiangbang: 4, taihou: 5, guowei: 4, keguan: 3, guanshi: 3, hejin: 3, cimiao: 2, ying: 4,
     hut: 0, ruins: 4, crypt: 5, marsh: 4,
-    tea: 2, forge: 2, wood: 2, incense: 2, weave: 2, study: 2, yard: 1, wish: 2, persimmon: 3, canal: 3, bridge: 2
+    tea: 2, forge: 2, wood: 2, incense: 2, weave: 2, study: 2, yard: 1, wish: 2, persimmon: 3, canal: 3, bridge: 2,
+    terraces: 2, iron_league: 3, stargaze: 3, poplar: 4, dragon_bridge: 2, canal_hq: 3, tea_master: 2,
+    sword_wash: 3, gorge: 5, paper: 2, rain_hut: 2, ink_pool: 2, dye: 2, rainy_tea: 2, brewery: 2,
+    pharmacy: 2, stone_forest: 4, garden_water: 2
   };
   const SCENE_CAPS = {
     farm: '工人喺田莊圖上走動', village: '鄉鄰沿街往來', market: '商販走街串巷',
@@ -162,7 +190,13 @@
     hut: '陋室燈火微明', ruins: '廢墟遊魂遊走', crypt: '古墓陰風掠影', marsh: '澤地蟲豸潛行',
     tea: '茶客云海品茗', forge: '鐵匠錘火花濺', wood: '木作刨花飛揚', incense: '香煙裊裊升騰',
     weave: '織娘機杼往來', study: '書生案前沉吟', yard: '庭院掃葉賞景', wish: '香客掛籤祈願',
-    persimmon: '山居摘柿晒果', canal: '漕幫裝船點貨', bridge: '橋上憑欄偶遇'
+    persimmon: '山居摘柿晒果', canal: '漕幫裝船點貨', bridge: '橋上憑欄偶遇',
+    terraces: '層田農人拾級', iron_league: '鐵盟鍛造火花', stargaze: '觀星客佇立井畔',
+    poplar: '駝隊穿行胡楊', dragon_bridge: '橋上行人往來', canal_hq: '總壇點貨裝船',
+    tea_master: '茶師瀹茗品鑒', sword_wash: '劍客溪邊滌刃', gorge: '谷風掠過索橋',
+    paper: '紙工晾箋抄造', rain_hut: '雨中人影匆匆', ink_pool: '書生臨池研墨',
+    dye: '染工晾布換色', rainy_tea: '雨亭茶客低語', brewery: '酒坊抱甕往來',
+    pharmacy: '藥鋪配劑抓藥', stone_forest: '石林遊魂穿行', garden_water: '水榭遊人憑欄'
   };
   const PERIODS = ['晨', '午', '暮', '夜'];
   let storyLines = [];
@@ -241,6 +275,18 @@
     { name: '青銅守卫', hp: 78, atk: 13 },
     { name: '陰火狐', hp: 100, atk: 15 }
   ];
+  const ENEMIES_GORGE = [
+    { name: '縫蝠', hp: 34, atk: 8 },
+    { name: '岩隙刺客', hp: 55, atk: 11 },
+    { name: '炎縫蜥蜴', hp: 72, atk: 13 },
+    { name: '赤瞳守衛', hp: 95, atk: 16 }
+  ];
+  const ENEMIES_STONE = [
+    { name: '石鼠', hp: 30, atk: 6 },
+    { name: '苔衣傀', hp: 50, atk: 10 },
+    { name: '石矛兵', hp: 70, atk: 12 },
+    { name: '岩甲獸', hp: 92, atk: 15 }
+  ];
   const ENEMIES_MARSH = [
     { name: '澤蛇', hp: 28, atk: 7 },
     { name: '毒蟾', hp: 44, atk: 9 },
@@ -253,7 +299,9 @@
     marsh: { name: '澤中巨物·黿王', hp: 175, atk: 17 },
     mine: { name: '礦脈主·岩魔', hp: 150, atk: 16 },
     wild: { name: '山君·蒼獠王', hp: 170, atk: 19 },
-    frontier: { name: '邊關妖物·狼吞', hp: 200, atk: 21 }
+    frontier: { name: '邊關妖物·狼吞', hp: 200, atk: 21 },
+    gorge: { name: '縫底炎魔·赭瞳', hp: 185, atk: 19 },
+    stone_forest: { name: '石林石精·巖翁', hp: 170, atk: 18 }
   };
   const SHOP_ITEMS = [
     { id: 'seed', name: '種子包', desc: '稻2菜1麥1', gold: 15, buy: () => {} },
@@ -536,7 +584,9 @@
       eraYear: 1,
       access: {},
       quests: {},
-      explore: { ruins: 1, crypt: 1, marsh: 1, ruinsBest: 0, cryptBest: 0, marshBest: 0, bosses: {} }
+      explore: { ruins: 1, crypt: 1, marsh: 1, gorge: 1, stone_forest: 1, ruinsBest: 0, cryptBest: 0, marshBest: 0, gorgeBest: 0, stone_forestBest: 0, bosses: {} },
+      attrs: { wu: 0, hu: 0, shen: 0, zhi: 0, bian: 0, yun: 0 },
+      plotFlags: {}
     };
     if (window.QianStory) {
       window.QianStory.ensure(st);
@@ -553,6 +603,10 @@
         : '史實軌道：秦王政元年，少年王即位，呂不韋輔政。';
     }
     if (window.QianFactions) window.QianFactions.ensure(st);
+    if (window.QianPlots) {
+      window.QianPlots.ensure(st);
+      window.QianPlots.initAttrsFromCareer(st, careerId);
+    }
     return st;
   }
 
@@ -612,7 +666,7 @@
       if (!o.access) o.access = {};
       if (!o.quests) o.quests = {};
       if (!o.explore) o.explore = { ruins: 1, crypt: 1, marsh: 1, ruinsBest: 0, cryptBest: 0, marshBest: 0, bosses: {} };
-      ['ruins','crypt','marsh'].forEach(function (k) {
+      ['ruins','crypt','marsh','gorge','stone_forest'].forEach(function (k) {
         if (o.explore[k] == null) o.explore[k] = 1;
         if (o.explore[k + 'Best'] == null) o.explore[k + 'Best'] = 0;
       });
@@ -647,6 +701,12 @@
       if (window.QianWorld) window.QianWorld.ensure(o);
       if (window.QianStory) window.QianStory.ensure(o);
       if (window.QianFactions) window.QianFactions.ensure(o);
+      if (window.QianPlots) {
+        window.QianPlots.ensure(o);
+        if (!o.attrs || (o.attrs.wu == null && o.attrs.zhi == null)) {
+          window.QianPlots.initAttrsFromCareer(o, o.career || 'farmer');
+        }
+      }
       return o;
     }
     return null;
@@ -719,15 +779,39 @@
     });
     return b;
   }
+  function baseHeroAttrs() {
+    if (!S) return { wu: 0, hu: 0, shen: 0, zhi: 0, bian: 0, yun: 0 };
+    if (!S.attrs) S.attrs = { wu: 0, hu: 0, shen: 0, zhi: 0, bian: 0, yun: 0 };
+    return S.attrs;
+  }
+  function heroAttrs() {
+    const base = baseHeroAttrs();
+    const b = gearBonus();
+    return {
+      wu: (base.wu || 0) + (b.wu || 0),
+      hu: (base.hu || 0) + (b.hu || 0),
+      shen: (base.shen || 0) + (b.shen || 0),
+      zhi: (base.zhi || 0) + (b.zhi || 0),
+      bian: (base.bian || 0) + (b.bian || 0),
+      yun: (base.yun || 0) + (b.yun || 0),
+      farmBonus: b.farmBonus || 0
+    };
+  }
+  // expose for plots.js
+  window.heroAttrsFull = function (state) {
+    const prev = S; S = state || S;
+    try { return heroAttrs(); } finally { S = prev; }
+  };
   function stats() {
     const b = gearBonus();
-    const maxHp = S.maxHp + b.hp + b.hu * 2;
+    const a = heroAttrs();
+    const maxHp = S.maxHp + b.hp + a.hu * 2 + Math.floor(a.yun / 2);
+    const atk = S.baseAtk + b.atk + (S.skills.mart || 0) + a.wu + Math.floor(a.shen / 3);
+    const def = S.baseDef + b.def + Math.floor(a.hu / 2) + Math.floor(a.zhi / 4);
     return {
-      atk: S.baseAtk + b.atk + (S.skills.mart || 0) + b.wu,
-      def: S.baseDef + b.def + Math.floor(b.hu / 2),
-      maxHp,
+      atk, def, maxHp,
       hp: Math.min(S.hp, maxHp),
-      attrs: { wu: b.wu, hu: b.hu, shen: b.shen, zhi: b.zhi, bian: b.bian, yun: b.yun, farmBonus: b.farmBonus }
+      attrs: a
     };
   }
 
@@ -752,6 +836,10 @@
     $('hud-gold').textContent = String(S.gold);
     $('hud-food').textContent = String(S.food);
     $('hud-combat').textContent = st.hp + '/' + st.maxHp + ' ·' + st.atk;
+    if ($('hud-attrs')) {
+      const a = st.attrs || {};
+      $('hud-attrs').textContent = '武' + (a.wu||0) + ' 護' + (a.hu||0) + ' 身' + (a.shen||0) + ' 智' + (a.zhi||0) + ' 辯' + (a.bian||0) + ' 運' + (a.yun||0);
+    }
     $('hud-career').textContent = (CAREERS[S.career] || CAREERS.farmer).name;
     if ($('auto-label')) {
       $('auto-label').textContent = autoOn ? 'AUTO 開' : 'AUTO 關';
@@ -866,7 +954,25 @@
     wish: '祈願樹：掛籤祈願，加民心與好感。',
     persimmon: '霜柿山居：秋收柿子，季節風味。',
     canal: '漕幫碼頭：接運單、運貨賺錢。',
-    bridge: '長橋：憑欄遠望，隨機偶遇。'
+    bridge: '長橋：憑欄遠望，隨機偶遇。',
+    terraces: '層田拾級，水光如鏡。',
+    iron_league: '鐵盟坊爐火，試煉待君。',
+    stargaze: '觀星隱廬，月井映宿。',
+    gorge: '雲縫谷深，索橋垂危——副本。',
+    stone_forest: '石林如戟，魍魎其間——副本。',
+    poplar: '胡楊洲上，沙風獵獵。',
+    dragon_bridge: '雙龍橋雙拱臥波。',
+    canal_hq: '漕幫總壇，貨船如織。',
+    tea_master: '品茗室，茶師瀹器。',
+    sword_wash: '浣劍居，溪石滌刃。',
+    paper: '紙坊抄造晾箋。',
+    rain_hut: '聽雨廬，雨聲如訴。',
+    ink_pool: '墨池齋，臨池學書。',
+    dye: '染坊青絲藍布。',
+    rainy_tea: '雨亭茶寮，煙雨一盞。',
+    brewery: '酒坊甕香撲鼻。',
+    pharmacy: '藥鋪柜上百草。',
+    garden_water: '水榭園，亭影入池。'
   };
   function showMode(m) {
     mode = m;
@@ -896,7 +1002,7 @@
     if (scene) {
       scene.classList.toggle('mode-farm', m === 'farm');
       scene.classList.toggle('mode-work', WORK_MODES.includes(m));
-      scene.classList.toggle('in-battle', !!(battle && (m === 'drill' || m === 'wild' || m === 'mine' || m === 'frontier')));
+      scene.classList.toggle('in-battle', !!(battle && DUNGEON_MODES.includes(m)));
     }
     setSceneArt(m);
     if ($('place-chip-label')) $('place-chip-label').textContent = MODE_LABELS[m] || '';
@@ -908,7 +1014,7 @@
     if (m === 'village') renderVillage();
     if (m === 'market') { renderShop(); renderCraft(); }
     if (m === 'clinic') { renderClinicInv(); renderCraft(); }
-    if (m === 'drill' || m === 'wild' || m === 'frontier' || m === 'mine' || m === 'ying' || m === 'ruins' || m === 'crypt' || m === 'marsh') renderCombatPanel();
+    if (m === 'drill' || m === 'wild' || m === 'frontier' || m === 'mine' || m === 'ying' || m === 'ruins' || m === 'crypt' || m === 'marsh' || m === 'gorge' || m === 'stone_forest') renderCombatPanel();
     if (LEISURE_MODES.includes(m)) renderLeisure(m);
     if (m === 'post') renderPost();
     if (m === 'tavern') renderTavern();
@@ -917,7 +1023,7 @@
     if (m === 'garden') renderGardenAff();
     if (QIN_COURT_MODES.includes(m) || m === 'guanshi' || m === 'hejin' || m === 'ying') renderQinPanel(m);
     if (m === 'hut') renderHut();
-    if (m === 'ruins' || m === 'crypt' || m === 'marsh') renderCombatPanel();
+    if (m === 'ruins' || m === 'crypt' || m === 'marsh' || m === 'gorge' || m === 'stone_forest') renderCombatPanel();
     if (BEAUTY_MODES.includes(m)) renderBeauty(m);
     if (m === 'drill' || m === 'wild' || m === 'frontier' || m === 'mine' || m === 'ruins' || m === 'crypt' || m === 'marsh') {
       const scene = $('adventure-scene');
@@ -977,6 +1083,11 @@
     showMode(m);
     closeSheets();
     openActSheet();
+    
+    // plot visit flags
+    if (m === 'stargaze') { S.flags = S.flags || {}; S.flags.visited_stargaze = 1; S.plotFlags = S.plotFlags || {}; S.plotFlags.stargaze = 1; }
+    if (m === 'iron_league') { S.flags = S.flags || {}; S.flags.visited_iron_league = 1; }
+    if (m === 'xiangbang' || m === 'palace') { S.flags = S.flags || {}; }
     pushStory('前往' + (MODE_LABELS[m] || '') + '。', 'sys');
     if (window.QianStory) {
       const done = window.QianStory.checkStoryQuests(S);
@@ -1631,6 +1742,11 @@
   function maybeTriggerVisit() {
     if (!S || !window.QianFactions) return;
     if (S.pendingEvent) { openEventModal(S.pendingEvent); return; }
+    if (window.QianPlots) {
+      window.QianPlots.ensure(S);
+      const pev = window.QianPlots.poll(S);
+      if (pev) { S.pendingEvent = pev; openEventModal(pev); renderHUD(); saveQuiet(); return; }
+    }
     if (battle) return;
     const ev = window.QianFactions.pickRecruitEvent(S);
     if (ev) {
@@ -1666,17 +1782,29 @@
     title.textContent = ev.title;
     body.textContent = ev.body;
     choices.innerHTML = (ev.choices || []).map((c) =>
-      '<button type="button" class="btn event-choice" data-eid="' + ev.id + '" data-cid="' + c.id + '">' + c.label + '</button>'
+      '<button type="button" class="btn event-choice' + (c.locked ? ' locked' : '') + '" data-eid="' + ev.id + '" data-cid="' + c.id + '"' +
+      (c.locked ? ' disabled aria-disabled="true"' : '') + '>' + c.label + '</button>'
     ).join('');
     choices.querySelectorAll('[data-cid]').forEach((b) => {
-      b.addEventListener('click', () => resolveEventChoice(ev, b.dataset.cid));
+      b.addEventListener('click', () => {
+        if (b.disabled) { toast('屬性不足'); return; }
+        resolveEventChoice(ev, b.dataset.cid);
+      });
     });
     $('modal-event').hidden = false;
     pushStory('【來訪】' + ev.title, 'sys');
   }
   function resolveEventChoice(ev, choiceId) {
-    if (!window.QianFactions) return;
-    const r = window.QianFactions.applyChoice(S, ev, choiceId);
+    let r = null;
+    const isPlot = !!(ev && (ev.plot || (ev.id && /^(lu_hunt|laoai_chaos|zhengguo_debate|lisi_law|border_raid|star_omen|iron_trial|chengjiao_plot|marsh_plague)$/.test(ev.id))));
+    if (isPlot && window.QianPlots) r = window.QianPlots.applyChoice(S, ev, choiceId);
+    else if (window.QianFactions) r = window.QianFactions.applyChoice(S, ev, choiceId);
+    else return;
+    if (r && r.toast === '屬性不足，無法如此') {
+      toast(r.toast);
+      if (r.line) pushStory(r.line, 'sys');
+      return;
+    }
     $('modal-event').hidden = true;
     if (r.line) { status(r.line); pushStory(r.line, 'nar'); }
     if (r.toast) toast(r.toast);
@@ -2420,6 +2548,13 @@
     toast('下至礦層 ' + S.mineFloor);
     renderCombatPanel(); saveQuiet();
   }
+  function dungeonDeeper(where) {
+    if (!S || battle) { toast(battle ? '戰鬥中' : ''); return; }
+    if (!S.explore) S.explore = {};
+    S.explore[where] = (S.explore[where] || 1) + 1;
+    toast('深入' + (MODE_LABELS[where] || '') + ' 層' + S.explore[where]);
+    renderCombatPanel(); saveQuiet();
+  }
   function frontScout() {
     if (!S) return;
     if (battle) { toast('戰鬥中'); return; }
@@ -2443,7 +2578,8 @@
   /* ---- Combat ---- */
   function powerLine() {
     const st = stats();
-    return '戰力 ATK' + st.atk + ' DEF' + st.def + ' HP' + st.hp;
+    const a = st.attrs || {};
+    return '戰力 ATK' + st.atk + ' DEF' + st.def + ' HP' + st.hp + ' ·武' + (a.wu||0) + '智' + (a.zhi||0);
   }
   function previewEnemyHtml(where) {
     const floor = battleFloor(where);
@@ -2489,8 +2625,8 @@
     if ($('front-power')) $('front-power').textContent = powerLine();
     if ($('front-enemy')) $('front-enemy').innerHTML = previewEnemyHtml('frontier');
     if (S.explore) {
-      ['ruins','crypt','marsh'].forEach((k) => {
-        if ($(k + '-floor')) $(k + '-floor').textContent = ({ruins:'廢墟層 ',crypt:'墓層 ',marsh:'澤層 '}[k]) + (S.explore[k] || 1);
+      ['ruins','crypt','marsh','gorge','stone_forest'].forEach((k) => {
+        if ($(k + '-floor')) $(k + '-floor').textContent = ({ruins:'廢墟層 ',crypt:'墓層 ',marsh:'澤層 ',gorge:'谷層 ',stone_forest:'石林層 '}[k]) + (S.explore[k] || 1);
         if ($(k + '-best')) $(k + '-best').textContent = '最深 ' + (S.explore[k + 'Best'] || 0);
         if ($(k + '-gear')) $(k + '-gear').textContent = '裝備 ' + S.gear.length;
         if ($(k + '-power')) $(k + '-power').textContent = powerLine();
@@ -2505,6 +2641,8 @@
     if ($('btn-flee-crypt')) $('btn-flee-crypt').hidden = !(inB && battle.where === 'crypt');
     if ($('btn-flee-marsh')) $('btn-flee-marsh').hidden = !(inB && battle.where === 'marsh');
     if ($('btn-flee-mine')) $('btn-flee-mine').hidden = !(inB && battle.where === 'mine');
+    if ($('btn-flee-gorge')) $('btn-flee-gorge').hidden = !(inB && battle.where === 'gorge');
+    if ($('btn-flee-stone')) $('btn-flee-stone').hidden = !(inB && battle.where === 'stone_forest');
     if ($('battle-hud')) $('battle-hud').hidden = !inB;
     const bar = $('map-battle-bar');
     if (bar && !$('sheet-map').hidden) bar.hidden = !inB;
@@ -2517,6 +2655,8 @@
     if (where === 'ruins') return ENEMIES_RUINS;
     if (where === 'crypt') return ENEMIES_CRYPT;
     if (where === 'marsh') return ENEMIES_MARSH;
+    if (where === 'gorge') return ENEMIES_GORGE;
+    if (where === 'stone_forest') return ENEMIES_STONE;
     return ENEMIES_DRILL;
   }
   function battleFloor(where) {
@@ -2526,6 +2666,8 @@
     if (where === 'ruins') return (S.explore && S.explore.ruins) || 1;
     if (where === 'crypt') return (S.explore && S.explore.crypt) || 1;
     if (where === 'marsh') return (S.explore && S.explore.marsh) || 1;
+    if (where === 'gorge') return (S.explore && S.explore.gorge) || 1;
+    if (where === 'stone_forest') return (S.explore && S.explore.stone_forest) || 1;
     return 1;
   }
   function startBattle(where, asBoss) {
@@ -2548,7 +2690,7 @@
       const idx = Math.min(pool.length - 1, floor - 1 + Math.floor(Math.random() * 2));
       base = pool[idx];
       scale = where === 'drill' ? 1 : 1 + (floor - 1) * 0.18;
-      maxWave = where === 'frontier' || where === 'crypt' ? 4 : (where === 'wild' || where === 'mine' || where === 'ruins' || where === 'marsh' ? 3 : 2);
+      maxWave = where === 'frontier' || where === 'crypt' || where === 'gorge' ? 4 : (where === 'wild' || where === 'mine' || where === 'ruins' || where === 'marsh' || where === 'stone_forest' ? 3 : 2);
     }
     const st = stats();
     S.hp = Math.min(S.hp, st.maxHp);
@@ -2561,7 +2703,7 @@
       log: [],
       autoTimer: 0
     };
-    if (['mine','frontier','ruins','crypt','marsh','wild'].includes(where) && mode !== where) showMode(where);
+    if (['mine','frontier','ruins','crypt','marsh','wild','gorge','stone_forest'].includes(where) && mode !== where) showMode(where);
     // close overlay sheets so battle HUD / 攻擊 are tappable on Safari
     try { closeSheets(); } catch (e) {}
     const scene = $('adventure-scene');
@@ -2589,16 +2731,28 @@
   function playerAttack() {
     if (!battle) return;
     const st = stats();
-    const dmg = Math.max(1, st.atk - Math.floor(battle.enemy.atk * 0.05) + Math.floor(Math.random() * 4));
+    const a = st.attrs || {};
+    let dmg = Math.max(1, st.atk - Math.floor(battle.enemy.atk * 0.05) + Math.floor(Math.random() * 4));
+    let note = '你造成 ' + dmg + ' 傷';
+    if ((a.wu || 0) + (a.yun || 0) >= 6 && Math.random() < Math.min(0.3, 0.05 + (a.wu + a.yun) * 0.015)) {
+      dmg = Math.floor(dmg * 1.5) + 1;
+      note = '會心！' + dmg + ' 傷';
+    }
     battle.enemy.hp = Math.max(0, battle.enemy.hp - dmg);
-    updateBattleHUD('你造成 ' + dmg + ' 傷');
+    updateBattleHUD(note);
     if (battle.enemy.hp <= 0) { onEnemyDown(); return; }
     enemyAttack();
   }
   function enemyAttack() {
     if (!battle) return;
     const st = stats();
-    const dmg = Math.max(1, battle.enemy.atk - st.def + Math.floor(Math.random() * 3));
+    const a = st.attrs || {};
+    if ((a.shen || 0) >= 4 && Math.random() < Math.min(0.35, 0.08 + a.shen * 0.02)) {
+      updateBattleHUD('身法閃避！');
+      renderHUD();
+      return;
+    }
+    const dmg = Math.max(1, battle.enemy.atk - st.def + Math.floor(Math.random() * 3) - Math.floor((a.hu || 0) / 5));
     S.hp = Math.max(0, S.hp - dmg);
     updateBattleHUD(battle.enemy.name + '擊你 ' + dmg);
     if (S.hp <= 0) {
@@ -2656,7 +2810,7 @@
     if (where === 'drill' && Math.random() < 0.35) S.skills.agi = Math.min(8, (S.skills.agi || 0) + 1);
     if (where === 'wild') S.wildBest = Math.max(S.wildBest || 0, S.wildFloor || 1);
     if (where === 'frontier') S.frontBest = Math.max(S.frontBest || 0, S.frontFloor || 1);
-    if (S.explore && (where === 'ruins' || where === 'crypt' || where === 'marsh')) {
+    if (S.explore && (where === 'ruins' || where === 'crypt' || where === 'marsh' || where === 'gorge' || where === 'stone_forest')) {
       S.explore[where + 'Best'] = Math.max(S.explore[where + 'Best'] || 0, S.explore[where] || 1);
     }
     if (Math.random() < 0.4 || isBoss) addBag('ore', 1 + Math.floor(Math.random() * 2) + (isBoss ? 2 : 0));
@@ -2683,6 +2837,8 @@
     if (where === 'ruins') bonus = floor * 0.04;
     if (where === 'crypt') bonus = floor * 0.05;
     if (where === 'marsh') bonus = floor * 0.035;
+    if (where === 'gorge') bonus = floor * 0.045;
+    if (where === 'stone_forest') bonus = floor * 0.04;
     if (isBoss) bonus += 0.18;
     if (roll > 0.97 - bonus) rarity = 'gold';
     else if (roll > 0.90 - bonus) rarity = 'purple';
@@ -2720,7 +2876,7 @@
         hp: Math.round((gear.hp || 0) * r.mult),
         wu: gear.wu, hu: gear.hu, shen: gear.shen, zhi: gear.zhi, bian: gear.bian, yun: gear.yun
       }) : ('ATK+' + Math.round(gear.atk * r.mult) + ' DEF+' + Math.round(gear.def * r.mult) + ' HP+' + Math.round(gear.hp * r.mult));
-      box.innerHTML = '<div class="gear-card ' + r.className + '"><img class="eq-ico" src="' + ico + '?v=15" alt=""><div class="eq-txt"><b>【' + r.name + '】' + gear.name + '</b><span>' + (SLOT_LABEL[gear.slot] || '') + ' · ' + statsTxt + '</span></div></div>';
+      box.innerHTML = '<div class="gear-card ' + r.className + '"><img class="eq-ico" src="' + ico + '?v=16" alt=""><div class="eq-txt"><b>【' + r.name + '】' + gear.name + '</b><span>' + (SLOT_LABEL[gear.slot] || '') + ' · ' + statsTxt + '</span></div></div>';
     } else box.innerHTML = '';
     $('modal-loot').hidden = false;
   }
@@ -2791,12 +2947,12 @@
   /* ---- Bag / Gear / Quest ---- */
   function gearIconSrc(g) {
     const key = (g && g.icon) || (g && g.slot === 'armor' ? 'jia' : g && g.slot === 'weapon' ? 'jian' : 'pei');
-    if (window.QianEquip) return window.QianEquip.iconPath(key) + '?v=15';
-    return 'assets/equip/' + key + '.webp?v=15';
+    if (window.QianEquip) return window.QianEquip.iconPath(key) + '?v=16';
+    return 'assets/equip/' + key + '.webp?v=16';
   }
   function openBag() {
     const st = stats();
-    const attrs = (window.QianEquip && window.QianEquip.heroAttrsFromGear(S.gear, S.equipped)) || {};
+    const attrs = (typeof heroAttrs === 'function' ? heroAttrs() : ((window.QianEquip && window.QianEquip.heroAttrsFromGear(S.gear, S.equipped)) || {}));
     $('combat-summary').textContent = '命 ' + st.hp + '/' + st.maxHp + ' · 攻 ' + st.atk + ' · 防 ' + st.def +
       (attrs.wu || attrs.hu || attrs.shen || attrs.zhi || attrs.bian || attrs.yun
         ? ' · 武' + (attrs.wu||0) + ' 護' + (attrs.hu||0) + ' 身' + (attrs.shen||0) + ' 智' + (attrs.zhi||0) + ' 辯' + (attrs.bian||0) + ' 運' + (attrs.yun||0)
@@ -2805,7 +2961,7 @@
       const id = S.equipped[slot];
       const g = id && S.gear.find((x) => x.id === id);
       if (!g) {
-        return '<div class="equip-slot"><img class="eq-ico" src="assets/equip/' + (slot==='weapon'?'jian':slot==='armor'?'jia':'pei') + '.webp?v=15" alt="" style="opacity:.35"><div class="eq-meta"><strong>' + (SLOT_LABEL[slot] || slot) + '</strong><small>空</small></div></div>';
+        return '<div class="equip-slot"><img class="eq-ico" src="assets/equip/' + (slot==='weapon'?'jian':slot==='armor'?'jia':'pei') + '.webp?v=16" alt="" style="opacity:.35"><div class="eq-meta"><strong>' + (SLOT_LABEL[slot] || slot) + '</strong><small>空</small></div></div>';
       }
       const r = RARITIES[g.rarity] || RARITIES.white;
       const statsTxt = window.QianEquip ? window.QianEquip.formatStats(g) : ('攻+' + g.atk + ' 防+' + g.def);
@@ -2846,7 +3002,7 @@
         const rKey = window.QianEquip.normalizeRarity(def.rarity);
         const r = RARITIES[rKey] || RARITIES.white;
         return '<div class="gear-card ' + r.className + '" style="opacity:' + (have ? '1' : '.45') + ';cursor:default">' +
-          '<img class="eq-ico" src="' + window.QianEquip.iconPath(def.icon) + '?v=15" alt="">' +
+          '<img class="eq-ico" src="' + window.QianEquip.iconPath(def.icon) + '?v=16" alt="">' +
           '<div class="eq-txt"><b>【' + r.name + '】' + def.name + '</b><span>' + (have ? '已入庫 · ' : '未得 · ') + (window.QianEquip.SLOT_LABEL[def.slot] || def.slot) + '</span></div></div>';
       }).join('') + '</div>';
     } else {
@@ -2893,6 +3049,8 @@
       if ($('quest-dot')) $('quest-dot').hidden = !window.QianStory.hasOpenStory(S) && (!S.quest || S.quest.done);
     }
     const sk = S.skills || {};
+    const ha = (typeof heroAttrs === 'function' ? heroAttrs() : {});
+    body += '<div class="quest-item"><strong>六維屬性</strong><p>' + (window.QianPlots ? window.QianPlots.fmtAttrs(S) : ('武'+(ha.wu||0)+' 護'+(ha.hu||0)+' 身'+(ha.shen||0)+' 智'+(ha.zhi||0)+' 辯'+(ha.bian||0)+' 運'+(ha.yun||0))) + '（含裝備）</p></div>';
     body += '<div class="quest-item"><strong>技能</strong><p>農' + (sk.farm||0) + ' 醫/藥理' + (sk.med||0) + ' 商' + (sk.trade||0) +
       ' 武' + (sk.mart||0) + ' 輕功' + (sk.agi||0) + ' 文' + (sk.lit||0) + ' 工' + (sk.craft||0) +
       (disguiseOn() ? ' · 女扮男裝中' : '') + '</p></div>';
@@ -3105,6 +3263,54 @@
     ]},
     bridge: { blurb: '長橋如龍，憑欄可遇各方人。', acts: [
       { id: 'gaze', label: '憑欄', tip: '回體' }, { id: 'meet', label: '偶遇', tip: '體力-2' }, { id: 'toll', label: '助守橋', tip: '體力-3 · 銀' }
+    ]},
+    terraces: { blurb: '層田拾級，水鏡映天。可助耕、觀稼。', acts: [
+      { id: 'help', label: '助耕', tip: '體力-3 · 糧' }, { id: 'gaze', label: '觀稼', tip: '回體' }, { id: 'meet', label: '遇田戶', tip: '體力-2' }
+    ]},
+    iron_league: { blurb: '鐵盟坊：秦風鍛造同盟。可試煉、開爐。', acts: [
+      { id: 'craft', label: '開爐', tip: '配方' }, { id: 'trial', label: '請試煉', tip: '觸發劇情機率' }, { id: 'sparks', label: '幫錘', tip: '體力-3 · 工' }
+    ]},
+    stargaze: { blurb: '觀星隱廬：月井映宿。可觀星、問讖。', acts: [
+      { id: 'star', label: '觀星', tip: '體力-2 · 運' }, { id: 'well', label: '臨井', tip: '回體' }, { id: 'ask', label: '問方士', tip: '銀5 · 智' }
+    ]},
+    poplar: { blurb: '胡楊洲：沙風楊影。可探路、歇蔭。', acts: [
+      { id: 'shade', label: '歇蔭', tip: '回體' }, { id: 'scout', label: '探路', tip: '體力-4 · 銀' }, { id: 'meet', label: '遇賈隊', tip: '體力-2' }
+    ]},
+    dragon_bridge: { blurb: '雙龍橋：雙拱臥波。', acts: [
+      { id: 'gaze', label: '憑欄', tip: '回體' }, { id: 'meet', label: '偶遇', tip: '體力-2' }, { id: 'toll', label: '助守', tip: '體力-3 · 銀' }
+    ]},
+    canal_hq: { blurb: '漕幫總壇：漕運樞紐。', acts: [
+      { id: 'craft', label: '運單', tip: '配方' }, { id: 'load', label: '裝船', tip: '體力-4 · 銀' }, { id: 'rumor', label: '聽總壇謠', tip: '體力-2' }
+    ]},
+    tea_master: { blurb: '品茗室：茶師瀹器。', acts: [
+      { id: 'sip', label: '品鑒', tip: '銀5 · 回體名' }, { id: 'learn', label: '學茶', tip: '體力-3 · 辯' }, { id: 'gossip', label: '茶語', tip: '體力-2' }
+    ]},
+    sword_wash: { blurb: '浣劍居：溪石滌刃。', acts: [
+      { id: 'wash', label: '浣劍', tip: '體力-2 · 武微' }, { id: 'meditate', label: '面水靜坐', tip: '回體' }, { id: 'spar', label: '切磋', tip: '體力-5 · 開戰' }
+    ]},
+    paper: { blurb: '紙坊：抄造晾箋。', acts: [
+      { id: 'craft', label: '抄造', tip: '花1→銀' }, { id: 'dry', label: '晾紙', tip: '體力-2 · 文' }, { id: 'buy', label: '買箋', tip: '銀8 · 花' }
+    ]},
+    rain_hut: { blurb: '聽雨廬：雨聲如訴。', acts: [
+      { id: 'listen', label: '聽雨', tip: '回體' }, { id: 'write', label: '雨中書', tip: '體力-2 · 文' }, { id: 'meet', label: '遇避雨人', tip: '體力-2' }
+    ]},
+    ink_pool: { blurb: '墨池齋：臨池學書。', acts: [
+      { id: 'ink', label: '研墨', tip: '體力-2 · 文智' }, { id: 'copy', label: '臨帖', tip: '體力-3 · 辯' }, { id: 'gaze', label: '觀池', tip: '回體' }
+    ]},
+    dye: { blurb: '染坊：青絲藍布。', acts: [
+      { id: 'craft', label: '浸染', tip: '花→布' }, { id: 'hang', label: '晾布', tip: '體力-2 · 銀' }, { id: 'learn', label: '學色', tip: '體力-3 · 工' }
+    ]},
+    rainy_tea: { blurb: '雨亭茶寮：煙雨一盞。', acts: [
+      { id: 'sip', label: '雨中品', tip: '銀4 · 回體' }, { id: 'gossip', label: '聽雨謠', tip: '體力-2' }, { id: 'tip', label: '賞茶博士', tip: '銀6 · 名' }
+    ]},
+    brewery: { blurb: '酒坊：甕香撲鼻。', acts: [
+      { id: 'drink', label: '試釀', tip: '銀3 · 回體' }, { id: 'help', label: '幫釀', tip: '體力-3 · 銀' }, { id: 'meet', label: '酒逢知己', tip: '體力-2' }
+    ]},
+    pharmacy: { blurb: '藥鋪：柜上百草。', acts: [
+      { id: 'craft', label: '配藥', tip: '配方' }, { id: 'buy', label: '買藥', tip: '銀12 · 藥' }, { id: 'learn', label: '問藥理', tip: '體力-3 · 醫' }
+    ]},
+    garden_water: { blurb: '水榭園：亭影入池。', acts: [
+      { id: 'gaze', label: '憑欄', tip: '回體' }, { id: 'meet', label: '偶遇', tip: '體力-2' }, { id: 'boat', label: '池上舟', tip: '銀4 · 運' }
     ]}
   };
 
@@ -3309,7 +3515,98 @@
         if (!needHp(3)) return;
         S.gold += 5; bump('qin', 1); toast('助守橋 +5銀');
       }
+
+    } else if (m === 'terraces') {
+      if (act === 'help') {
+        if (!needHp(3)) return;
+        addBag('rice', 1); S.food += 1; toast('助耕得稻'); bump('people', 1);
+      } else if (act === 'gaze') { S.hp = Math.min(stats().maxHp, S.hp + 8); toast('觀稼心安'); }
+      else if (act === 'meet') { if (!needHp(2)) return; gardenMeet(); return; }
+    } else if (m === 'iron_league') {
+      if (act === 'trial') {
+        if (window.QianPlots && !S.seenEvents.iron_trial) {
+          S.flags = S.flags || {}; S.flags.visited_iron_league = 1;
+          const ev = window.QianPlots.poll(S);
+          if (ev && ev.id === 'iron_trial') { S.pendingEvent = ev; openEventModal(ev); return; }
+        }
+        toast('坊主曰：他日再試'); bump('fame', 1);
+      } else if (act === 'sparks') {
+        if (!needHp(3)) return;
+        S.skills.craft = Math.min(8, (S.skills.craft || 0) + (Math.random() < 0.5 ? 1 : 0));
+        S.gold += 4; toast('鐵盟幫錘');
+      }
+    } else if (m === 'stargaze') {
+      S.plotFlags = S.plotFlags || {}; S.plotFlags.stargaze = 1; S.flags = S.flags || {}; S.flags.visited_stargaze = 1;
+      if (act === 'star') {
+        if (!needHp(2)) return;
+        if (!S.attrs) S.attrs = {}; S.attrs.yun = (S.attrs.yun || 0) + (Math.random() < 0.4 ? 1 : 0);
+        toast('觀星 · 氣運微動');
+      } else if (act === 'well') { S.hp = Math.min(stats().maxHp, S.hp + 10); toast('臨井清心'); }
+      else if (act === 'ask') {
+        if (!needGold(5)) return;
+        if (!S.attrs) S.attrs = {}; S.attrs.zhi = (S.attrs.zhi || 0) + (Math.random() < 0.35 ? 1 : 0);
+        toast('方士指點 · 智計');
+      }
+    } else if (m === 'poplar' || m === 'dragon_bridge' || m === 'garden_water' || m === 'rain_hut' || m === 'brewery') {
+      if (act === 'shade' || act === 'gaze' || act === 'listen' || act === 'meditate' || act === 'well') {
+        S.hp = Math.min(stats().maxHp, S.hp + 8); toast('稍憩回體');
+      } else if (act === 'meet' || act === 'chat') {
+        if (!needHp(2)) return; gardenMeet(); return;
+      } else if (act === 'scout' || act === 'toll' || act === 'load' || act === 'help') {
+        if (!needHp(act === 'scout' ? 4 : 3)) return;
+        S.gold += 4 + Math.floor(Math.random() * 5); toast('奔走得銀');
+      } else if (act === 'drink') {
+        if (!needGold(3)) return; S.hp = Math.min(stats().maxHp, S.hp + 12); toast('酒暖');
+      } else if (act === 'write') {
+        if (!needHp(2)) return; S.skills.lit = Math.min(8, (S.skills.lit || 0) + 1); toast('雨中書 · 文');
+      } else if (act === 'boat') {
+        if (!needGold(4)) return;
+        if (!S.attrs) S.attrs = {}; S.attrs.yun = (S.attrs.yun || 0) + (Math.random() < 0.3 ? 1 : 0);
+        toast('池上舟');
+      } else if (act === 'rumor' || act === 'gossip') {
+        if (!needHp(2)) return; toast('聽得一則江湖謠');
+      }
+    } else if (m === 'canal_hq') {
+      if (act === 'load') { if (!needHp(4)) return; S.gold += 8; bump('lu', 1); toast('總壇裝船'); }
+      else if (act === 'rumor') { if (!needHp(2)) return; toast('漕幫密語'); }
+    } else if (m === 'tea_master' || m === 'rainy_tea') {
+      if (act === 'sip') {
+        if (!needGold(m === 'tea_master' ? 5 : 4)) return;
+        S.hp = Math.min(stats().maxHp, S.hp + 12); bump('fame', 1); toast('好茶回體');
+      } else if (act === 'learn') {
+        if (!needHp(3)) return;
+        if (!S.attrs) S.attrs = {}; S.attrs.bian = (S.attrs.bian || 0) + (Math.random() < 0.4 ? 1 : 0);
+        toast('學茶 · 辯才');
+      } else if (act === 'gossip') { if (!needHp(2)) return; toast('茶語一陣'); }
+      else if (act === 'tip') { if (!needGold(6)) return; bump('fame', 2); toast('賞茶博士'); }
+    } else if (m === 'sword_wash') {
+      if (act === 'wash') {
+        if (!needHp(2)) return;
+        if (!S.attrs) S.attrs = {}; if (Math.random() < 0.35) S.attrs.wu = (S.attrs.wu || 0) + 1;
+        toast('浣劍 · 刃心微明');
+      } else if (act === 'meditate') { S.hp = Math.min(stats().maxHp, S.hp + 10); toast('面水靜坐'); }
+      else if (act === 'spar') { if (!needHp(5)) return; startBattle('drill'); return; }
+    } else if (m === 'paper' || m === 'dye' || m === 'ink_pool' || m === 'pharmacy') {
+      if (act === 'dry' || act === 'hang') {
+        if (!needHp(2)) return; S.gold += 5; if (m === 'paper') S.skills.lit = Math.min(8, (S.skills.lit || 0) + 1);
+        toast('完工得銀');
+      } else if (act === 'ink' || act === 'copy') {
+        if (!needHp(act === 'copy' ? 3 : 2)) return;
+        if (!S.attrs) S.attrs = {};
+        if (act === 'ink') { S.attrs.zhi = (S.attrs.zhi || 0) + (Math.random() < 0.3 ? 1 : 0); S.skills.lit = Math.min(8, (S.skills.lit || 0) + 1); }
+        else S.attrs.bian = (S.attrs.bian || 0) + (Math.random() < 0.3 ? 1 : 0);
+        toast(act === 'ink' ? '研墨' : '臨帖');
+      } else if (act === 'buy') {
+        if (m === 'pharmacy') { if (!needGold(12)) return; addBag('potion', 1); toast('買得回春散'); }
+        else { if (!needGold(8)) return; addBag('flower', 2); toast('買箋花飾'); }
+      } else if (act === 'learn') {
+        if (!needHp(3)) return;
+        if (m === 'pharmacy') S.skills.med = Math.min(8, (S.skills.med || 0) + 1);
+        else S.skills.craft = Math.min(8, (S.skills.craft || 0) + 1);
+        toast('學藝有進');
+      } else if (act === 'gaze') { S.hp = Math.min(stats().maxHp, S.hp + 8); toast('稍憩'); }
     }
+
     if (window.QianStory) window.QianStory.checkStoryQuests(S).forEach((q) => toast('差事完成：' + q.title));
     renderBeauty(m); renderHUD(); saveQuiet();
   }
@@ -4071,6 +4368,18 @@
       toast('深入山層 ' + S.wildFloor);
       renderCombatPanel();
     });
+    // v16 dungeons
+    ['ruins','crypt','marsh','gorge','stone_forest'].forEach((k) => {
+      const fight = $('btn-' + (k === 'stone_forest' ? 'stone' : k) + '-fight');
+      const flee = $('btn-flee-' + (k === 'stone_forest' ? 'stone' : k));
+      const deeper = $('btn-' + (k === 'stone_forest' ? 'stone' : k) + '-deeper');
+      const boss = $('btn-' + (k === 'stone_forest' ? 'stone' : k) + '-boss');
+      if (fight) fight.addEventListener('click', () => startBattle(k));
+      if (flee) flee.addEventListener('click', fleeBattle);
+      if (deeper) deeper.addEventListener('click', () => dungeonDeeper(k));
+      if (boss) boss.addEventListener('click', () => startBattle(k, true));
+    });
+
 
     // manual attack while in battle: tap scene OR HUD buttons
     $('adventure-scene').addEventListener('click', () => {
