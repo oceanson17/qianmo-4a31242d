@@ -1,4 +1,4 @@
-// v22 title layout · iPhone safe inset
+// v23 scene maps + faces · iPhone safe inset
 (() => {
   'use strict';
 
@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '22';
+  const GAME_VERSION = '23';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -314,7 +314,7 @@
     { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
     { id: 'hire', name: '僱長工', desc: '田莊人手+1', gold: 0 }
   ];
-  const FACE_V = '10';
+  const FACE_V = '11';
   function allNpcs() {
     if (window.QianWorld && window.QianWorld.CAST) return window.QianWorld.CAST;
     return [];
@@ -1391,7 +1391,7 @@
     if (!el) return;
     const keys = ['scholar', 'merchant', 'farmer_f', 'soldier', 'doctor', 'farmer_m'];
     el.innerHTML = keys.map((k) =>
-      '<img class="guest-face" src="' + faceUrl(k) + '" alt="" width="40" height="40" decoding="async">'
+      '<img class="guest-face" src="' + faceUrl(k) + '" alt="" width="52" height="52" decoding="async">'
     ).join('');
   }
   function setTalkFace(n) {
@@ -1411,7 +1411,7 @@
     el.alt = '來訪';
   }
   function faceThumbHtml(faceKey, name) {
-    return '<img class="face-thumb" src="' + faceUrl(faceKey) + '" alt="' + (name || '') + '" width="40" height="40" decoding="async">';
+    return '<img class="face-thumb" src="' + faceUrl(faceKey) + '" alt="' + (name || '') + '" width="52" height="52" decoding="async">';
   }
   function openSheet(id) {
     ['sheet-map', 'sheet-act'].forEach((x) => { if ($(x)) $(x).hidden = true; });

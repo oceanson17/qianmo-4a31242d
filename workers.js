@@ -3,7 +3,7 @@
   'use strict';
 
   const MAX = 14;
-  const ASSET_V = '17';
+  const ASSET_V = '23';
   const SPRITE_KEYS = {
     farm: ['farmer_m', 'farmer_f', 'farmer_m', 'farmer_f'],
     market: ['merchant', 'merchant', 'farmer_m', 'farmer_f'],
@@ -43,7 +43,25 @@
     wish: ['scholar', 'doctor', 'farmer_f', 'soldier'],
     persimmon: ['farmer_m', 'farmer_f', 'scholar', 'merchant'],
     canal: ['merchant', 'farmer_m', 'soldier', 'merchant'],
-    bridge: ['scholar', 'merchant', 'soldier', 'farmer_f']
+    bridge: ['scholar', 'merchant', 'soldier', 'farmer_f'],
+    terraces: ['farmer_m', 'farmer_f', 'merchant', 'scholar'],
+    iron_league: ['soldier', 'farmer_m', 'merchant', 'soldier'],
+    stargaze: ['scholar', 'doctor', 'scholar', 'farmer_f'],
+    poplar: ['farmer_m', 'farmer_f', 'merchant', 'soldier'],
+    dragon_bridge: ['scholar', 'merchant', 'soldier', 'farmer_f'],
+    canal_hq: ['merchant', 'soldier', 'farmer_m', 'merchant'],
+    tea_master: ['scholar', 'merchant', 'farmer_f', 'doctor'],
+    sword_wash: ['soldier', 'scholar', 'farmer_m', 'soldier'],
+    gorge: ['soldier', 'farmer_m', 'scholar', 'soldier'],
+    paper: ['scholar', 'farmer_f', 'merchant', 'doctor'],
+    rain_hut: ['scholar', 'farmer_f', 'doctor', 'merchant'],
+    ink_pool: ['scholar', 'scholar', 'doctor', 'farmer_m'],
+    dye: ['farmer_f', 'merchant', 'farmer_m', 'scholar'],
+    rainy_tea: ['scholar', 'merchant', 'farmer_f', 'doctor'],
+    brewery: ['merchant', 'farmer_m', 'soldier', 'farmer_f'],
+    pharmacy: ['doctor', 'scholar', 'farmer_f', 'merchant'],
+    stone_forest: ['soldier', 'scholar', 'farmer_m', 'doctor'],
+    garden_water: ['scholar', 'farmer_f', 'merchant', 'farmer_m']
   };
   const ROLES = [
     { id: 'hoe', label: '耕', carry: false },
@@ -223,6 +241,80 @@
       [[0.15, 0.65], [0.35, 0.62], [0.55, 0.65], [0.75, 0.62], [0.90, 0.66], [0.60, 0.70], [0.30, 0.68]],
       [[0.25, 0.55], [0.50, 0.52], [0.75, 0.55]]
     ]
+,
+
+    terraces: [
+      [[0.15, 0.70], [0.35, 0.68], [0.55, 0.72], [0.75, 0.68], [0.50, 0.76]],
+      [[0.22, 0.58], [0.45, 0.56], [0.68, 0.60], [0.42, 0.64]]
+    ],
+    iron_league: [
+      [[0.18, 0.70], [0.40, 0.68], [0.60, 0.72], [0.80, 0.68], [0.50, 0.78]],
+      [[0.25, 0.58], [0.48, 0.56], [0.70, 0.60], [0.45, 0.64]]
+    ],
+    stargaze: [
+      [[0.20, 0.68], [0.40, 0.66], [0.60, 0.70], [0.75, 0.66], [0.50, 0.74]],
+      [[0.30, 0.55], [0.50, 0.54], [0.68, 0.58]]
+    ],
+    poplar: [
+      [[0.15, 0.72], [0.35, 0.70], [0.55, 0.74], [0.75, 0.70], [0.50, 0.78]],
+      [[0.25, 0.60], [0.48, 0.58], [0.70, 0.62]]
+    ],
+    dragon_bridge: [
+      [[0.30, 0.55], [0.40, 0.52], [0.50, 0.50], [0.60, 0.52], [0.70, 0.55], [0.50, 0.60]],
+      [[0.25, 0.70], [0.45, 0.72], [0.65, 0.70], [0.50, 0.76]]
+    ],
+    canal_hq: [
+      [[0.12, 0.70], [0.30, 0.68], [0.50, 0.72], [0.70, 0.68], [0.88, 0.74], [0.55, 0.78]],
+      [[0.20, 0.58], [0.45, 0.56], [0.70, 0.60], [0.40, 0.64]]
+    ],
+    tea_master: [
+      [[0.20, 0.68], [0.40, 0.66], [0.60, 0.70], [0.75, 0.66], [0.50, 0.74]],
+      [[0.30, 0.55], [0.50, 0.54], [0.68, 0.58]]
+    ],
+    sword_wash: [
+      [[0.18, 0.70], [0.40, 0.68], [0.60, 0.72], [0.78, 0.68], [0.50, 0.76]],
+      [[0.28, 0.58], [0.48, 0.56], [0.68, 0.60]]
+    ],
+    gorge: [
+      [[0.25, 0.48], [0.40, 0.50], [0.55, 0.48], [0.70, 0.50], [0.50, 0.55]],
+      [[0.20, 0.70], [0.40, 0.72], [0.60, 0.70], [0.45, 0.76]]
+    ],
+    paper: [
+      [[0.18, 0.70], [0.40, 0.68], [0.60, 0.72], [0.78, 0.68], [0.50, 0.76]],
+      [[0.28, 0.58], [0.50, 0.56], [0.70, 0.60]]
+    ],
+    rain_hut: [
+      [[0.20, 0.68], [0.42, 0.66], [0.62, 0.70], [0.78, 0.66], [0.50, 0.74]],
+      [[0.30, 0.55], [0.52, 0.54], [0.70, 0.58]]
+    ],
+    ink_pool: [
+      [[0.22, 0.68], [0.42, 0.66], [0.62, 0.70], [0.75, 0.66], [0.50, 0.74]],
+      [[0.32, 0.55], [0.52, 0.54], [0.68, 0.58]]
+    ],
+    dye: [
+      [[0.18, 0.70], [0.40, 0.68], [0.60, 0.72], [0.78, 0.68], [0.50, 0.76]],
+      [[0.28, 0.58], [0.50, 0.56], [0.70, 0.60]]
+    ],
+    rainy_tea: [
+      [[0.20, 0.68], [0.42, 0.66], [0.62, 0.70], [0.75, 0.66], [0.50, 0.74]],
+      [[0.30, 0.55], [0.52, 0.54], [0.70, 0.58]]
+    ],
+    brewery: [
+      [[0.15, 0.70], [0.35, 0.68], [0.55, 0.72], [0.75, 0.68], [0.50, 0.76]],
+      [[0.25, 0.58], [0.48, 0.56], [0.68, 0.60]]
+    ],
+    pharmacy: [
+      [[0.20, 0.68], [0.40, 0.66], [0.60, 0.70], [0.78, 0.66], [0.50, 0.74]],
+      [[0.28, 0.55], [0.50, 0.54], [0.70, 0.58]]
+    ],
+    stone_forest: [
+      [[0.18, 0.72], [0.38, 0.70], [0.58, 0.74], [0.78, 0.70], [0.50, 0.78]],
+      [[0.28, 0.58], [0.50, 0.56], [0.70, 0.60]]
+    ],
+    garden_water: [
+      [[0.18, 0.68], [0.40, 0.66], [0.60, 0.70], [0.78, 0.66], [0.50, 0.74]],
+      [[0.28, 0.55], [0.50, 0.54], [0.70, 0.58]]
+    ]
   };
 
   const imgCache = {};
@@ -397,35 +489,72 @@
     a.y += (dy / dist) * Math.min(step, dist);
   }
 
-  /** 畫 Q 版 char_* 小人，高度約 32–48 CSS px */
+  /** 畫 Q 版 char_* 小人 + 頭頂圓形臉（保證睇到樣貌） */
+  function faceUrl(key) {
+    return 'assets/face_' + key + '.webp?v=' + ASSET_V;
+  }
+  const faceImgs = Object.create(null);
+  function getFaceImg(key) {
+    if (!faceImgs[key]) {
+      const im = new Image();
+      im.decoding = 'async';
+      im.src = faceUrl(key);
+      faceImgs[key] = im;
+    }
+    return faceImgs[key];
+  }
   function drawSprite(g, x, y, a, cssPxTall, dpr) {
-    const tall = (cssPxTall || 40) * (a.scale || 1) * (dpr || 1);
+    const d = dpr || 1;
+    const tall = (cssPxTall || 48) * (a.scale || 1) * d;
     const bob = Math.sin(a.bob) * 1.4 * ((a.pause > 0 || a.wait > 0) ? 0.25 : 1);
-    const face = a.dir || 1;
-    const im = getImg(a.sprite || 'farmer_m');
+    const dir = a.dir || 1;
+    const key = a.sprite || 'farmer_m';
+    const im = getImg(key);
     g.save();
     g.translate(x, y + bob);
     // 影
-    g.fillStyle = 'rgba(40,25,15,.2)';
+    g.fillStyle = 'rgba(40,25,15,.22)';
     g.beginPath();
-    g.ellipse(0, 2 * (dpr || 1), tall * 0.28, tall * 0.07, 0, 0, Math.PI * 2);
+    g.ellipse(0, 2 * d, tall * 0.28, tall * 0.07, 0, 0, Math.PI * 2);
     g.fill();
 
     if (im && im.complete && im.naturalWidth > 0) {
       const ratio = im.naturalWidth / im.naturalHeight;
       const h = tall;
       const w = h * ratio;
-      g.scale(face, 1);
+      g.save();
+      g.scale(dir, 1);
       g.drawImage(im, -w / 2, -h, w, h);
+      g.restore();
     } else {
-      // 載入中：極簡占位（非最終）
       g.fillStyle = '#5d4037';
-      g.fillRect(-4, -18, 8, 16);
-      g.fillStyle = '#f0d5b8';
-      g.beginPath();
-      g.arc(0, -20, 4, 0, Math.PI * 2);
-      g.fill();
+      g.fillRect(-4 * d, -18 * d, 8 * d, 16 * d);
     }
+    // 圓形臉：固定可讀尺寸（約 28–34 CSS px）
+    const faceIm = getFaceImg(key);
+    const faceR = Math.max(14 * d, Math.min(18 * d, tall * 0.42));
+    const fy = -tall - faceR * 0.15;
+    g.beginPath();
+    g.arc(0, fy, faceR + 1.5 * d, 0, Math.PI * 2);
+    g.fillStyle = 'rgba(201,163,90,.95)';
+    g.fill();
+    g.save();
+    g.beginPath();
+    g.arc(0, fy, faceR, 0, Math.PI * 2);
+    g.clip();
+    if (faceIm && faceIm.complete && faceIm.naturalWidth > 0) {
+      const s = faceR * 2;
+      g.drawImage(faceIm, -faceR, fy - faceR, s, s);
+    } else {
+      g.fillStyle = '#f0d5b8';
+      g.fillRect(-faceR, fy - faceR, faceR * 2, faceR * 2);
+    }
+    g.restore();
+    g.beginPath();
+    g.arc(0, fy, faceR, 0, Math.PI * 2);
+    g.strokeStyle = 'rgba(201,163,90,.9)';
+    g.lineWidth = 1.5 * d;
+    g.stroke();
     g.restore();
   }
 
@@ -458,8 +587,8 @@
     ensure(S, mode);
     const sorted = agents.slice().sort((a, b) => a.y - b.y);
     // ~40 CSS px tall on a ~390 wide phone
-    const base = (mode === 'farm') ? 44 : 40;
-    const cssTall = Math.max(32, Math.min(52, base * (sz.cssW / 390)));
+    const base = (mode === 'farm') ? 52 : 48;
+    const cssTall = Math.max(40, Math.min(64, base * (sz.cssW / 390)));
     sorted.forEach((a) => {
       drawSprite(g, a.x * sz.w, a.y * sz.h, a, cssTall, sz.dpr);
     });
