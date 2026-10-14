@@ -42,7 +42,7 @@ input,textarea,select{font-family:inherit;}
 .title-bg picture,.title-bg img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 40%;}
 .title-bg-shade{
   position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(251,244,238,.35),rgba(251,244,238,0) 38%,rgba(251,244,238,0) 55%,rgba(251,244,238,.72));
+  background:linear-gradient(180deg,rgba(18,14,28,.45),rgba(18,14,28,.08) 28%,rgba(18,14,28,0) 48%,rgba(20,12,10,.55) 72%,rgba(20,12,10,.88));
 }
 .title-content{
   position:absolute;left:0;right:0;bottom:0;top:0;
@@ -973,3 +973,65 @@ input,textarea,select{font-family:inherit;}
 }
 .event-choice.locked,.event-choice[disabled]{opacity:.45;filter:grayscale(.3);cursor:not-allowed;}
 .bag-attrs-hint,.tiny.muted{opacity:.75;font-size:12px;margin:.2rem 0;}
+
+
+/* —— 標題頁秦風主視覺 v18 —— */
+#screen-title .title-bg img{object-position:center 42%;}
+.title-hero-block{
+  display:flex;flex-direction:column;align-items:center;
+  margin-bottom:8px;margin-top:auto;
+}
+.tseal-img{
+  width:64px;height:64px;margin-bottom:10px;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.45));
+  animation:sealIn .9s ease-out both;
+  pointer-events:none;
+}
+@keyframes sealIn{from{opacity:0;transform:scale(.86) rotate(-8deg)}to{opacity:1;transform:none}}
+#screen-title h1{
+  color:#fbf3ee;
+  text-shadow:0 2px 0 rgba(40,20,10,.35),0 8px 28px rgba(0,0,0,.45),0 0 40px rgba(184,50,58,.25);
+  letter-spacing:.35em;padding-left:.35em;font-size:58px;
+}
+#screen-title .subtitle{
+  color:rgba(251,236,220,.92);letter-spacing:.28em;
+  text-shadow:0 1px 8px rgba(0,0,0,.4);
+}
+#screen-title .subtitle:before,#screen-title .subtitle:after{background:rgba(230,180,90,.85);}
+.title-tagline{
+  margin:2px 0 12px;font-size:12px;letter-spacing:.42em;padding-left:.42em;
+  color:rgba(230,190,120,.95);text-shadow:0 1px 6px rgba(0,0,0,.35);
+}
+#screen-title .tmenu{gap:12px;margin-bottom:12px;}
+#screen-title .tbtn{
+  width:min(82%,310px);height:56px;border-radius:18px;
+  border:1.5px solid rgba(201,163,90,.65);
+  background:linear-gradient(180deg,rgba(251,244,238,.96),rgba(244,231,221,.92));
+  box-shadow:0 6px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.65);
+  color:var(--ink);
+}
+#screen-title .tbtn:before,#screen-title .tbtn:after{display:none;}
+#screen-title .tbtn-primary{
+  border-color:rgba(184,50,58,.75);
+  background:linear-gradient(180deg,#c4454c,#9e2f36);
+  color:#fbf3ee;
+  box-shadow:0 8px 22px rgba(120,20,30,.4), inset 0 1px 0 rgba(255,200,200,.35);
+}
+#screen-title .tbtn-primary b{color:#fbf3ee;letter-spacing:.35em;}
+#screen-title .tbtn-primary small{color:rgba(255,230,230,.88);}
+#screen-title .tbtn-ghost{
+  background:rgba(251,244,238,.78);
+}
+#screen-title .tbtn:active{transform:scale(.97);}
+#screen-title .tfoot{color:rgba(240,220,200,.78);text-shadow:0 1px 4px rgba(0,0,0,.35);}
+#screen-title .tver{
+  color:#e6c070;background:rgba(20,12,10,.35);
+  border:1px solid rgba(201,163,90,.45);border-radius:999px;
+  padding:4px 14px;letter-spacing:.2em;
+}
+@media (max-height:700px){
+  #screen-title h1{font-size:46px}
+  .tseal-img{width:52px;height:52px;margin-bottom:6px}
+  #screen-title .tbtn{height:50px}
+  .title-tagline{margin-bottom:8px}
+}
