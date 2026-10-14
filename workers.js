@@ -3,7 +3,7 @@
   'use strict';
 
   const MAX = 14;
-  const ASSET_V = '23';
+  const ASSET_V = '24';
   const SPRITE_KEYS = {
     farm: ['farmer_m', 'farmer_f', 'farmer_m', 'farmer_f'],
     market: ['merchant', 'merchant', 'farmer_m', 'farmer_f'],
@@ -532,8 +532,8 @@
     }
     // 圓形臉：固定可讀尺寸（約 28–34 CSS px）
     const faceIm = getFaceImg(key);
-    const faceR = Math.max(14 * d, Math.min(18 * d, tall * 0.42));
-    const fy = -tall - faceR * 0.15;
+    const faceR = Math.max(16 * d, Math.min(22 * d, tall * 0.48));
+    const fy = -tall - faceR * 0.08;
     g.beginPath();
     g.arc(0, fy, faceR + 1.5 * d, 0, Math.PI * 2);
     g.fillStyle = 'rgba(201,163,90,.95)';

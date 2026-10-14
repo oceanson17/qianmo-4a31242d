@@ -202,8 +202,162 @@
       desc: '回陋室休息一次恢復體力。',
       type: 'side',
       check: function (S) { return !!(S.flags && S.flags.hut_rest); },
-      reward: { gold: 8 },
+      reward: { gold: 8, food: 1 },
       unlockNpc: []
+    },
+    /* —— v24 新增日常／支線（可領獎） —— */
+    {
+      id: 'sq_spring_plow',
+      title: '春耕首穫',
+      desc: '於田莊收成稻米，累計持有稻≥4（或完成一次收割）。',
+      type: 'daily',
+      check: function (S) {
+        return !!(S.flags && S.flags.harvested) || ((S.bag && (S.bag.rice || 0) >= 4));
+      },
+      reward: { gold: 20, food: 3, bag: { rice: 1 } },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_yard_sweep',
+      title: '庭院掃葉',
+      desc: '至庭院掃葉／歇息一次。',
+      type: 'daily',
+      check: function (S) { return !!(S.flags && S.flags.yard_sweep); },
+      reward: { gold: 10, food: 1 },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_tea_sip',
+      title: '云海一盞',
+      desc: '於茶寮／品茗室品茗一次。',
+      type: 'daily',
+      check: function (S) { return !!(S.flags && S.flags.tea_sip); },
+      reward: { gold: 12, fame: 1 },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_swim_bath',
+      title: '水塘洗濯',
+      desc: '至水塘洗濯／嬉水一次。',
+      type: 'daily',
+      check: function (S) { return !!(S.flags && S.flags.swim_bath); },
+      reward: { gold: 10, food: 1 },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_incense_burn',
+      title: '靜坐燃香',
+      desc: '於香鋪燃香靜心一次。',
+      type: 'side',
+      check: function (S) { return !!(S.flags && S.flags.incense_burn); },
+      reward: { gold: 14, fame: 2 },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_copy_book',
+      title: '書齋抄書',
+      desc: '於書齋研讀或抄書一次。',
+      type: 'side',
+      check: function (S) { return !!(S.flags && S.flags.study_read); },
+      reward: { gold: 16, fame: 1, bag: { flower: 1 } },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_forge_sparks',
+      title: '鐵鋪幫錘',
+      desc: '於鐵鋪或鐵盟坊幫錘一次。',
+      type: 'side',
+      check: function (S) { return !!(S.flags && S.flags.forge_sparks); },
+      reward: { gold: 18, bag: { ore: 1 } },
+      unlockNpc: ['gongjiang']
+    },
+    {
+      id: 'sq_canal_load',
+      title: '漕運裝船',
+      desc: '於漕幫碼頭／總壇裝船一次。',
+      type: 'side',
+      check: function (S) { return !!(S.flags && S.flags.canal_load); },
+      reward: { gold: 22, people: 1 },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_wish_tag',
+      title: '祈願掛籤',
+      desc: '於祈願樹掛籤一次。',
+      type: 'side',
+      check: function (S) { return !!(S.flags && S.flags.wish_tag); },
+      reward: { gold: 12, people: 2 },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_persimmon_pick',
+      title: '霜柿秋收',
+      desc: '於霜柿山居摘柿一次。',
+      type: 'side',
+      check: function (S) { return !!(S.flags && S.flags.persimmon); },
+      reward: { gold: 15, food: 4 },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_stargaze',
+      title: '觀星問讖',
+      desc: '造訪觀星隱廬並觀星／臨井。',
+      type: 'side',
+      check: function (S) { return !!(S.flags && S.flags.visited_stargaze); },
+      reward: { gold: 18, fame: 2 },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_garden_walk',
+      title: '園林閒步',
+      desc: '於園林／水榭園閒步或遇人一次。',
+      type: 'daily',
+      check: function (S) { return !!(S.flags && S.flags.garden_walk); },
+      reward: { gold: 10, people: 1 },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_aff_friend',
+      title: '鄉鄰好感',
+      desc: '任一人脈好感達到 20。',
+      type: 'side',
+      check: function (S) {
+        var max = 0;
+        Object.keys(S.npcs || {}).forEach(function (id) {
+          var a = (S.npcs[id] && S.npcs[id].aff) || 0;
+          if (a > max) max = a;
+        });
+        return max >= 20;
+      },
+      reward: { gold: 25, food: 2, fame: 2 },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_potion_craft',
+      title: '回春散成',
+      desc: '煉成回春散（藥劑）至少一帖。',
+      type: 'side',
+      check: function (S) { return ((S.bag && (S.bag.potion || 0) >= 1) || !!(S.flags && S.flags.saiPotion)); },
+      reward: { gold: 20, bag: { herb: 1 }, people: 2 },
+      unlockNpc: ['yiguan']
+    },
+    {
+      id: 'sq_rain_hut',
+      title: '聽雨一晝',
+      desc: '造訪聽雨廬並稍憩／書寫。',
+      type: 'side',
+      check: function (S) { return !!(S.flags && S.flags.rain_hut); },
+      reward: { gold: 14, fame: 1 },
+      unlockNpc: []
+    },
+    {
+      id: 'sq_sold_market',
+      title: '坊市販售',
+      desc: '累計賣出所得銀兩達到 40。',
+      type: 'side',
+      check: function (S) { return (S.soldGold || 0) >= 40; },
+      reward: { gold: 30, bag: { cloth: 1 }, fame: 2 },
+      unlockNpc: ['guren']
     }
   ];
 
@@ -243,6 +397,9 @@
         S.quests[q.id].title = q.title;
         S.quests[q.id].desc = q.desc;
         S.quests[q.id].type = q.type;
+        /* v23 自動發獎存檔：已完成但無 claimed 欄 → 視作已領，避免重領 */
+        if (S.quests[q.id].done && S.quests[q.id].claimed == null) S.quests[q.id].claimed = true;
+        if (S.quests[q.id].claimed == null) S.quests[q.id].claimed = false;
       }
     });
     return S;
@@ -348,6 +505,43 @@
     return { ok: true, msg: '已入' + g.name };
   }
 
+  function applyQuestReward(S, q) {
+    if (!q || !q.reward) return '';
+    var parts = [];
+    var r = q.reward;
+    if (r.gold) { S.gold = (S.gold || 0) + r.gold; parts.push('銀' + r.gold); }
+    if (r.food) { S.food = (S.food || 0) + r.food; parts.push('糧' + r.food); }
+    if (r.fame) {
+      if (global.QianFactions) global.QianFactions.bump(S, 'fame', r.fame);
+      else S.fame = Math.min(100, (S.fame || 0) + r.fame);
+      parts.push('名+' + r.fame);
+    }
+    if (r.people) {
+      if (global.QianFactions) global.QianFactions.bump(S, 'people', r.people);
+      else S.people = Math.min(100, (S.people || 0) + r.people);
+      parts.push('民+' + r.people);
+    }
+    if (r.bag) {
+      if (!S.bag) S.bag = {};
+      Object.keys(r.bag).forEach(function (k) {
+        S.bag[k] = (S.bag[k] || 0) + r.bag[k];
+        parts.push(k + '×' + r.bag[k]);
+      });
+    }
+    return parts.join(' · ');
+  }
+
+  function rewardTip(q) {
+    if (!q || !q.reward) return '';
+    var r = q.reward, parts = [];
+    if (r.gold) parts.push('銀' + r.gold);
+    if (r.food) parts.push('糧' + r.food);
+    if (r.fame) parts.push('名+' + r.fame);
+    if (r.people) parts.push('民+' + r.people);
+    if (r.bag) Object.keys(r.bag).forEach(function (k) { parts.push(k + '×' + r.bag[k]); });
+    return parts.join(' · ');
+  }
+
   function checkStoryQuests(S) {
     ensure(S);
     var doneNow = [];
@@ -356,21 +550,38 @@
       if (!st || st.done) return;
       if (q.check(S)) {
         st.done = true;
-        if (!st.claimed) {
-          st.claimed = true;
-          if (q.reward) {
-            if (q.reward.gold) S.gold = (S.gold || 0) + q.reward.gold;
-            if (q.reward.fame && global.QianFactions) global.QianFactions.bump(S, 'fame', q.reward.fame);
-            else if (q.reward.fame) S.fame = Math.min(100, (S.fame || 0) + q.reward.fame);
-            if (q.reward.people && global.QianFactions) global.QianFactions.bump(S, 'people', q.reward.people);
-            else if (q.reward.people) S.people = Math.min(100, (S.people || 0) + q.reward.people);
-          }
-          markKnownMany(S, q.unlockNpc, '差事：' + q.title);
-          doneNow.push(q);
-        }
+        st.claimed = !!st.claimed;
+        doneNow.push(q);
       }
     });
     return doneNow;
+  }
+
+  function claimStoryQuest(S, id) {
+    ensure(S);
+    var q = null;
+    for (var i = 0; i < STORY_QUESTS.length; i++) if (STORY_QUESTS[i].id === id) q = STORY_QUESTS[i];
+    if (!q) return { ok: false, msg: '無此差事' };
+    var st = S.quests[id];
+    if (!st) return { ok: false, msg: '尚未接取' };
+    if (!st.done) {
+      if (q.check(S)) { st.done = true; }
+      else return { ok: false, msg: '尚未完成' };
+    }
+    if (st.claimed) return { ok: false, msg: '已領過獎' };
+    st.claimed = true;
+    var tip = applyQuestReward(S, q);
+    markKnownMany(S, q.unlockNpc, '差事：' + q.title);
+    return { ok: true, quest: q, tip: tip || '無額外獎品' };
+  }
+
+  function hasClaimable(S) {
+    ensure(S);
+    checkStoryQuests(S);
+    return STORY_QUESTS.some(function (q) {
+      var st = S.quests[q.id];
+      return st && st.done && !st.claimed;
+    });
   }
 
   function questListHtml(S, escapeHtml) {
@@ -379,27 +590,37 @@
     var html = '';
     var mains = STORY_QUESTS.filter(function (q) { return q.type === 'main'; });
     var sides = STORY_QUESTS.filter(function (q) { return q.type === 'side'; });
+    var dailies = STORY_QUESTS.filter(function (q) { return q.type === 'daily'; });
     function block(title, list) {
-      html += '<div class="quest-item"><strong>' + title + '</strong></div>';
+      if (!list.length) return;
+      html += '<div class="quest-item quest-section"><strong>' + title + '</strong></div>';
       list.forEach(function (q) {
         var st = S.quests[q.id] || {};
-        html += '<div class="quest-item' + (st.done ? ' done' : '') + '">';
-        html += '<strong>' + (st.done ? '✓ ' : '') + escapeHtml(q.title) + '</strong>';
+        var cls = 'quest-item';
+        if (st.claimed) cls += ' done claimed';
+        else if (st.done) cls += ' claimable';
+        html += '<div class="' + cls + '" data-qid="' + q.id + '">';
+        html += '<strong>' + (st.claimed ? '✓ ' : (st.done ? '◎ ' : '· ')) + escapeHtml(q.title) + '</strong>';
         html += '<p>' + escapeHtml(q.desc) + '</p>';
-        if (st.done) html += '<p class="ok">已完成</p>';
+        html += '<p class="quest-reward">獎：' + escapeHtml(rewardTip(q) || '—') + '</p>';
+        if (st.claimed) html += '<p class="ok">已領獎</p>';
+        else if (st.done) html += '<button type="button" class="btn primary slim btn-claim-quest" data-qid="' + q.id + '">領獎</button>';
+        else html += '<p class="quest-progress">進行中</p>';
         html += '</div>';
       });
     }
-    block('主線影', mains);
+    block('主線', mains);
+    block('日常', dailies);
     block('支線', sides);
     return html;
   }
 
   function hasOpenStory(S) {
     ensure(S);
+    checkStoryQuests(S);
     return STORY_QUESTS.some(function (q) {
       var st = S.quests[q.id];
-      return st && !st.done;
+      return st && (!st.done || !st.claimed);
     });
   }
 
@@ -505,6 +726,9 @@
     gateOptions: gateOptions,
     tryOpenGate: tryOpenGate,
     checkStoryQuests: checkStoryQuests,
+    claimStoryQuest: claimStoryQuest,
+    hasClaimable: hasClaimable,
+    rewardTip: rewardTip,
     questListHtml: questListHtml,
     hasOpenStory: hasOpenStory,
     talkChoices: talkChoices,

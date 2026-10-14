@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '23';
+  const GAME_VERSION = '24';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -314,7 +314,7 @@
     { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
     { id: 'hire', name: '僱長工', desc: '田莊人手+1', gold: 0 }
   ];
-  const FACE_V = '11';
+  const FACE_V = '24';
   function allNpcs() {
     if (window.QianWorld && window.QianWorld.CAST) return window.QianWorld.CAST;
     return [];
@@ -1089,11 +1089,13 @@
     // plot visit flags
     if (m === 'stargaze') { S.flags = S.flags || {}; S.flags.visited_stargaze = 1; S.plotFlags = S.plotFlags || {}; S.plotFlags.stargaze = 1; }
     if (m === 'iron_league') { S.flags = S.flags || {}; S.flags.visited_iron_league = 1; }
+    if (m === 'rain_hut') { S.flags = S.flags || {}; S.flags.rain_hut = 1; }
+    if (m === 'garden' || m === 'garden_water') { S.flags = S.flags || {}; /* visit only */ }
     if (m === 'xiangbang' || m === 'palace') { S.flags = S.flags || {}; }
     pushStory('前往' + (MODE_LABELS[m] || '') + '。', 'sys');
     if (window.QianStory) {
       const done = window.QianStory.checkStoryQuests(S);
-      done.forEach((q) => toast('差事完成：' + q.title));
+      done.forEach((q) => toast('差事可領獎：' + q.title));
     }
     renderHUD();
     saveQuiet();
@@ -1160,6 +1162,7 @@
     if (kind === 'garden') {
       S.hp = Math.min(S.maxHp, S.hp + 8);
       if (window.QianFactions) window.QianFactions.bump(S, 'people', 1);
+      S.flags = S.flags || {}; S.flags.garden_walk = 1;
       toast('園林閒步 · 體力回復');
       pushStory('你在園林信步，心神稍定。', 'nar');
     } else if (kind === 'garden_meet') {
@@ -1181,6 +1184,7 @@
     } else if (kind === 'swim') {
       S.hp = Math.min(S.maxHp, S.hp + 14);
       if (S.food > 0 && Math.random() < 0.3) { S.food -= 1; }
+      S.flags = S.flags || {}; S.flags.swim_bath = 1;
       toast('水塘洗濯 · 體力大復');
       pushStory('清波濯足，暑氣盡去。', 'nar');
     } else if (kind === 'fish') {
@@ -1627,6 +1631,7 @@
     renderHUD();
   }
   function harvestOne(p) {
+    S.flags = S.flags || {}; S.flags.harvested = 1;
     const crop = CROPS[p.crop];
     const farmGear = (stats().attrs && stats().attrs.farmBonus) || 0;
     const bonus = 1 + Math.floor((S.skills.farm || 0) / 3) + Math.floor(farmGear / 2);
@@ -3030,14 +3035,14 @@
     checkQuest();
     if (window.QianFactions) window.QianFactions.checkFactionQuest(S);
     const q = S.quest;
-    let body = '<div class="quest-item' + (q.done ? ' done' : '') + '"><strong>' + q.title + '</strong><p>' + q.desc + '</p>';
+    let body = '<div class="quest-item' + (q.done ? ' done' : '') + '"><strong>【出身】' + q.title + '</strong><p>' + q.desc + '</p>';
     if (q.done) body += '<p class="ok">已完成</p>';
-    else body += '<p>酬：銀' + q.gold + ' · 糧' + q.food + '</p>';
+    else body += '<p class="quest-reward">酬：銀' + q.gold + ' · 糧' + q.food + '</p>';
     body += '</div>';
     if (S.factionQuest) {
       const fq = S.factionQuest;
       body += '<div class="quest-item' + (fq.done ? ' done' : '') + '"><strong>【勢力】' + fq.title + '</strong><p>' + fq.desc + '</p>';
-      body += '<p>酬：銀' + fq.gold + (fq.food ? ' · 糧' + fq.food : '') + '</p></div>';
+      body += '<p class="quest-reward">酬：銀' + fq.gold + (fq.food ? ' · 糧' + fq.food : '') + '</p></div>';
     } else if (!S.joined) {
       body += '<div class="quest-item"><strong>勢力</strong><p>尚未加入任何一方。聲名漸起時，呂黨／王府／邊市盟或將來訪。</p></div>';
     }
@@ -3046,9 +3051,11 @@
     if (S.worldLine) body += '<div class="quest-item"><strong>天下大勢</strong><p>' + escapeHtml(S.worldLine) + '</p></div>';
     if (window.QianStory) {
       window.QianStory.ensure(S);
-      window.QianStory.checkStoryQuests(S);
+      const newly = window.QianStory.checkStoryQuests(S);
+      if (newly && newly.length) newly.forEach((qq) => toast('差事可領獎：' + qq.title));
       body += window.QianStory.questListHtml(S, escapeHtml);
-      if ($('quest-dot')) $('quest-dot').hidden = !window.QianStory.hasOpenStory(S) && (!S.quest || S.quest.done);
+      const claimable = window.QianStory.hasClaimable && window.QianStory.hasClaimable(S);
+      if ($('quest-dot')) $('quest-dot').hidden = !window.QianStory.hasOpenStory(S) && (!S.quest || S.quest.done) && !claimable;
     }
     const sk = S.skills || {};
     const ha = (typeof heroAttrs === 'function' ? heroAttrs() : {});
@@ -3058,6 +3065,22 @@
       (disguiseOn() ? ' · 女扮男裝中' : '') + '</p></div>';
     $('quest-list').innerHTML = body;
     $('modal-quest').hidden = false;
+    const ql = $('quest-list');
+    if (ql && !ql._claimBound) {
+      ql._claimBound = true;
+      ql.addEventListener('click', (ev) => {
+        const btn = ev.target && ev.target.closest && ev.target.closest('.btn-claim-quest');
+        if (!btn) return;
+        const id = btn.getAttribute('data-qid');
+        if (!id || !window.QianStory || !window.QianStory.claimStoryQuest) return;
+        const r = window.QianStory.claimStoryQuest(S, id);
+        if (!r.ok) { toast(r.msg || '無法領獎'); return; }
+        toast('領獎：' + r.quest.title + (r.tip ? ' · ' + r.tip : ''));
+        renderHUD();
+        saveQuiet();
+        openQuest();
+      });
+    }
   }
   function checkQuest() {
     const q = S.quest;
@@ -3399,6 +3422,7 @@
       if (act === 'sip') {
         if (!needGold(3)) return;
         S.hp = Math.min(S.maxHp, S.hp + 10); bump('fame', 1);
+        S.flags = S.flags || {}; S.flags.tea_sip = 1;
         toast('云海一盞 · 回體'); pushStory('茶煙與云海一色，你心神稍定。', 'nar');
       } else if (act === 'gossip') {
         if (!needHp(2)) return;
@@ -3414,7 +3438,8 @@
       if (act === 'sparks') {
         if (!needHp(3)) return;
         S.skills.craft = Math.min(8, (S.skills.craft || 0) + (Math.random() < 0.5 ? 1 : 0));
-        S.gold += 3; toast('幫錘 · 工藝有進'); pushStory('火花四濺，你幫打了數錘。', 'nar');
+        S.gold += 3; S.flags = S.flags || {}; S.flags.forge_sparks = 1;
+        toast('幫錘 · 工藝有進'); pushStory('火花四濺，你幫打了數錘。', 'nar');
       } else if (act === 'buyOre') {
         if (!needGold(10)) return;
         addBag('ore', 2); toast('買礦×2'); 
@@ -3430,7 +3455,8 @@
     } else if (m === 'incense') {
       if (act === 'burn') {
         if (!needGold(4)) return;
-        S.hp = Math.min(S.maxHp, S.hp + 14); bump('fame', 1); toast('靜坐燃香'); 
+        S.hp = Math.min(S.maxHp, S.hp + 14); bump('fame', 1);
+        S.flags = S.flags || {}; S.flags.incense_burn = 1; toast('靜坐燃香'); 
       } else if (act === 'offer') {
         if (bagCount('flower') < 1) { toast('缺花卉'); return; }
         addBag('flower', -1); bump('people', 2); toast('貢香 · 民心↑');
@@ -3454,6 +3480,7 @@
       if (act === 'read') {
         if (!needHp(3)) return;
         S.skills.lit = Math.min(8, (S.skills.lit || 0) + (Math.random() < 0.55 ? 1 : 0));
+        S.flags = S.flags || {}; S.flags.study_read = 1;
         toast('研讀有所得'); pushStory('書齋燈下，你又翻過一冊。', 'nar');
       } else if (act === 'agi') {
         if (!needHp(4)) return;
@@ -3462,7 +3489,7 @@
       }
     } else if (m === 'yard') {
       if (act === 'sweep') {
-        S.hp = Math.min(S.maxHp, S.hp + 8); toast('掃庭 · 回體'); 
+        S.hp = Math.min(S.maxHp, S.hp + 8); S.flags = S.flags || {}; S.flags.yard_sweep = 1; toast('掃庭 · 回體'); 
       } else if (act === 'meet') {
         if (!needHp(2)) return;
         gardenMeet(); return;
@@ -3502,7 +3529,8 @@
       if (act === 'load') {
         if (!needHp(4)) return;
         const g = 8 + Math.floor(Math.random() * 10) + (S.skills.trade || 0) * 2;
-        S.gold += g; bump('lu', 1); toast('裝船 +' + g + '銀'); markNpcKnown('zhao', '碼頭');
+        S.gold += g; bump('lu', 1); S.flags = S.flags || {}; S.flags.canal_load = 1;
+        toast('裝船 +' + g + '銀'); markNpcKnown('zhao', '碼頭');
       } else if (act === 'rumor') {
         if (!needHp(2)) return;
         toast('漕謠：關東要糧'); pushStory('碼頭艄公說關東急徵軍糧。', 'nar');
@@ -3535,7 +3563,7 @@
       } else if (act === 'sparks') {
         if (!needHp(3)) return;
         S.skills.craft = Math.min(8, (S.skills.craft || 0) + (Math.random() < 0.5 ? 1 : 0));
-        S.gold += 4; toast('鐵盟幫錘');
+        S.gold += 4; S.flags = S.flags || {}; S.flags.forge_sparks = 1; toast('鐵盟幫錘');
       }
     } else if (m === 'stargaze') {
       S.plotFlags = S.plotFlags || {}; S.plotFlags.stargaze = 1; S.flags = S.flags || {}; S.flags.visited_stargaze = 1;
@@ -3550,6 +3578,10 @@
         toast('方士指點 · 智計');
       }
     } else if (m === 'poplar' || m === 'dragon_bridge' || m === 'garden_water' || m === 'rain_hut' || m === 'brewery') {
+      if (m === 'rain_hut') { S.flags = S.flags || {}; S.flags.rain_hut = 1; }
+      if (m === 'garden_water' && (act === 'gaze' || act === 'meet' || act === 'boat' || act === 'shade')) {
+        S.flags = S.flags || {}; S.flags.garden_walk = 1;
+      }
       if (act === 'shade' || act === 'gaze' || act === 'listen' || act === 'meditate' || act === 'well') {
         S.hp = Math.min(stats().maxHp, S.hp + 8); toast('稍憩回體');
       } else if (act === 'meet' || act === 'chat') {
@@ -3569,12 +3601,13 @@
         if (!needHp(2)) return; toast('聽得一則江湖謠');
       }
     } else if (m === 'canal_hq') {
-      if (act === 'load') { if (!needHp(4)) return; S.gold += 8; bump('lu', 1); toast('總壇裝船'); }
+      if (act === 'load') { if (!needHp(4)) return; S.gold += 8; bump('lu', 1); S.flags = S.flags || {}; S.flags.canal_load = 1; toast('總壇裝船'); }
       else if (act === 'rumor') { if (!needHp(2)) return; toast('漕幫密語'); }
     } else if (m === 'tea_master' || m === 'rainy_tea') {
       if (act === 'sip') {
         if (!needGold(m === 'tea_master' ? 5 : 4)) return;
-        S.hp = Math.min(stats().maxHp, S.hp + 12); bump('fame', 1); toast('好茶回體');
+        S.hp = Math.min(stats().maxHp, S.hp + 12); bump('fame', 1);
+        S.flags = S.flags || {}; S.flags.tea_sip = 1; toast('好茶回體');
       } else if (act === 'learn') {
         if (!needHp(3)) return;
         if (!S.attrs) S.attrs = {}; S.attrs.bian = (S.attrs.bian || 0) + (Math.random() < 0.4 ? 1 : 0);

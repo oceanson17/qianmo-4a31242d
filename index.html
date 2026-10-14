@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v22 title layout · iPhone safe inset -->
+<!-- v24 UI · retreat maps · claimable quests · iPhone safe inset -->
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#f6ebe4">
 <title>墨夢莊周</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E墨%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=23">
+<link rel="stylesheet" href="style.css?v=24">
 </head>
 <body x-apple-data-detectors="false">
 <div id="app">
@@ -20,16 +20,16 @@
   <section id="screen-title" class="screen on">
     <div class="title-bg" aria-hidden="true">
       <picture>
-        <source srcset="assets/bg_title.webp?v=23" type="image/webp">
-        <img src="assets/bg_title.jpg?v=23" alt="" decoding="async">
+        <source srcset="assets/bg_title.webp?v=24" type="image/webp">
+        <img src="assets/bg_title.jpg?v=24" alt="" decoding="async">
       </picture>
       <div class="title-bg-shade"></div>
     </div>
     <div class="title-content title-poster">
       <div class="title-hero-block">
         <div class="title-brand-row">
-          <img class="tseal-img" src="assets/seal_mo.webp?v=23" alt="墨" width="64" height="64" decoding="async">
-          <p class="title-ver-inline" id="game-version">版本 v22</p>
+          <img class="tseal-img" src="assets/seal_mo.webp?v=24" alt="墨" width="64" height="64" decoding="async">
+          <p class="title-ver-inline" id="game-version">版本 v24</p>
         </div>
         <h1>墨夢莊周</h1>
         <p class="subtitle">秦王政元年　墨夢可改史</p>
@@ -100,8 +100,8 @@
     <!-- 全屏場景 -->
     <div class="vn-stage" id="adventure-scene">
       <picture id="scene-pic">
-        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=23" type="image/webp">
-        <img id="scene-img" src="assets/bg_busy_farm.webp?v=23" alt="場景" class="scene-img" decoding="async">
+        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=24" type="image/webp">
+        <img id="scene-img" src="assets/bg_busy_farm.webp?v=24" alt="場景" class="scene-img" decoding="async">
       </picture>
       <div class="season-tint" id="season-tint" data-season="0"></div>
       <canvas id="worker-layer" class="worker-layer" aria-hidden="true"></canvas>
@@ -318,7 +318,7 @@
       </div>
       <div class="sbody act-body">
         <div class="act-scene" id="act-scene">
-          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=23" alt="場景" class="act-scene-img" decoding="async">
+          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=24" alt="場景" class="act-scene-img" decoding="async">
           <canvas id="act-worker-layer" class="act-worker-layer" aria-hidden="true"></canvas>
           <div class="act-scene-cap" id="act-scene-cap">場景人物走動</div>
         </div>
@@ -766,7 +766,7 @@
   <div id="modal-menu" class="modal" hidden>
     <div class="modal-card parchment">
       <h2>選單</h2>
-      <p class="ver-line" id="menu-version">版本 v22</p>
+      <p class="ver-line" id="menu-version">版本 v24</p>
       <button type="button" class="btn" id="btn-save">立即存檔</button>
       <button type="button" class="btn" id="btn-toggle-disguise" hidden>女扮男裝</button>
         <button type="button" class="btn" id="btn-world">天下大勢</button>
@@ -842,7 +842,7 @@
       <button type="button" class="btn" id="btn-test-ai">試連線</button>
       <p class="tiny" id="ai-test-result"></p>
       <p class="tiny">Key 只存本機 localStorage，不上傳。無 Key 時對白走離線劇本。</p>
-      <p class="ver-line" id="set-version">版本 v22</p>
+      <p class="ver-line" id="set-version">版本 v24</p>
       <button type="button" class="btn primary" id="btn-save-settings">儲存</button>
       <button type="button" class="btn ghost" id="btn-close-settings">關閉</button>
     </div>
@@ -868,7 +868,7 @@
       </div>
       <div class="wave-label" id="wave-label">第 1／3 波</div>
       <div class="hp-block player">
-        <img class="battle-hero" src="assets/char_hero.webp?v=23" alt="" decoding="async">
+        <img class="battle-hero" src="assets/char_hero.webp?v=24" alt="" decoding="async">
         <div class="hp-name">你</div>
         <div class="hp-bar"><div class="hp-fill player" id="player-hp-fill"></div></div>
         <div class="hp-num" id="player-hp-num">0/0</div>
@@ -883,14 +883,14 @@
   </div>
 
 </div>
-<script src="equip.js?v=23"></script>
-<script src="plots.js?v=23"></script>
-<script src="ai.js?v=23"></script>
-<script src="factions.js?v=23"></script>
-<script src="world.js?v=23"></script>
-<script src="story.js?v=23"></script>
-<script src="workers.js?v=23"></script>
-<script src="npc_ai.js?v=23"></script>
-<script src="game.js?v=23"></script>
+<script src="equip.js?v=24"></script>
+<script src="plots.js?v=24"></script>
+<script src="ai.js?v=24"></script>
+<script src="factions.js?v=24"></script>
+<script src="world.js?v=24"></script>
+<script src="story.js?v=24"></script>
+<script src="workers.js?v=24"></script>
+<script src="npc_ai.js?v=24"></script>
+<script src="game.js?v=24"></script>
 </body>
 </html>
