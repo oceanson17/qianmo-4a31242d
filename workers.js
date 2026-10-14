@@ -3,7 +3,7 @@
   'use strict';
 
   const MAX = 14;
-  const ASSET_V = '24';
+  const ASSET_V = '25';
   const SPRITE_KEYS = {
     farm: ['farmer_m', 'farmer_f', 'farmer_m', 'farmer_f'],
     market: ['merchant', 'merchant', 'farmer_m', 'farmer_f'],
@@ -387,7 +387,7 @@
       speed: 0.016 + Math.random() * 0.02,
       role, sprite,
       bob: Math.random() * Math.PI * 2,
-      scale: 0.9 + (i % 3) * 0.06,
+      scale: 0.95 + (i % 3) * 0.08,
       dir: 1, pause: 0, workFrame: 0
     };
   }
@@ -532,8 +532,8 @@
     }
     // 圓形臉：固定可讀尺寸（約 28–34 CSS px）
     const faceIm = getFaceImg(key);
-    const faceR = Math.max(16 * d, Math.min(22 * d, tall * 0.48));
-    const fy = -tall - faceR * 0.08;
+    const faceR = Math.max(14 * d, Math.min(18 * d, tall * 0.32));
+    const fy = -tall + faceR * 0.55; /* nest face on head, show more body */
     g.beginPath();
     g.arc(0, fy, faceR + 1.5 * d, 0, Math.PI * 2);
     g.fillStyle = 'rgba(201,163,90,.95)';
@@ -587,8 +587,8 @@
     ensure(S, mode);
     const sorted = agents.slice().sort((a, b) => a.y - b.y);
     // ~40 CSS px tall on a ~390 wide phone
-    const base = (mode === 'farm') ? 52 : 48;
-    const cssTall = Math.max(40, Math.min(64, base * (sz.cssW / 390)));
+    const base = (mode === 'farm') ? 64 : 58;
+    const cssTall = Math.max(48, Math.min(78, base * (sz.cssW / 390)));
     sorted.forEach((a) => {
       drawSprite(g, a.x * sz.w, a.y * sz.h, a, cssTall, sz.dpr);
     });

@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '24';
+  const GAME_VERSION = '25';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -314,7 +314,7 @@
     { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
     { id: 'hire', name: '僱長工', desc: '田莊人手+1', gold: 0 }
   ];
-  const FACE_V = '24';
+  const FACE_V = '25';
   function allNpcs() {
     if (window.QianWorld && window.QianWorld.CAST) return window.QianWorld.CAST;
     return [];
@@ -1450,10 +1450,15 @@
         p.appendChild(costEl);
       }
       costEl.textContent = cost ? ('體-' + cost) : '本處';
-      // soft mini preview thumbs for 田／陋
-      if (p.dataset.mode === 'farm' || p.dataset.mode === 'hut') {
+      // v25: original pin icons for common locales
+      const PIN_ART = {
+        farm: 'farm', hut: 'hut', village: 'village', market: 'market',
+        clinic: 'clinic', drill: 'drill', wild: 'wild', garden: 'garden'
+      };
+      const art = PIN_ART[p.dataset.mode];
+      if (art) {
         p.classList.add('pin-art');
-        p.dataset.art = p.dataset.mode === 'farm' ? 'farm' : 'hut';
+        p.dataset.art = art;
       }
     });
     openSheet('sheet-map');
