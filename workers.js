@@ -3,14 +3,14 @@
   'use strict';
 
   const MAX = 14;
-  const ASSET_V = '25';
+  const ASSET_V = '26';
   const SPRITE_KEYS = {
     farm: ['farmer_m', 'farmer_f', 'farmer_m', 'farmer_f'],
     market: ['merchant', 'merchant', 'farmer_m', 'farmer_f'],
     clinic: ['doctor', 'doctor', 'farmer_f', 'farmer_m', 'scholar', 'farmer_f', 'doctor', 'merchant'],
     village: ['scholar', 'farmer_m', 'farmer_f', 'merchant'],
     drill: ['soldier', 'soldier', 'farmer_m'],
-    wild: ['soldier', 'soldier', 'farmer_f'],
+    wild: ['hunter', 'ranger', 'hunter', 'soldier'],
     garden: ['scholar', 'farmer_f', 'merchant', 'farmer_m'],
     swim: ['farmer_f', 'farmer_m', 'scholar'],
     moon: ['merchant', 'scholar', 'farmer_f', 'soldier'],
@@ -18,7 +18,7 @@
     post: ['merchant', 'soldier', 'scholar', 'farmer_m'],
     tavern: ['merchant', 'farmer_f', 'soldier', 'scholar'],
     academy: ['scholar', 'scholar', 'farmer_m', 'doctor'],
-    frontier: ['soldier', 'soldier', 'farmer_m', 'merchant'],
+    frontier: ['soldier', 'ranger', 'hunter', 'soldier'],
     xianyang: ['merchant', 'scholar', 'soldier', 'farmer_m'],
     palace: ['soldier', 'soldier', 'scholar', 'farmer_f', 'soldier', 'merchant', 'scholar'],
     xiangbang: ['merchant', 'scholar', 'merchant', 'soldier', 'farmer_m', 'scholar', 'merchant', 'farmer_f'],
@@ -34,7 +34,7 @@
     crypt: ['soldier', 'scholar', 'doctor', 'soldier'],
     marsh: ['farmer_m', 'farmer_f', 'soldier', 'merchant'],
     tea: ['scholar', 'merchant', 'farmer_f', 'doctor'],
-    forge: ['soldier', 'farmer_m', 'merchant', 'farmer_m'],
+    forge: ['craftsman', 'craftsman', 'farmer_m', 'merchant'],
     wood: ['farmer_m', 'farmer_f', 'merchant', 'scholar'],
     incense: ['doctor', 'scholar', 'farmer_f', 'merchant'],
     weave: ['farmer_f', 'farmer_f', 'merchant', 'scholar'],
@@ -45,7 +45,7 @@
     canal: ['merchant', 'farmer_m', 'soldier', 'merchant'],
     bridge: ['scholar', 'merchant', 'soldier', 'farmer_f'],
     terraces: ['farmer_m', 'farmer_f', 'merchant', 'scholar'],
-    iron_league: ['soldier', 'farmer_m', 'merchant', 'soldier'],
+    iron_league: ['craftsman', 'soldier', 'craftsman', 'merchant'],
     stargaze: ['scholar', 'doctor', 'scholar', 'farmer_f'],
     poplar: ['farmer_m', 'farmer_f', 'merchant', 'soldier'],
     dragon_bridge: ['scholar', 'merchant', 'soldier', 'farmer_f'],
@@ -336,7 +336,7 @@
     return im;
   }
   // preload all
-  ['farmer_m', 'farmer_f', 'merchant', 'doctor', 'scholar', 'soldier', 'hero'].forEach(getImg);
+  ['farmer_m', 'farmer_f', 'merchant', 'doctor', 'scholar', 'soldier', 'hero', 'craftsman', 'hunter', 'ranger'].forEach(getImg);
 
   function pickSprite(mode, i) {
     const pool = SPRITE_KEYS[mode] || SPRITE_KEYS.farm;
@@ -533,7 +533,7 @@
     // 圓形臉：固定可讀尺寸（約 28–34 CSS px）
     const faceIm = getFaceImg(key);
     const faceR = Math.max(14 * d, Math.min(18 * d, tall * 0.32));
-    const fy = -tall + faceR * 0.55; /* nest face on head, show more body */
+    const fy = -tall + faceR * 0.35; /* nest face higher — full face in badge */
     g.beginPath();
     g.arc(0, fy, faceR + 1.5 * d, 0, Math.PI * 2);
     g.fillStyle = 'rgba(201,163,90,.95)';
@@ -544,7 +544,12 @@
     g.clip();
     if (faceIm && faceIm.complete && faceIm.naturalWidth > 0) {
       const s = faceR * 2;
-      g.drawImage(faceIm, -faceR, fy - faceR, s, s);
+      const nw = faceIm.naturalWidth, nh = faceIm.naturalHeight;
+      const side = Math.min(nw, nh);
+      const sx = (nw - side) / 2;
+      /* bias crop upward so hair/face stay in circle, never cut crown */
+      const sy = Math.max(0, Math.min(nh - side, (nh - side) * 0.08));
+      g.drawImage(faceIm, sx, sy, side, side, -faceR, fy - faceR, s, s);
     } else {
       g.fillStyle = '#f0d5b8';
       g.fillRect(-faceR, fy - faceR, faceR * 2, faceR * 2);

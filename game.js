@@ -1,4 +1,4 @@
-// v23 scene maps + faces · iPhone safe inset
+// v26 parchment HUD · iso scenes · career sprites · face fix
 (() => {
   'use strict';
 
@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '25';
+  const GAME_VERSION = '26';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -314,7 +314,7 @@
     { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
     { id: 'hire', name: '僱長工', desc: '田莊人手+1', gold: 0 }
   ];
-  const FACE_V = '25';
+  const FACE_V = '26';
   function allNpcs() {
     if (window.QianWorld && window.QianWorld.CAST) return window.QianWorld.CAST;
     return [];
@@ -331,6 +331,50 @@
   const FACTION_FACE = { lu: 'merchant', qin: 'soldier', sai: 'scholar' };
   function faceUrl(key) {
     return 'assets/face_' + key + '.webp?v=' + FACE_V;
+  }
+  function careerFaceKey(careerId, gender) {
+    const g = gender || (S && S.hero && S.hero.gender) || 'm';
+    const map = {
+      farmer: g === 'f' ? 'farmer_f' : 'farmer_m',
+      healer: 'doctor',
+      merchant: 'merchant',
+      soldier: 'soldier',
+      scholar: 'scholar',
+      craftsman: 'craftsman',
+      hunter: 'hunter',
+      ranger: 'ranger'
+    };
+    return map[careerId] || 'hero';
+  }
+  function careerCharKey(careerId, gender) {
+    const face = careerFaceKey(careerId, gender);
+    return face; // char_* shares face keys for careers
+  }
+  function careerTitle(careerId) {
+    const titles = {
+      farmer: '田畝小道', healer: '懸壺小道', merchant: '坊市行賈',
+      soldier: '校場武卒', scholar: '青衿書生', craftsman: '爐邊工匠',
+      hunter: '山徑獵戶', ranger: '遊俠浪客'
+    };
+    return titles[careerId] || '修仙小道';
+  }
+  function heroLevel() {
+    if (!S) return 1;
+    const sk = S.skills || {};
+    const sum = (sk.farm||0)+(sk.med||0)+(sk.trade||0)+(sk.mart||0)+(sk.lit||0)+(sk.craft||0);
+    const wins = (S.flags && S.flags.wins) || S.wins || 0;
+    return Math.max(1, 1 + Math.floor(((S.day || 1) - 1) / 10) + Math.floor(sum / 4) + Math.floor(wins / 4));
+  }
+  function combatPower() {
+    const st = stats();
+    const a = st.attrs || {};
+    const fame = Math.floor(S.fame || 0);
+    const people = Math.floor(S.people || 0);
+    return Math.max(100,
+      st.atk * 120 + st.def * 80 + st.maxHp * 6 +
+      (a.wu||0)*40 + (a.hu||0)*30 + (a.shen||0)*25 + (a.zhi||0)*20 + (a.bian||0)*15 + (a.yun||0)*10 +
+      fame * 12 + people * 8 + heroLevel() * 50
+    );
   }
   function npcFaceKey(n) {
     return (n && n.face) || 'farmer_m';
@@ -843,6 +887,14 @@
       $('hud-attrs').textContent = '武' + (a.wu||0) + ' 護' + (a.hu||0) + ' 身' + (a.shen||0) + ' 智' + (a.zhi||0) + ' 辯' + (a.bian||0) + ' 運' + (a.yun||0);
     }
     $('hud-career').textContent = (CAREERS[S.career] || CAREERS.farmer).name;
+    if ($('hud-title')) $('hud-title').textContent = careerTitle(S.career);
+    if ($('hud-lv')) $('hud-lv').textContent = heroLevel() + '級';
+    if ($('hud-power')) $('hud-power').textContent = String(combatPower());
+    if ($('hud-avatar')) {
+      const fk = careerFaceKey(S.career, S.hero && S.hero.gender);
+      const src = faceUrl(fk);
+      if ($('hud-avatar').getAttribute('src') !== src) $('hud-avatar').src = src;
+    }
     if ($('auto-label')) {
       $('auto-label').textContent = autoOn ? 'AUTO 開' : 'AUTO 關';
       $('auto-label').className = autoOn ? 'auto-on' : 'auto-off';
@@ -1359,6 +1411,7 @@
     const np = $('np-name');
     if (!char || !img) return;
     char.hidden = false;
+    char.removeAttribute('hidden');
     char.classList.remove('tint-su', 'tint-zhao');
     char.classList.add('face-mode', 'showing');
     char.classList.toggle('npc', !!isNpc);
@@ -4195,11 +4248,21 @@
       blurb.textContent = '秦王政元年。' + window.__createDraft.name + '（' + g + '·' + o.name + '）——汝欲以何業立足？' +
         (window.__createDraft.worldMode === 'free' ? '〔高度自由〕' : '〔史實軌道〕');
     }
-    grid.innerHTML = Object.values(CAREERS).map((c) =>
-      '<button type="button" class="career-card" data-career="' + c.id + '">' +
-      '<h3>' + c.name + '</h3><p>' + c.desc + '</p>' +
-      '<div class="stats">銀' + c.gold + ' · 糧' + c.food + ' · HP' + c.hp + ' · ATK' + c.atk + '</div></button>'
-    ).join('');
+    const draft = window.__createDraft || {};
+    const strip = [
+      ['farmer_m','農夫'],['doctor','醫者'],['merchant','商賈'],['soldier','武卒'],
+      ['craftsman','工匠'],['hunter','獵戶'],['ranger','遊俠']
+    ].map(function (pair) {
+      return '<figure><img src="assets/char_' + pair[0] + '.webp' + ASSET_V + '" alt=""><figcaption>' + pair[1] + '</figcaption></figure>';
+    }).join('');
+    grid.innerHTML = '<div class="career-strip-embed" aria-hidden="true">' + strip + '</div>' +
+      Object.values(CAREERS).map((c) => {
+        const ck = careerCharKey(c.id, draft.gender);
+        return '<button type="button" class="career-card" data-career="' + c.id + '">' +
+          '<img class="career-art" src="assets/char_' + ck + '.webp' + ASSET_V + '" alt="" decoding="async">' +
+          '<div class="career-body"><h3>' + c.name + '</h3><p>' + c.desc + '</p>' +
+          '<div class="stats">銀' + c.gold + ' · 糧' + c.food + ' · HP' + c.hp + ' · ATK' + c.atk + '</div></div></button>';
+      }).join('');
     grid.querySelectorAll('[data-career]').forEach((b) => {
       b.addEventListener('click', () => startGame(b.dataset.career));
     });
