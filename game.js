@@ -32,11 +32,11 @@
       quest: { id: 'q_trade', title: '坊市第一單', desc: '累計賣出得銀 80', needFlag: 'soldGold', needVal: 80, gold: 45, food: 3 }
     },
     soldier: {
-      id: 'soldier', name: '武卒', desc: '校場出身，身強力壯，攜木劍開局。',
+      id: 'soldier', name: '武卒', desc: '校場出身，身強力壯，攜桐木劍開局。',
       gold: 60, food: 14, hp: 100, atk: 10, def: 4,
       skills: { farm: 0, med: 0, trade: 0, mart: 3, lit: 0 },
       bag: { rice: 2 },
-      startGear: { slot: 'weapon', name: '木劍', atk: 3, def: 0, hp: 0, rarity: 'white' },
+      startGear: { slot: 'weapon', name: '桐木劍', atk: 3, def: 0, hp: 0, rarity: 'white' },
       quest: { id: 'q_fight', title: '校場初勝', desc: '戰勝 3 場', needFlag: 'wins', needVal: 3, gold: 55, food: 2 }
     },
     scholar: {
@@ -168,34 +168,40 @@
   let storyLines = [];
 
   const RARITIES = {
-    white:  { id: 'white',  name: '白', className: 'rarity-white',  mult: 1,   sell: 8 },
-    green:  { id: 'green',  name: '綠', className: 'rarity-green',  mult: 1.4, sell: 18 },
-    blue:   { id: 'blue',   name: '藍', className: 'rarity-blue',   mult: 1.9, sell: 40 },
-    purple: { id: 'purple', name: '紫', className: 'rarity-purple', mult: 2.6, sell: 90 },
-    gold:   { id: 'gold',   name: '金', className: 'rarity-gold',   mult: 3.5, sell: 200 }
+    white:  { id: 'white',  name: '凡', className: 'rarity-white',  mult: 1,   sell: 8 },
+    green:  { id: 'green',  name: '良', className: 'rarity-green',  mult: 1.4, sell: 18 },
+    blue:   { id: 'blue',   name: '珍', className: 'rarity-blue',   mult: 1.9, sell: 40 },
+    purple: { id: 'purple', name: '史', className: 'rarity-purple', mult: 2.6, sell: 90 },
+    gold:   { id: 'gold',   name: '傳說', className: 'rarity-gold',   mult: 3.5, sell: 200 }
   };
   const RARITY_ORDER = ['white', 'green', 'blue', 'purple', 'gold'];
+  /* GEAR_BASE：舊掉落回退；正式目錄見 equip.js · QianEquip.EQUIP_TABLE */
   const GEAR_BASE = {
     weapon: [
-      { name: '木劍', atk: 3, def: 0, hp: 0 },
-      { name: '鐵刃', atk: 5, def: 0, hp: 0 },
-      { name: '青鋼刀', atk: 7, def: 0, hp: 2 },
-      { name: '霜紋劍', atk: 9, def: 1, hp: 0 }
+      { name: '桐木劍', atk: 3, def: 0, hp: 0, icon: 'jian', tableId: 'mu_jian' },
+      { name: '鐵刃', atk: 5, def: 0, hp: 0, icon: 'dao', tableId: 'tie_ren' },
+      { name: '青鋼刀', atk: 7, def: 0, hp: 2, icon: 'dao', tableId: 'qinggang_dao' },
+      { name: '霜紋劍', atk: 9, def: 1, hp: 0, icon: 'jian', tableId: 'shuangwen_jian' },
+      { name: '青銅戈', atk: 6, def: 1, hp: 0, icon: 'ge', tableId: 'tong_ge' },
+      { name: '秦弩', atk: 11, def: 0, hp: 0, icon: 'nu', tableId: 'qin_nu' }
     ],
     armor: [
-      { name: '布衣', atk: 0, def: 2, hp: 8 },
-      { name: '皮甲', atk: 0, def: 4, hp: 12 },
-      { name: '鐵鎧', atk: 0, def: 6, hp: 18 },
-      { name: '玄甲', atk: 1, def: 8, hp: 24 }
+      { name: '布衣', atk: 0, def: 2, hp: 8, icon: 'jia', tableId: 'bu_yi' },
+      { name: '牛皮甲', atk: 0, def: 4, hp: 12, icon: 'jia', tableId: 'pi_jia' },
+      { name: '鐵札甲', atk: 0, def: 6, hp: 18, icon: 'kai', tableId: 'tie_kai' },
+      { name: '玄甲', atk: 1, def: 8, hp: 24, icon: 'kai', tableId: 'xuan_jia' },
+      { name: '圓形銅盾', atk: 0, def: 5, hp: 10, icon: 'dun', tableId: 'tong_dun' }
     ],
     accessory: [
-      { name: '草繩環', atk: 1, def: 0, hp: 4 },
-      { name: '玉佩', atk: 1, def: 1, hp: 8 },
-      { name: '護心鏡', atk: 2, def: 2, hp: 10 },
-      { name: '金絲墜', atk: 3, def: 2, hp: 14 }
+      { name: '草繩環', atk: 1, def: 0, hp: 4, icon: 'huan', tableId: 'cao_huan' },
+      { name: '青玉佩', atk: 1, def: 1, hp: 8, icon: 'pei', tableId: 'yu_pei' },
+      { name: '護心鏡', atk: 2, def: 2, hp: 10, icon: 'mirror', tableId: 'hu_xin_jing' },
+      { name: '金絲墜', atk: 3, def: 2, hp: 14, icon: 'pei', tableId: 'jin_si_zhui' },
+      { name: '五色符', atk: 1, def: 1, hp: 6, icon: 'talisman', tableId: 'wu_fu' }
     ]
   };
-  const SLOT_LABEL = { weapon: '武器', armor: '防具', accessory: '飾品' };
+  const SLOT_LABEL = (window.QianEquip && window.QianEquip.SLOT_LABEL) || { weapon: '兵器', armor: '甲胄', accessory: '配飾' };
+  if (!SLOT_LABEL.weapon) Object.assign(SLOT_LABEL, { weapon: '兵器', armor: '甲胄', accessory: '配飾' });
   const ENEMIES_DRILL = [
     { name: '木人樁', hp: 22, atk: 4 },
     { name: '校場教習', hp: 30, atk: 6 },
@@ -435,9 +441,36 @@
     const gear = [];
     const equipped = { weapon: null, armor: null, accessory: null };
     if (C.startGear) {
-      const g = Object.assign({ id: 'g0', slot: C.startGear.slot }, C.startGear);
+      let g = Object.assign({ id: 'g0', slot: C.startGear.slot }, C.startGear);
+      if (window.QianEquip) {
+        const def = window.QianEquip.getDef(g.name) || window.QianEquip.getDef(g.tableId);
+        if (def) {
+          g = window.QianEquip.spawn(def.id, 0, g.rarity || def.rarity) || g;
+          g.id = 'g0';
+        }
+      }
+      if (!g.icon) g.icon = (g.slot === 'weapon' ? 'jian' : g.slot === 'armor' ? 'jia' : 'pei');
       gear.push(g);
-      equipped[g.slot] = g.id;
+      equipped[g.slot === 'tool' ? 'accessory' : g.slot] = g.id;
+    }
+    /* 開局再贈一冊農器／凡品，方便行囊看見新圖鑑 */
+    if (window.QianEquip) {
+      const extras = ['mu_chu', 'cao_huan', 'qian_dai'];
+      extras.forEach((tid) => {
+        if (gear.some((x) => x.tableId === tid)) return;
+        const inst = window.QianEquip.spawn(tid, gear.length, 'fan');
+        if (inst) { gear.push(inst); }
+      });
+      /* 依職業再贈一件良品 */
+      const careerGift = {
+        farmer: 'tie_chu', healer: 'yao_dai', scholar: 'wen_bi', merchant: 'sai_shi_huan',
+        soldier: 'bian_jun_kai', craftsman: 'ge_dai', hunter: 'shan_gong', ranger: 'pi_lv'
+      };
+      const gid = careerGift[careerId];
+      if (gid) {
+        const inst = window.QianEquip.spawn(gid, gear.length, 'liang');
+        if (inst) gear.push(inst);
+      }
     }
     const quest = Object.assign({ done: false, progress: 0 }, C.quest);
     const cast = (window.QianWorld && window.QianWorld.CAST) || [];
@@ -584,6 +617,32 @@
         if (o.explore[k + 'Best'] == null) o.explore[k + 'Best'] = 0;
       });
       if (!o.explore.bosses) o.explore.bosses = {};
+      /* v15：為舊裝備補圖示／目錄屬性 */
+      if (Array.isArray(o.gear) && window.QianEquip) {
+        o.gear = o.gear.map(function (g) {
+          if (!g) return g;
+          var def = window.QianEquip.getDef(g.tableId) || window.QianEquip.getDef(g.name);
+          if (def) {
+            if (!g.tableId) g.tableId = def.id;
+            if (!g.icon) g.icon = def.icon;
+            if (g.wu == null) g.wu = def.wu || 0;
+            if (g.hu == null) g.hu = def.hu || 0;
+            if (g.shen == null) g.shen = def.shen || 0;
+            if (g.zhi == null) g.zhi = def.zhi || 0;
+            if (g.bian == null) g.bian = def.bian || 0;
+            if (g.yun == null) g.yun = def.yun || 0;
+            if (g.farmBonus == null) g.farmBonus = def.farmBonus || 0;
+            if (!g.desc) g.desc = def.desc || '';
+            if (g.name === '木劍') g.name = '桐木劍';
+            if (g.name === '皮甲') g.name = '牛皮甲';
+            if (g.name === '鐵鎧') g.name = '鐵札甲';
+            if (g.name === '玉佩') g.name = '青玉佩';
+          } else if (!g.icon) {
+            g.icon = g.slot === 'armor' ? 'jia' : (g.slot === 'weapon' ? 'jian' : 'pei');
+          }
+          return g;
+        });
+      }
       o.v = 5;
       if (window.QianWorld) window.QianWorld.ensure(o);
       if (window.QianStory) window.QianStory.ensure(o);
@@ -639,7 +698,7 @@
   }
 
   function gearBonus() {
-    const b = { atk: 0, def: 0, hp: 0 };
+    const b = { atk: 0, def: 0, hp: 0, wu: 0, hu: 0, shen: 0, zhi: 0, bian: 0, yun: 0, farmBonus: 0 };
     if (!S) return b;
     ['weapon', 'armor', 'accessory'].forEach((slot) => {
       const id = S.equipped[slot];
@@ -650,17 +709,25 @@
       b.atk += Math.round((g.atk || 0) * r.mult);
       b.def += Math.round((g.def || 0) * r.mult);
       b.hp += Math.round((g.hp || 0) * r.mult);
+      b.wu += (g.wu || 0);
+      b.hu += (g.hu || 0);
+      b.shen += (g.shen || 0);
+      b.zhi += (g.zhi || 0);
+      b.bian += (g.bian || 0);
+      b.yun += (g.yun || 0);
+      b.farmBonus += (g.farmBonus || 0);
     });
     return b;
   }
   function stats() {
     const b = gearBonus();
-    const maxHp = S.maxHp + b.hp;
+    const maxHp = S.maxHp + b.hp + b.hu * 2;
     return {
-      atk: S.baseAtk + b.atk + (S.skills.mart || 0),
-      def: S.baseDef + b.def,
+      atk: S.baseAtk + b.atk + (S.skills.mart || 0) + b.wu,
+      def: S.baseDef + b.def + Math.floor(b.hu / 2),
       maxHp,
-      hp: Math.min(S.hp, maxHp)
+      hp: Math.min(S.hp, maxHp),
+      attrs: { wu: b.wu, hu: b.hu, shen: b.shen, zhi: b.zhi, bian: b.bian, yun: b.yun, farmBonus: b.farmBonus }
     };
   }
 
@@ -1448,7 +1515,8 @@
   }
   function harvestOne(p) {
     const crop = CROPS[p.crop];
-    const bonus = 1 + Math.floor((S.skills.farm || 0) / 3);
+    const farmGear = (stats().attrs && stats().attrs.farmBonus) || 0;
+    const bonus = 1 + Math.floor((S.skills.farm || 0) / 3) + Math.floor(farmGear / 2);
     addBag(p.crop, bonus);
     if (crop.food) S.food += Math.floor(crop.food / 2);
     status('收成 ' + crop.name + ' ×' + bonus);
@@ -2624,12 +2692,18 @@
     if (isBoss && rarity === 'white') rarity = 'green';
     const slots = ['weapon', 'armor', 'accessory'];
     const slot = slots[Math.floor(Math.random() * slots.length)];
-    const base = GEAR_BASE[slot][Math.min(GEAR_BASE[slot].length - 1, Math.floor(Math.random() * (1 + floor / 2)))];
     S.gearSeq++;
+    if (window.QianEquip && window.QianEquip.rollFromPool) {
+      const inst = window.QianEquip.rollFromPool(slot, rarity, S.gearSeq);
+      if (inst) return inst;
+    }
+    const base = GEAR_BASE[slot][Math.min(GEAR_BASE[slot].length - 1, Math.floor(Math.random() * (1 + floor / 2)))];
     return {
       id: 'g' + S.gearSeq,
       slot,
       name: base.name,
+      icon: base.icon || 'jian',
+      tableId: base.tableId || null,
       atk: base.atk, def: base.def, hp: base.hp,
       rarity
     };
@@ -2638,9 +2712,15 @@
     $('loot-body').textContent = '銀 +' + gold + (gear ? '' : ' · 無裝備掉落');
     const box = $('loot-gear');
     if (gear) {
-      const r = RARITIES[gear.rarity];
-      box.innerHTML = '<div class="gear-card ' + r.className + '">【' + r.name + '】' + SLOT_LABEL[gear.slot] + ' · ' + gear.name +
-        '<br>ATK+' + Math.round(gear.atk * r.mult) + ' DEF+' + Math.round(gear.def * r.mult) + ' HP+' + Math.round(gear.hp * r.mult) + '</div>';
+      const r = RARITIES[gear.rarity] || RARITIES.white;
+      const ico = (window.QianEquip && window.QianEquip.iconPath(gear.icon)) || ('assets/equip/' + (gear.icon || 'jian') + '.webp');
+      const statsTxt = window.QianEquip ? window.QianEquip.formatStats({
+        atk: Math.round((gear.atk || 0) * r.mult),
+        def: Math.round((gear.def || 0) * r.mult),
+        hp: Math.round((gear.hp || 0) * r.mult),
+        wu: gear.wu, hu: gear.hu, shen: gear.shen, zhi: gear.zhi, bian: gear.bian, yun: gear.yun
+      }) : ('ATK+' + Math.round(gear.atk * r.mult) + ' DEF+' + Math.round(gear.def * r.mult) + ' HP+' + Math.round(gear.hp * r.mult));
+      box.innerHTML = '<div class="gear-card ' + r.className + '"><img class="eq-ico" src="' + ico + '?v=15" alt=""><div class="eq-txt"><b>【' + r.name + '】' + gear.name + '</b><span>' + (SLOT_LABEL[gear.slot] || '') + ' · ' + statsTxt + '</span></div></div>';
     } else box.innerHTML = '';
     $('modal-loot').hidden = false;
   }
@@ -2709,33 +2789,81 @@
   }
 
   /* ---- Bag / Gear / Quest ---- */
+  function gearIconSrc(g) {
+    const key = (g && g.icon) || (g && g.slot === 'armor' ? 'jia' : g && g.slot === 'weapon' ? 'jian' : 'pei');
+    if (window.QianEquip) return window.QianEquip.iconPath(key) + '?v=15';
+    return 'assets/equip/' + key + '.webp?v=15';
+  }
   function openBag() {
     const st = stats();
-    $('combat-summary').textContent = 'HP ' + st.hp + '/' + st.maxHp + ' · ATK ' + st.atk + ' · DEF ' + st.def;
+    const attrs = (window.QianEquip && window.QianEquip.heroAttrsFromGear(S.gear, S.equipped)) || {};
+    $('combat-summary').textContent = '命 ' + st.hp + '/' + st.maxHp + ' · 攻 ' + st.atk + ' · 防 ' + st.def +
+      (attrs.wu || attrs.hu || attrs.shen || attrs.zhi || attrs.bian || attrs.yun
+        ? ' · 武' + (attrs.wu||0) + ' 護' + (attrs.hu||0) + ' 身' + (attrs.shen||0) + ' 智' + (attrs.zhi||0) + ' 辯' + (attrs.bian||0) + ' 運' + (attrs.yun||0)
+        : '');
     $('equip-slots').innerHTML = ['weapon', 'armor', 'accessory'].map((slot) => {
       const id = S.equipped[slot];
       const g = id && S.gear.find((x) => x.id === id);
-      return '<div class="equip-slot"><span>' + SLOT_LABEL[slot] + '</span><strong>' + (g ? g.name + '（' + RARITIES[g.rarity].name + '）' : '空') + '</strong></div>';
+      if (!g) {
+        return '<div class="equip-slot"><img class="eq-ico" src="assets/equip/' + (slot==='weapon'?'jian':slot==='armor'?'jia':'pei') + '.webp?v=15" alt="" style="opacity:.35"><div class="eq-meta"><strong>' + (SLOT_LABEL[slot] || slot) + '</strong><small>空</small></div></div>';
+      }
+      const r = RARITIES[g.rarity] || RARITIES.white;
+      const statsTxt = window.QianEquip ? window.QianEquip.formatStats(g) : ('攻+' + g.atk + ' 防+' + g.def);
+      return '<div class="equip-slot"><img class="eq-ico" src="' + gearIconSrc(g) + '" alt=""><div class="eq-meta"><strong>' + g.name + '（' + r.name + '）</strong><small>' + statsTxt + (g.desc ? ' · ' + g.desc : '') + '</small></div></div>';
     }).join('');
     $('bag-grid').innerHTML = Object.keys(S.bag).filter((k) => S.bag[k] > 0).map((k) =>
       '<div class="bag-item">' + itemName(k) + ' <b>×' + S.bag[k] + '</b></div>'
     ).join('') || '<p class="muted">空空如也</p>';
     $('gear-list').innerHTML = S.gear.map((g) => {
-      const r = RARITIES[g.rarity];
-      const on = S.equipped[g.slot] === g.id;
+      const r = RARITIES[g.rarity] || RARITIES.white;
+      const slotKey = g.slot === 'tool' ? 'accessory' : g.slot;
+      const on = S.equipped[slotKey] === g.id;
+      const statsTxt = window.QianEquip ? window.QianEquip.formatStats(g) : '';
       return '<button type="button" class="gear-card ' + r.className + (on ? ' on' : '') + '" data-gid="' + g.id + '">' +
-        (on ? '【裝】' : '') + '【' + r.name + '】' + g.name + ' · ' + SLOT_LABEL[g.slot] + '</button>';
+        '<img class="eq-ico" src="' + gearIconSrc(g) + '" alt="">' +
+        '<div class="eq-txt"><b>' + (on ? '【裝】' : '') + '【' + r.name + '】' + g.name + '</b><span>' + (SLOT_LABEL[slotKey] || slotKey) + (statsTxt ? ' · ' + statsTxt : '') + '</span></div></button>';
     }).join('') || '<p class="muted">尚無裝備</p>';
+    /* 圖鑑：展示完整秦風裝備目錄（未擁有半透明） */
+    let dex = document.getElementById('equip-dex');
+    if (!dex) {
+      dex = document.createElement('div');
+      dex.id = 'equip-dex';
+      const title = document.createElement('h3');
+      title.className = 'bag-section-title';
+      title.id = 'equip-dex-title';
+      title.textContent = '兵器圖鑑';
+      const list = $('gear-list');
+      list.parentNode.insertBefore(title, list.nextSibling);
+      list.parentNode.insertBefore(dex, title.nextSibling);
+    }
+    if (window.QianEquip) {
+      const owned = new Set(S.gear.map((g) => g.tableId || g.name));
+      const all = Object.values(window.QianEquip.EQUIP_TABLE);
+      const tEl = document.getElementById('equip-dex-title');
+      if (tEl) tEl.textContent = '秦風圖鑑 · ' + all.length + ' 件';
+      dex.innerHTML = '<div class="gear-list">' + all.map((def) => {
+        const have = owned.has(def.id) || owned.has(def.name);
+        const rKey = window.QianEquip.normalizeRarity(def.rarity);
+        const r = RARITIES[rKey] || RARITIES.white;
+        return '<div class="gear-card ' + r.className + '" style="opacity:' + (have ? '1' : '.45') + ';cursor:default">' +
+          '<img class="eq-ico" src="' + window.QianEquip.iconPath(def.icon) + '?v=15" alt="">' +
+          '<div class="eq-txt"><b>【' + r.name + '】' + def.name + '</b><span>' + (have ? '已入庫 · ' : '未得 · ') + (window.QianEquip.SLOT_LABEL[def.slot] || def.slot) + '</span></div></div>';
+      }).join('') + '</div>';
+    } else {
+      dex.innerHTML = '';
+    }
     $('gear-list').querySelectorAll('[data-gid]').forEach((b) => {
       b.addEventListener('click', () => {
         const g = S.gear.find((x) => x.id === b.dataset.gid);
         if (!g) return;
-        if (S.equipped[g.slot] === g.id) S.equipped[g.slot] = null;
-        else S.equipped[g.slot] = g.id;
+        const slotKey = g.slot === 'tool' ? 'accessory' : g.slot;
+        if (S.equipped[slotKey] === g.id) S.equipped[slotKey] = null;
+        else S.equipped[slotKey] = g.id;
         const st2 = stats();
         S.hp = Math.min(S.hp, st2.maxHp);
         openBag();
         renderHUD();
+        saveQuiet();
       });
     });
     $('modal-bag').hidden = false;

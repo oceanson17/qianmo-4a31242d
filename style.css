@@ -906,3 +906,42 @@ input,textarea,select{font-family:inherit;}
 /* 對白輸入列：iPhone Safari 保底 */
 #box #inrow{position:relative;z-index:3}
 #free-input{font-size:16px!important}
+
+
+/* —— 裝備圖示／行囊（v15） —— */
+.equip-slots{display:flex;flex-direction:column;gap:4px;margin-bottom:8px;}
+.equip-slot{
+  display:flex;align-items:center;gap:10px;padding:8px 6px;
+  border-bottom:1px dashed rgba(201,163,90,.5);font-size:13px;
+}
+.equip-slot .eq-ico{
+  width:40px;height:40px;border-radius:10px;background:rgba(40,28,20,.08);
+  border:1px solid rgba(201,163,90,.55);object-fit:contain;image-rendering:pixelated;
+  flex:0 0 auto;
+}
+.equip-slot .eq-meta{flex:1;min-width:0;}
+.equip-slot .eq-meta small{display:block;color:var(--ink2);font-size:11px;margin-top:2px;}
+.gear-list{display:flex;flex-wrap:wrap;gap:6px;}
+.gear-card{
+  display:inline-flex;align-items:center;gap:8px;text-align:left;
+  max-width:100%;
+}
+.gear-card .eq-ico{
+  width:36px;height:36px;border-radius:8px;background:rgba(40,28,20,.06);
+  border:1px solid rgba(201,163,90,.4);object-fit:contain;image-rendering:pixelated;
+  flex:0 0 auto;
+}
+.gear-card .eq-txt{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.gear-card .eq-txt b{font-size:12px;letter-spacing:.06em;}
+.gear-card .eq-txt span{font-size:10px;color:var(--ink2);line-height:1.3;}
+.rarity-white{border-color:#bdbdbd}.rarity-green{border-color:#66bb6a;color:#2e7d32}
+.rarity-blue{border-color:#42a5f5;color:#1565c0}
+.rarity-purple{border-color:#ab47bc;color:#6a1b9a}
+.rarity-gold{border-color:#f0c040;color:#9a6b00;box-shadow:0 0 0 1px rgba(240,192,64,.35)}
+.combat-summary{font-size:12px;color:var(--ink2);margin:4px 0 8px;letter-spacing:.04em;}
+.attr-chip-row{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 8px;}
+.attr-chip{
+  font-size:10px;padding:2px 6px;border-radius:999px;
+  background:rgba(255,250,240,.8);border:1px solid rgba(201,163,90,.45);
+}
+.loot-gear .gear-card{width:100%;}
