@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>墨夢莊周 · 介面草稿</title>
+<style>
+  :root{
+    --ink:#2a221c; --ink2:#5c4a3a; --paper:#fbf4ea; --gold:#c9a35a;
+    --ver:#8b2e2e; --leaf:#3d6b45; --sky:#dfe9f0; --bar:#1a1612ee;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(160deg,#1c1814,#3a2e24 50%,#1c1814);
+    font-family:"Songti SC","Noto Serif TC","PingFang TC",serif;color:var(--ink);
+    padding:24px 12px;
+  }
+  .stage{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:420px}
+  .label{
+    color:#e8d9c4;font-size:13px;letter-spacing:.18em;opacity:.9;text-align:center;
+  }
+  .phone{
+    width:min(390px,100%);aspect-ratio:9/19.5;border-radius:36px;
+    border:3px solid #4a3a2c;box-shadow:0 24px 60px rgba(0,0,0,.55),inset 0 0 0 2px #c9a35a55;
+    overflow:hidden;position:relative;background:#1a1410;
+  }
+  .scene{
+    position:absolute;inset:0;background:#1a1410 center/cover no-repeat;
+    background-image:url('assets/bg_busy_farm.webp');
+  }
+  .scene:after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(20,14,10,.35) 0%,transparent 18%,transparent 58%,rgba(12,8,6,.55) 100%);
+  }
+
+  /* —— 頂欄：類似 Stardew／珊瑚島 精簡狀態 —— */
+  .topbar{
+    position:absolute;left:10px;right:10px;top:14px;z-index:5;
+    display:flex;align-items:center;gap:8px;
+  }
+  .pill{
+    display:flex;align-items:center;gap:6px;
+    background:rgba(251,244,234,.92);backdrop-filter:blur(8px);
+    border:1.5px solid rgba(201,163,90,.75);border-radius:999px;
+    padding:6px 10px;font-size:12px;font-weight:700;letter-spacing:.06em;
+    box-shadow:0 4px 14px rgba(0,0,0,.18);
+  }
+  .pill.day{padding-left:6px}
+  .seal{
+    width:28px;height:28px;border-radius:50%;background:var(--ver);color:#fbf3ee;
+    display:grid;place-items:center;font-size:11px;letter-spacing:0;border:1.5px solid #e8c98a;
+  }
+  .stats{display:flex;gap:6px;margin-left:auto}
+  .stat{
+    background:rgba(26,20,16,.72);color:#f6ebe0;border:1px solid rgba(201,163,90,.45);
+    border-radius:10px;padding:5px 8px;font-size:11px;display:flex;align-items:center;gap:4px;
+  }
+  .stat b{color:#f0d48a;font-weight:700}
+
+  /* 體力條（右側豎條，常見種田 RPG） */
+  .energy{
+    position:absolute;right:10px;top:64px;z-index:5;width:14px;height:110px;
+    background:rgba(26,20,16,.55);border:1.5px solid rgba(201,163,90,.6);border-radius:10px;
+    overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.25);
+  }
+  .energy i{
+    position:absolute;left:0;right:0;bottom:0;height:72%;
+    background:linear-gradient(180deg,#7ec98a,#3d6b45);border-radius:0 0 8px 8px;
+  }
+  .energy span{
+    position:absolute;left:50%;bottom:-18px;transform:translateX(-50%);
+    font-size:9px;color:#f6ebe0;letter-spacing:.1em;white-space:nowrap;
+  }
+
+  /* 場景浮標：地點名 */
+  .place-chip{
+    position:absolute;left:50%;top:58px;transform:translateX(-50%);z-index:4;
+    background:rgba(251,244,234,.88);border:1px solid rgba(201,163,90,.7);
+    border-radius:999px;padding:4px 14px;font-size:12px;letter-spacing:.2em;
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+  }
+
+  /* 快捷動作（場景上浮） */
+  .fab-row{
+    position:absolute;left:12px;right:12px;bottom:148px;z-index:6;
+    display:flex;justify-content:space-between;align-items:flex-end;pointer-events:none;
+  }
+  .fabs{display:flex;flex-direction:column;gap:8px;pointer-events:auto}
+  .fab{
+    width:48px;height:48px;border-radius:14px;border:1.5px solid rgba(201,163,90,.8);
+    background:rgba(251,244,234,.94);display:grid;place-items:center;
+    font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--ink);
+    box-shadow:0 6px 16px rgba(0,0,0,.22);
+  }
+  .fab.primary{background:var(--ver);color:#fbf3ee;border-color:#e8c98a;width:56px;height:56px;font-size:12px}
+  .fab.ghost{background:rgba(26,20,16,.7);color:#f6ebe0}
+
+  /* 對白條：更扁、更透明，唔搶場景 */
+  .dialogue{
+    position:absolute;left:10px;right:10px;bottom:78px;z-index:7;
+    background:linear-gradient(180deg,rgba(251,244,234,.94),rgba(243,230,214,.96));
+    border:1.5px solid rgba(201,163,90,.75);border-radius:16px;
+    padding:10px 12px 12px;box-shadow:0 8px 24px rgba(0,0,0,.28);
+    min-height:72px;
+  }
+  .dialogue .who{
+    display:inline-block;background:var(--ver);color:#fbf3ee;
+    font-size:11px;letter-spacing:.15em;padding:2px 8px;border-radius:6px;margin-bottom:6px;
+  }
+  .dialogue p{font-size:13px;line-height:1.55;color:var(--ink2)}
+  .dialogue .hint{margin-top:4px;font-size:10px;color:#8a7460;letter-spacing:.08em}
+
+  /* 底欄 Dock：圓角島嶼式（常見手機 RPG） */
+  .dock{
+    position:absolute;left:10px;right:10px;bottom:12px;z-index:8;
+    display:flex;justify-content:space-around;align-items:center;
+    background:rgba(26,20,16,.88);backdrop-filter:blur(12px);
+    border:1.5px solid rgba(201,163,90,.55);border-radius:22px;
+    padding:8px 6px 10px;box-shadow:0 10px 28px rgba(0,0,0,.35);
+  }
+  .dock button{
+    flex:1;border:0;background:transparent;color:#e8d9c4;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    font-size:10px;letter-spacing:.08em;font-family:inherit;cursor:pointer;
+  }
+  .dock button .ico{
+    width:36px;height:36px;border-radius:12px;display:grid;place-items:center;
+    background:rgba(251,244,234,.08);font-size:15px;border:1px solid transparent;
+  }
+  .dock button.on .ico{
+    background:rgba(251,244,234,.95);color:var(--ver);border-color:rgba(201,163,90,.7);
+    box-shadow:0 2px 8px rgba(0,0,0,.2);
+  }
+  .dock button.on{color:#f0d48a}
+
+  .badge{
+    position:absolute;top:-2px;right:18%;width:8px;height:8px;border-radius:50%;
+    background:#d64545;border:1.5px solid #1a1612;
+  }
+
+  .note{
+    color:#cbb89a;font-size:12px;line-height:1.6;text-align:center;max-width:360px;
+  }
+  .note b{color:#f0d48a;font-weight:600}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <p class="label">介面草稿 · 種田 RPG 常見佈局</p>
+    <div class="phone" id="phone">
+      <div class="scene"></div>
+
+      <div class="topbar">
+        <div class="pill day"><span class="seal">春</span>第 12 日 · 晨</div>
+        <div class="stats">
+          <div class="stat">◎ <b>128</b></div>
+          <div class="stat">✿ <b>24</b></div>
+        </div>
+      </div>
+
+      <div class="place-chip">田　莊</div>
+      <div class="energy" title="體力"><i></i><span>體</span></div>
+
+      <div class="fab-row">
+        <div class="fabs">
+          <button class="fab ghost" type="button">AUTO</button>
+          <button class="fab" type="button">種</button>
+        </div>
+        <div class="fabs" style="align-items:flex-end">
+          <button class="fab" type="button">收</button>
+          <button class="fab primary" type="button">行事</button>
+        </div>
+      </div>
+
+      <div class="dialogue">
+        <span class="who">你</span>
+        <p>春光滿阡。田埂上新芽剛冒，隔壁阿嬸喊你去市井看花種。</p>
+        <div class="hint">輕點場景物件可互動 · 對白可收合</div>
+      </div>
+
+      <nav class="dock" aria-label="主選單">
+        <button type="button" class="on"><span class="ico">◈</span>地圖</button>
+        <button type="button"><span class="ico">袋</span>行囊</button>
+        <button type="button" style="position:relative"><span class="ico">人</span>人脈<span class="badge"></span></button>
+        <button type="button"><span class="ico">札</span>差事</button>
+        <button type="button"><span class="ico">☰</span>選單</button>
+      </nav>
+    </div>
+    <p class="note">重點：<b>場景更大</b>、頂欄變細、對白變扁、底欄變圓島、<b>體力豎條</b>同場景快捷鈕——唔會改你遊戲檔，只係預覽。</p>
+  </div>
+</body>
+</html>

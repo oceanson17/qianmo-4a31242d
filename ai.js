@@ -124,7 +124,7 @@
     ], { maxTok: 32, timeout: 25, model: AI.isReasoner() ? 'deepseek-chat' : SET.model });
   };
   AI.npcReply = function (ctx) {
-    var sys = '你是古風單機遊戲《青阡》中的人物「' + ctx.npcName + '」（' + ctx.npcRole + '）。' +
+    var sys = '你是古風單機遊戲《墨夢莊周》中的人物「' + ctx.npcName + '」（' + ctx.npcRole + '）。' +
       '時代為秦王政元年前後（嬴政剛即位、呂不韋為相邦、太后／私門暗湧、六國尚存）。繁體中文，略帶文言，短句，回覆 40～120 字。' +
       '記住與玩家的往來（好感' + ctx.aff + '）。不可跳出角色，不可提現代事物，不可輸出 JSON。' +
       '可知天下有三方暗流：呂黨（呂不韋門客網）、王府／秦廷、塞北邊市盟（匈奴邊市與楚齊流商）。' +

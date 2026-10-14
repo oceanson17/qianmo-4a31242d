@@ -5,7 +5,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '18';
+  const GAME_VERSION = '19';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -4182,7 +4182,7 @@
     const h = S.hero || {};
     const o = window.QianWorld ? window.QianWorld.originById(h.origin) : { name: '' };
     const modeTxt = S.worldMode === 'free' ? '高度自由世界' : '史實軌道';
-    status('秦王政元年。你是' + (h.name || '旅人') + '，出身' + (o.name || '') + '，以' + CAREERS[careerId].name + '立足青阡。（' + modeTxt + '）' +
+    status('秦王政元年。你是' + (h.name || '旅人') + '，出身' + (o.name || '') + '，以' + CAREERS[careerId].name + '立足墨夢。（' + modeTxt + '）' +
       (h.disguise === 'male' ? '女扮男裝潛行江湖。' : '') + '少年王即位，呂不韋為相邦——天下軌道可被你改寫。');
     toast('開局 · ' + CAREERS[careerId].name + (h.disguise === 'male' ? ' · 男裝' : ''));
     saveQuiet();

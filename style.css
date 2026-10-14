@@ -1,4 +1,4 @@
-/* ===== 青阡：國風文字 RPG 殼（宣紙・金線・朱砂） ===== */
+/* ===== 墨夢莊周：國風文字 RPG 殼（宣紙・金線・朱砂） ===== */
 :root{
   --paper:#fbf4ee;--paper2:#f4e7dd;--paper3:#ead8c8;
   --ver:#b8323a;--ver2:#d2545c;--ink:#2b2321;--ink2:#5a4a44;
@@ -975,63 +975,89 @@ input,textarea,select{font-family:inherit;}
 .bag-attrs-hint,.tiny.muted{opacity:.75;font-size:12px;margin:.2rem 0;}
 
 
-/* —— 標題頁秦風主視覺 v18 —— */
-#screen-title .title-bg img{object-position:center 42%;}
+/* —— 標題頁海報風主視覺 v19 · 墨夢莊周 —— */
+#screen-title .title-bg img{object-position:center 35%;}
+#screen-title .title-bg-shade{
+  background:
+    linear-gradient(90deg, rgba(10,6,4,.72) 0%, rgba(10,6,4,.42) 42%, rgba(10,6,4,.12) 68%, rgba(10,6,4,.28) 100%),
+    linear-gradient(180deg, rgba(10,6,4,.55) 0%, rgba(10,6,4,.08) 28%, rgba(10,6,4,0) 48%, rgba(12,8,6,.45) 78%, rgba(8,5,4,.82) 100%);
+}
+.title-content.title-poster{
+  align-items:flex-start;justify-content:flex-start;text-align:left;
+  padding:calc(var(--sat) + 28px) 22px calc(var(--sab) + 22px) 22px;
+}
 .title-hero-block{
-  display:flex;flex-direction:column;align-items:center;
-  margin-bottom:8px;margin-top:auto;
+  display:flex;flex-direction:column;align-items:flex-start;
+  margin:0 0 18px;margin-top:0;max-width:92%;
+}
+.title-brand-row{
+  display:flex;align-items:center;gap:12px;margin-bottom:10px;
 }
 .tseal-img{
-  width:64px;height:64px;margin-bottom:10px;
-  filter:drop-shadow(0 4px 12px rgba(0,0,0,.45));
+  width:48px;height:48px;margin-bottom:0;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.55));
   animation:sealIn .9s ease-out both;
   pointer-events:none;
 }
 @keyframes sealIn{from{opacity:0;transform:scale(.86) rotate(-8deg)}to{opacity:1;transform:none}}
+.title-ver-inline{
+  margin:0;font-size:12px;letter-spacing:.18em;
+  color:#e6c070;background:rgba(20,12,10,.42);
+  border:1px solid rgba(201,163,90,.5);border-radius:999px;
+  padding:4px 12px;
+}
 #screen-title h1{
-  color:#fbf3ee;
-  text-shadow:0 2px 0 rgba(40,20,10,.35),0 8px 28px rgba(0,0,0,.45),0 0 40px rgba(184,50,58,.25);
-  letter-spacing:.35em;padding-left:.35em;font-size:58px;
+  color:#f4d78a;
+  text-shadow:0 2px 0 rgba(40,20,10,.45),0 10px 32px rgba(0,0,0,.55),0 0 48px rgba(184,50,58,.22);
+  letter-spacing:.18em;padding-left:0;font-size:42px;line-height:1.15;
+  font-weight:700;margin:0 0 10px;
 }
 #screen-title .subtitle{
-  color:rgba(251,236,220,.92);letter-spacing:.28em;
-  text-shadow:0 1px 8px rgba(0,0,0,.4);
+  margin:0 0 10px;color:rgba(251,236,220,.92);letter-spacing:.22em;
+  text-shadow:0 1px 8px rgba(0,0,0,.45);font-size:13px;
 }
-#screen-title .subtitle:before,#screen-title .subtitle:after{background:rgba(230,180,90,.85);}
+#screen-title .subtitle:before,#screen-title .subtitle:after{display:none;content:none;}
 .title-tagline{
-  margin:2px 0 12px;font-size:12px;letter-spacing:.42em;padding-left:.42em;
-  color:rgba(230,190,120,.95);text-shadow:0 1px 6px rgba(0,0,0,.35);
+  margin:0 0 8px;font-size:13px;letter-spacing:.08em;padding-left:0;line-height:1.65;
+  color:rgba(245,230,210,.92);text-shadow:0 1px 8px rgba(0,0,0,.45);
 }
-#screen-title .tmenu{gap:12px;margin-bottom:12px;}
+#screen-title .tmenu{
+  gap:10px;margin-bottom:14px;margin-top:auto;align-items:flex-start;width:100%;
+}
 #screen-title .tbtn{
-  width:min(82%,310px);height:56px;border-radius:18px;
-  border:1.5px solid rgba(201,163,90,.65);
-  background:linear-gradient(180deg,rgba(251,244,238,.96),rgba(244,231,221,.92));
-  box-shadow:0 6px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.65);
-  color:var(--ink);
+  width:min(78%,280px);height:52px;border-radius:14px;
+  border:1.5px solid rgba(201,163,90,.7);
+  background:linear-gradient(180deg,rgba(251,244,238,.94),rgba(236,220,205,.9));
+  box-shadow:0 8px 22px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.55);
+  color:var(--ink);align-items:flex-start;padding:0 18px;text-align:left;
 }
 #screen-title .tbtn:before,#screen-title .tbtn:after{display:none;}
+#screen-title .tbtn b{letter-spacing:.28em;padding-left:.1em;font-size:17px;}
+#screen-title .tbtn small{letter-spacing:.12em;padding-left:.1em;}
 #screen-title .tbtn-primary{
-  border-color:rgba(184,50,58,.75);
-  background:linear-gradient(180deg,#c4454c,#9e2f36);
+  border-color:rgba(184,50,58,.8);
+  background:linear-gradient(180deg,#c4454c,#8f2a30);
   color:#fbf3ee;
-  box-shadow:0 8px 22px rgba(120,20,30,.4), inset 0 1px 0 rgba(255,200,200,.35);
+  box-shadow:0 10px 26px rgba(90,15,20,.45), inset 0 1px 0 rgba(255,200,200,.35);
 }
-#screen-title .tbtn-primary b{color:#fbf3ee;letter-spacing:.35em;}
+#screen-title .tbtn-primary b{color:#fbf3ee;letter-spacing:.28em;}
 #screen-title .tbtn-primary small{color:rgba(255,230,230,.88);}
-#screen-title .tbtn-ghost{
-  background:rgba(251,244,238,.78);
-}
+#screen-title .tbtn-ghost{background:rgba(251,244,238,.72);}
 #screen-title .tbtn:active{transform:scale(.97);}
-#screen-title .tfoot{color:rgba(240,220,200,.78);text-shadow:0 1px 4px rgba(0,0,0,.35);}
-#screen-title .tver{
-  color:#e6c070;background:rgba(20,12,10,.35);
-  border:1px solid rgba(201,163,90,.45);border-radius:999px;
-  padding:4px 14px;letter-spacing:.2em;
+#screen-title .tfoot{
+  color:rgba(240,220,200,.72);text-shadow:0 1px 4px rgba(0,0,0,.4);
+  font-size:11px;letter-spacing:.14em;text-align:left;margin:0;
+}
+@media (max-width:380px){
+  #screen-title h1{font-size:34px;letter-spacing:.12em}
 }
 @media (max-height:700px){
-  #screen-title h1{font-size:46px}
-  .tseal-img{width:52px;height:52px;margin-bottom:6px}
-  #screen-title .tbtn{height:50px}
-  .title-tagline{margin-bottom:8px}
+  #screen-title h1{font-size:34px}
+  .tseal-img{width:40px;height:40px}
+  #screen-title .tbtn{height:46px}
+  .title-tagline{margin-bottom:4px;font-size:12px}
+  .title-content.title-poster{padding-top:calc(var(--sat) + 16px)}
+}
+@media (min-height:780px){
+  #screen-title h1{font-size:48px}
 }

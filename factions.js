@@ -103,7 +103,7 @@
     {
       id: 'late_retire',
       tier: 'late',
-      name: '青阡隱退',
+      name: '墨夢隱退',
       when: '日久年深，銀糧俱足，放下刀與黨爭，歸田自守。',
       check: function (S) {
         return (S.day || 0) >= 60 && (S.gold || 0) >= 400 && (S.food || 0) >= 30 &&

@@ -6,12 +6,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="青阡">
+<meta name="apple-mobile-web-app-title" content="墨夢莊周">
 <meta name="format-detection" content="telephone=no,email=no,address=no">
 <meta name="theme-color" content="#f6ebe4">
-<title>青阡</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E阡%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=18">
+<title>墨夢莊周</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E墨%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css?v=19">
 </head>
 <body x-apple-data-detectors="false">
 <div id="app">
@@ -19,25 +19,27 @@
   <section id="screen-title" class="screen on">
     <div class="title-bg" aria-hidden="true">
       <picture>
-        <source srcset="assets/bg_title.webp?v=18" type="image/webp">
-        <img src="assets/bg_title.jpg?v=18" alt="" decoding="async">
+        <source srcset="assets/bg_title.webp?v=19" type="image/webp">
+        <img src="assets/bg_title.jpg?v=19" alt="" decoding="async">
       </picture>
       <div class="title-bg-shade"></div>
     </div>
-    <div class="title-content">
+    <div class="title-content title-poster">
       <div class="title-hero-block">
-        <img class="tseal-img" src="assets/seal_qian.webp?v=18" alt="阡" width="72" height="72" decoding="async">
-        <h1>青阡</h1>
-        <p class="subtitle">秦王政元年　少年王初立</p>
-        <p class="title-tagline">阡陌之間 · 可改史實</p>
+        <div class="title-brand-row">
+          <img class="tseal-img" src="assets/seal_mo.webp?v=19" alt="墨" width="56" height="56" decoding="async">
+          <p class="title-ver-inline" id="game-version">版本 v19</p>
+        </div>
+        <h1>墨夢莊周</h1>
+        <p class="subtitle">秦王政元年　墨夢可改史</p>
+        <p class="title-tagline">江湖有了新門面<br>你的故事，也有了封面</p>
       </div>
       <div class="tmenu">
         <button type="button" class="tbtn tbtn-primary" id="btn-new"><b>開始新局</b><small>身世 · 擇業</small></button>
-        <button type="button" class="tbtn" id="btn-continue" hidden><b>續寫阡陌</b><small>讀取存檔</small></button>
+        <button type="button" class="tbtn" id="btn-continue" hidden><b>續寫</b><small>讀取存檔</small></button>
         <button type="button" class="tbtn tbtn-ghost" id="btn-settings-title"><b>設定</b><small>AI · 文字</small></button>
       </div>
       <p class="tfoot">種田 · 坊市 · 副本 · 勢力 · AUTO·AI</p>
-      <p class="tver" id="game-version">版本 v18</p>
     </div>
   </section>
 
@@ -86,7 +88,7 @@
   <section id="screen-career" class="screen" hidden>
     <div class="career-wrap parchment">
       <h2>擇業開局</h2>
-      <p class="career-blurb" id="career-blurb">秦王政元年，阡陌初開。汝欲以何業立足？</p>
+      <p class="career-blurb" id="career-blurb">秦王政元年，墨夢初開。汝欲以何業立足？</p>
       <div class="career-grid" id="career-grid"></div>
       <button type="button" class="btn ghost" id="btn-career-back">返回</button>
     </div>
@@ -133,7 +135,7 @@
         <div class="mt tmp mt-combat" title="戰況／勢力"><em id="hud-faction">獨</em><span id="hud-combat">HP 80</span></div>
         <div class="mt mt-attrs" title="主角屬性" id="hud-attrs-wrap"><em>屬</em><span id="hud-attrs">武0 護0 身0 智0 辯0 運0</span></div>
       </div>
-      <div id="hud-ver" class="hud-ver" title="版本">v18</div>
+      <div id="hud-ver" class="hud-ver" title="版本">v19</div>
     </header>
     <div id="place-chip" aria-live="polite"><span id="place-chip-label">田莊</span></div>
 
@@ -233,7 +235,7 @@
     <div id="sheet-map" class="sheet" hidden>
       <div class="shead">
         <button type="button" class="sx" id="map-x">✕</button>
-        <h2>青阡輿圖</h2>
+        <h2>墨夢輿圖</h2>
         <p class="shead-sub" id="map-date">春 · 第1日</p>
       </div>
       <div class="sbody map-body">
@@ -763,7 +765,7 @@
   <div id="modal-menu" class="modal" hidden>
     <div class="modal-card parchment">
       <h2>選單</h2>
-      <p class="ver-line" id="menu-version">版本 v18</p>
+      <p class="ver-line" id="menu-version">版本 v19</p>
       <button type="button" class="btn" id="btn-save">立即存檔</button>
       <button type="button" class="btn" id="btn-toggle-disguise" hidden>女扮男裝</button>
         <button type="button" class="btn" id="btn-world">天下大勢</button>
@@ -839,7 +841,7 @@
       <button type="button" class="btn" id="btn-test-ai">試連線</button>
       <p class="tiny" id="ai-test-result"></p>
       <p class="tiny">Key 只存本機 localStorage，不上傳。無 Key 時對白走離線劇本。</p>
-      <p class="ver-line" id="set-version">版本 v18</p>
+      <p class="ver-line" id="set-version">版本 v19</p>
       <button type="button" class="btn primary" id="btn-save-settings">儲存</button>
       <button type="button" class="btn ghost" id="btn-close-settings">關閉</button>
     </div>
@@ -880,14 +882,14 @@
   </div>
 
 </div>
-<script src="equip.js?v=18"></script>
-<script src="plots.js?v=18"></script>
-<script src="ai.js?v=18"></script>
-<script src="factions.js?v=18"></script>
-<script src="world.js?v=18"></script>
-<script src="story.js?v=18"></script>
-<script src="workers.js?v=18"></script>
-<script src="npc_ai.js?v=18"></script>
-<script src="game.js?v=18"></script>
+<script src="equip.js?v=19"></script>
+<script src="plots.js?v=19"></script>
+<script src="ai.js?v=19"></script>
+<script src="factions.js?v=19"></script>
+<script src="world.js?v=19"></script>
+<script src="story.js?v=19"></script>
+<script src="workers.js?v=19"></script>
+<script src="npc_ai.js?v=19"></script>
+<script src="game.js?v=19"></script>
 </body>
 </html>
