@@ -2425,3 +2425,26 @@ html,body{
   #toast.toast-pop,#toast.toast-pop.ok,#toast.toast-pop.err,
   .dmg-float,.battle-flash.on,.tbtn,.btn,.chip-card{animation:none!important;transition:none!important;}
 }
+
+
+/* ---- v34 day guide ---- */
+.day-guide{
+  margin: 0.35rem 0.6rem 0.15rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 10px;
+  background: #fffdf9;
+  color: #1a1510 !important;
+  border: 1px solid rgba(30,58,95,0.18);
+  border-left: 3px solid #c9a227;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  min-height: 2.4em;
+}
+#hud-day{ letter-spacing: 0.02em; }
+#btn-nextday{
+  min-height: 44px;
+  font-weight: 600;
+}
+@media (max-width: 420px){
+  .day-guide{ font-size: 0.78rem; margin-left: 0.4rem; margin-right: 0.4rem; }
+}

@@ -1,10 +1,11 @@
-/* 青阡 · NPC 自主：時段日程、走動、行動、編年；有 AI Key 可潤色動向 */
+/* 墨夢莊周 · NPC 自主 FSM（v34）：idle／work／travel／talk／react */
 (function (global) {
   'use strict';
 
   var PERIODS = ['晨', '午', '暮', '夜'];
+  var STATES = ['idle', 'work', 'travel', 'talk', 'react'];
 
-  /* 預設日程：晨午暮夜 → 地點偏好（可隨機微偏） */
+  /* 預設日程：晨午暮夜 → 地點偏好 */
   var SCHEDULE = {
     he: ['village', 'village', 'farm', 'hut'],
     su: ['clinic', 'clinic', 'village', 'hut'],
@@ -31,7 +32,7 @@
     tiejiang: ['forge', 'forge', 'tavern', 'hut'],
     munong: ['wood', 'farm', 'wood', 'hut'],
     zhifu: ['weave', 'village', 'weave', 'hut'],
-    chashi: ['tea', 'tea', 'garden', 'tea'],
+    chashi: ['tea', 'tea', 'garden', 'tea']
   };
 
   var DEFAULT_CYCLE = ['village', 'market', 'garden', 'tavern'];
@@ -78,18 +79,28 @@
     marsh: ['涉澤', '採藥', '避毒']
   };
 
+  var WORK_LOCS = {
+    farm: 1, clinic: 1, market: 1, drill: 1, forge: 1, wood: 1, weave: 1,
+    academy: 1, study: 1, canal: 1, ying: 1, mine: 1, frontier: 1, guanshi: 1
+  };
+
   function periodIndex(S) {
-    /* 用過日次數推時段；亦可存 S.period */
+    if (global.QianModes && global.QianModes.ensurePeriod) {
+      return global.QianModes.periodIndex(S);
+    }
     if (S.period != null && PERIODS.indexOf(S.period) >= 0) return PERIODS.indexOf(S.period);
     return ((S.day || 1) - 1) % 4;
   }
   function periodName(S) {
+    if (global.QianModes && global.QianModes.ensurePeriod) return global.QianModes.ensurePeriod(S);
     return PERIODS[periodIndex(S)];
   }
 
   function ensure(S) {
-    if (!S.npcAI) S.npcAI = { loc: {}, lastTickDay: 0, log: [], interrupted: {} };
+    if (!S.npcAI) S.npcAI = { loc: {}, state: {}, intent: {}, lastTickDay: 0, log: [], interrupted: {} };
     if (!S.npcAI.loc) S.npcAI.loc = {};
+    if (!S.npcAI.state) S.npcAI.state = {};
+    if (!S.npcAI.intent) S.npcAI.intent = {};
     if (!S.npcAI.log) S.npcAI.log = [];
     if (!S.npcAI.interrupted) S.npcAI.interrupted = {};
     return S.npcAI;
@@ -99,7 +110,6 @@
     var sch = SCHEDULE[id] || DEFAULT_CYCLE;
     var p = periodIndex(S);
     var base = sch[p % sch.length];
-    /* 微偏：10% 去休閒 */
     if (Math.random() < 0.1) {
       var leisure = ['tea', 'garden', 'yard', 'wish', 'bridge', 'tavern'];
       return leisure[Math.floor(Math.random() * leisure.length)];
@@ -116,27 +126,8 @@
     return !!(S.npcs && S.npcs[id] && S.npcs[id].known);
   }
 
-  function doAction(S, n, loc) {
-    var acts = ACTIONS[loc] || ['徘徊', '觀望', '歇息'];
-    var act = acts[Math.floor(Math.random() * acts.length)];
-    var line = n.name + '在' + (locLabel(loc)) + act;
-    /* 對玩家感受：若玩家曾到此地／認識，微調 */
-    if (known(S, n.id) && S.npcs[n.id]) {
-      var feel = S.npcs[n.id].feel || (S.npcs[n.id].feel = { respect: 0, fear: 0, suspicion: 0, gratitude: 0 });
-      if (S.flags && S.flags['visited_' + loc] && Math.random() < 0.25) {
-        S.npcs[n.id].aff = Math.min(100, (S.npcs[n.id].aff || 0) + (Math.random() < 0.5 ? 1 : 0));
-        if (Math.random() < 0.4) feel.respect = Math.min(100, (feel.respect || 0) + 1);
-        line += '，隱約念及你';
-      }
-      if (S.npcs[n.id].log) {
-        S.npcs[n.id].log.unshift({ t: '自主', text: act + '於' + locLabel(loc), day: S.day });
-        if (S.npcs[n.id].log.length > 24) S.npcs[n.id].log = S.npcs[n.id].log.slice(0, 24);
-      }
-    }
-    return { id: n.id, name: n.name, loc: loc, act: act, line: line };
-  }
-
   function locLabel(id) {
+    if (global.QianModes && global.QianModes.label) return global.QianModes.label(id);
     var M = {
       farm: '田莊', village: '村落', market: '市井', clinic: '藥廬', drill: '校場', wild: '山野',
       garden: '園林', swim: '水塘', moon: '夜宴', mine: '礦坑', post: '驛道', tavern: '酒肆',
@@ -149,7 +140,78 @@
     return M[id] || id;
   }
 
-  /** 過日／AUTO 時呼叫：移動並行動一批 NPC */
+  /** 決策層：只輸出意圖 {state, targetLoc, act}，唔直接改像素 */
+  function decide(S, n, ai) {
+    var cur = ai.loc[n.id];
+    var want = preferredLoc(n.id, S);
+    var st = ai.state[n.id] || 'idle';
+
+    if (ai.interrupted[n.id]) {
+      return { state: 'talk', targetLoc: cur || want, act: '對談中', intent: 'talk' };
+    }
+
+    /* 好感高／玩家同場：react */
+    var aff = (S.npcs && S.npcs[n.id] && S.npcs[n.id].aff) || 0;
+    var playerHere = S.flags && S.flags['visited_' + (cur || want)];
+    if (known(S, n.id) && aff >= 25 && playerHere && Math.random() < 0.22) {
+      return { state: 'react', targetLoc: cur || want, act: '遙念故人', intent: 'react' };
+    }
+
+    if (!cur || cur !== want) {
+      return { state: 'travel', targetLoc: want, act: '前往' + locLabel(want), intent: 'travel' };
+    }
+
+    if (WORK_LOCS[want] && Math.random() < 0.7) {
+      var acts = ACTIONS[want] || ['行事'];
+      return { state: 'work', targetLoc: want, act: acts[Math.floor(Math.random() * acts.length)], intent: 'work' };
+    }
+
+    if (Math.random() < 0.15) {
+      return { state: 'idle', targetLoc: want, act: '歇息觀望', intent: 'idle' };
+    }
+
+    var acts2 = ACTIONS[want] || ['徘徊', '觀望', '歇息'];
+    return { state: st === 'work' ? 'idle' : 'work', targetLoc: want, act: acts2[Math.floor(Math.random() * acts2.length)], intent: 'work' };
+  }
+
+  function applyIntent(S, n, decision) {
+    var ai = ensure(S);
+    var prev = ai.loc[n.id];
+    var loc = decision.targetLoc;
+    ai.loc[n.id] = loc;
+    ai.state[n.id] = decision.state;
+    ai.intent[n.id] = { kind: decision.intent, act: decision.act, at: Date.now() };
+
+    var line = n.name;
+    if (decision.state === 'travel' && prev && prev !== loc) {
+      line += '由' + locLabel(prev) + '赴' + locLabel(loc);
+    } else if (decision.state === 'talk') {
+      line += '正與人對談於' + locLabel(loc);
+    } else if (decision.state === 'react') {
+      line += '在' + locLabel(loc) + '駐足，似有所感';
+    } else {
+      line += '在' + locLabel(loc) + (decision.act || '行事');
+    }
+
+    if (known(S, n.id) && S.npcs[n.id]) {
+      var feel = S.npcs[n.id].feel || (S.npcs[n.id].feel = { respect: 0, fear: 0, suspicion: 0, gratitude: 0 });
+      if (decision.state === 'react') {
+        S.npcs[n.id].aff = Math.min(100, (S.npcs[n.id].aff || 0) + 1);
+        feel.respect = Math.min(100, (feel.respect || 0) + 1);
+        line += '，隱約念及你';
+      } else if (S.flags && S.flags['visited_' + loc] && Math.random() < 0.2) {
+        if (Math.random() < 0.4) feel.respect = Math.min(100, (feel.respect || 0) + 1);
+        line += '，擦肩略點頭';
+      }
+      if (S.npcs[n.id].log) {
+        S.npcs[n.id].log.unshift({ t: decision.state, text: (decision.act || '') + '於' + locLabel(loc), day: S.day });
+        if (S.npcs[n.id].log.length > 24) S.npcs[n.id].log = S.npcs[n.id].log.slice(0, 24);
+      }
+    }
+    return { id: n.id, name: n.name, loc: loc, act: decision.act, state: decision.state, line: line };
+  }
+
+  /** 過日／時段 tick：決策→套用意圖 */
   function tick(S, opts) {
     opts = opts || {};
     var ai = ensure(S);
@@ -160,10 +222,9 @@
     var nDone = 0;
     for (var i = 0; i < shuffled.length && nDone < maxN; i++) {
       var n = shuffled[i];
-      if (ai.interrupted[n.id]) continue; /* 玩家正在對話則跳過 */
-      var loc = preferredLoc(n.id, S);
-      ai.loc[n.id] = loc;
-      var r = doAction(S, n, loc);
+      if (ai.interrupted[n.id] && !opts.includeTalking) continue;
+      var decision = decide(S, n, ai);
+      var r = applyIntent(S, n, decision);
       results.push(r);
       nDone++;
     }
@@ -188,10 +249,11 @@
   }
 
   function advancePeriod(S) {
-    var i = periodIndex(S);
-    S.period = PERIODS[(i + 1) % 4];
-    if (S.period === '晨') {
-      /* 晨＝新一日由 nextDay 處理；此處僅轉時段 */
+    if (global.QianModes && global.QianModes.advancePeriod) {
+      global.QianModes.advancePeriod(S);
+    } else {
+      var i = periodIndex(S);
+      S.period = PERIODS[(i + 1) % 4];
     }
     return tick(S, { max: 12 });
   }
@@ -205,41 +267,61 @@
       if (!loc) {
         loc = preferredLoc(n.id, S);
         S.npcAI.loc[n.id] = loc;
+        S.npcAI.state[n.id] = 'idle';
       }
       if (loc === mode) here.push(n);
     });
     return here;
   }
 
+  function stateOf(S, id) {
+    ensure(S);
+    return S.npcAI.state[id] || 'idle';
+  }
+
   function interrupt(S, id) {
     ensure(S);
     S.npcAI.interrupted[id] = 1;
+    S.npcAI.state[id] = 'talk';
   }
   function resume(S, id) {
     ensure(S);
     delete S.npcAI.interrupted[id];
+    if (S.npcAI.state[id] === 'talk') S.npcAI.state[id] = 'idle';
   }
   function resumeAll(S) {
     ensure(S);
     S.npcAI.interrupted = {};
   }
 
-  /** 可選：有 AI Key 時潤色今日動向（非阻塞由外部 await） */
   function aiPrompt(S, summary) {
     return '你是秦王政元年的編年吏。用兩句文言白話潤色以下人物動向，勿加英文，勿超 60 字：\n' + summary;
   }
 
   function logHtml(S, escapeHtml) {
     ensure(S);
-    if (!S.npcAI.log.length) return '<p class="muted">人物尚未自主行動。過日或 AUTO 後可見動向。</p>';
+    if (!S.npcAI.log.length) return '<p class="muted">人物尚未自主行動。過時段或 AUTO 後可見動向。</p>';
     return S.npcAI.log.slice(0, 10).map(function (L) {
       return '<div class="chron-item"><b>' + escapeHtml(L.period || '') + '</b>' +
         '<span class="muted"> · 第' + (L.day || '') + '日</span><p>' + escapeHtml(L.text || '') + '</p></div>';
     }).join('');
   }
 
+  /** 世界線摘要用：列出各狀態人數 */
+  function stateSummary(S) {
+    ensure(S);
+    var counts = { idle: 0, work: 0, travel: 0, talk: 0, react: 0 };
+    Object.keys(S.npcAI.state).forEach(function (id) {
+      var st = S.npcAI.state[id] || 'idle';
+      if (counts[st] == null) counts[st] = 0;
+      counts[st]++;
+    });
+    return counts;
+  }
+
   global.QianNpcAI = {
     PERIODS: PERIODS,
+    STATES: STATES,
     SCHEDULE: SCHEDULE,
     ensure: ensure,
     tick: tick,
@@ -247,6 +329,8 @@
     atLocation: atLocation,
     preferredLoc: preferredLoc,
     periodName: periodName,
+    stateOf: stateOf,
+    stateSummary: stateSummary,
     interrupt: interrupt,
     resume: resume,
     resumeAll: resumeAll,
@@ -254,4 +338,4 @@
     locLabel: locLabel,
     logHtml: logHtml
   };
-})(window);
+})(typeof window !== 'undefined' ? window : global);
