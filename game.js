@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '27';
+  const GAME_VERSION = '28';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -314,7 +314,7 @@
     { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
     { id: 'hire', name: '僱長工', desc: '田莊人手+1', gold: 0 }
   ];
-  const FACE_V = '27';
+  const FACE_V = '28';
   function allNpcs() {
     if (window.QianWorld && window.QianWorld.CAST) return window.QianWorld.CAST;
     return [];

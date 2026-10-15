@@ -1859,14 +1859,14 @@ input,textarea,select{font-family:inherit;}
 }
 
 /* Map pin cache bust v26 */
-.pin.pin-art[data-art="farm"] .ps{background-image:url('assets/ui/pin_farm.webp?v=27'),url('assets/bg_busy_farm.webp?v=27');}
-.pin.pin-art[data-art="hut"] .ps{background-image:url('assets/ui/pin_hut.webp?v=27'),url('assets/bg_homestead.webp?v=27');}
-.pin.pin-art[data-art="village"] .ps{background-image:url('assets/ui/pin_village.webp?v=27');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="market"] .ps{background-image:url('assets/ui/pin_market.webp?v=27');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="clinic"] .ps{background-image:url('assets/ui/pin_clinic.webp?v=27');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="drill"] .ps{background-image:url('assets/ui/pin_drill.webp?v=27');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="wild"] .ps{background-image:url('assets/ui/pin_wild.webp?v=27');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="garden"] .ps{background-image:url('assets/ui/pin_garden.webp?v=27');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="farm"] .ps{background-image:url('assets/ui/pin_farm.webp?v=28'),url('assets/bg_busy_farm.webp?v=28');}
+.pin.pin-art[data-art="hut"] .ps{background-image:url('assets/ui/pin_hut.webp?v=28'),url('assets/bg_homestead.webp?v=28');}
+.pin.pin-art[data-art="village"] .ps{background-image:url('assets/ui/pin_village.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="market"] .ps{background-image:url('assets/ui/pin_market.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="clinic"] .ps{background-image:url('assets/ui/pin_clinic.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="drill"] .ps{background-image:url('assets/ui/pin_drill.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="wild"] .ps{background-image:url('assets/ui/pin_wild.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="garden"] .ps{background-image:url('assets/ui/pin_garden.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
 
 /* v26 polish pass */
 .hud-ver{
