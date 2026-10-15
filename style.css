@@ -1,4 +1,4 @@
-/* v30 black text + contrast · navy-gold kit · cute pixel · circular dock · face-safe */
+/* v31 white panels + black text · navy-gold HUD · cute pixel · circular dock · face-safe */
 /* ===== 墨夢莊周：國風文字 RPG 殼（宣紙・金線・朱砂） ===== */
 :root{
   --paper:#fbf4ee;--paper2:#f4e7dd;--paper3:#ead8c8;
@@ -2585,3 +2585,275 @@ html,body,#app{color:#111!important;}
 }
 
 /* HUD／底欄深蓝底維持淺字，正文已改黑 */
+
+
+/* ===== v31: 內容區白底黑字（可讀優先；HUD／底欄維持深藍淺字） ===== */
+:root{
+  --ink:#111111;
+  --ink2:#222222;
+  --paper:#fffdf8;
+  --paper2:#fffaf4;
+  --paper3:#f5e8d8;
+}
+
+/* 身世／擇業／羊皮紙／模態：強制白底，去掉 panel_md 海軍藍圖 */
+#screen-create .create-wrap,
+.career-wrap,
+.career-wrap.parchment,
+#screen-career .career-wrap,
+.parchment,
+.modal-card.parchment,
+.modal-card{
+  background:#fffdf8!important;
+  background-image:none!important;
+  color:#111!important;
+  border:2px solid rgba(212,175,95,.75)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.6)!important;
+}
+.modal{
+  /* 遮罩維持暗；卡片本身由 .modal-card 管 */
+  color:#111!important;
+}
+
+/* 標題列：青綠橫幅 + 金字（對應舊 panel 頂欄） */
+#screen-create .create-wrap h2,
+.career-wrap h2,
+.parchment h2,
+.modal-card.parchment h2,
+.modal-card h2{
+  background:linear-gradient(180deg,#3aa0a6,#2a7c82)!important;
+  color:#f0d28c!important;
+  text-shadow:0 1px 0 rgba(0,0,0,.25)!important;
+  padding:10px 12px!important;
+  border-radius:10px!important;
+  margin:0 0 12px!important;
+  letter-spacing:.35em;
+}
+#screen-create .create-wrap h2:before,
+#screen-create .create-wrap h2:after,
+.career-wrap h2:before,
+.career-wrap h2:after,
+.parchment h2:before,
+.parchment h2:after,
+.modal-card h2:before,
+.modal-card h2:after{
+  color:#f0d28c!important;
+}
+
+/* 身世／擇業說明與標籤：白底上必須黑字（覆蓋 v29 奶油字） */
+#screen-create .create-wrap,
+#screen-create .create-wrap .career-blurb,
+.career-wrap .career-blurb,
+.career-blurb,
+.create-wrap .field,
+.create-wrap .flabel,
+.create-wrap .field.check,
+#disguise-field .field.check,
+.create-wrap label.field{
+  color:#111!important;
+}
+.create-wrap .field.check,
+#disguise-field .field.check{
+  color:#222!important;
+}
+
+/* 擇業卡：淺クリーム + 黑字 */
+.career-card{
+  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
+  color:#111!important;
+  border:1.5px solid rgba(184,50,58,.35)!important;
+  border-left:5px solid rgba(184,50,58,.65)!important;
+}
+.career-card h3{color:#111!important;}
+.career-card p,.career-card .stats{color:#222!important;}
+
+/* 薄片（地圖／行囊／人脈／差事／選單）：內容白底黑字 */
+.sheet{
+  background:#fffdf8!important;
+  background-image:none!important;
+  color:#111!important;
+}
+.sheet .sbody,
+#sheet-act .sbody,
+#sheet-map .sbody,
+#sheet-bag .sbody,
+#sheet-quest .sbody,
+#sheet-ppl .sbody,
+#sheet-menu .sbody{
+  background:#ffffff!important;
+  color:#111!important;
+}
+.sheet .shead{
+  background:linear-gradient(180deg,#3aa0a6,#2a7c82)!important;
+  border-bottom:1px solid rgba(212,175,95,.55)!important;
+  color:#f6e7c8!important;
+}
+.sheet .shead h2{
+  color:#f0d28c!important;
+  background:transparent!important;
+  padding:0!important;
+  margin:0!important;
+}
+.sheet .shead h2:before,
+.sheet .shead h2:after{color:#f0d28c!important;}
+.sheet .shead-sub{color:rgba(255,245,220,.88)!important;}
+
+/* 對話／事件：淺宣紙 + 黑字 */
+#box,
+.vn-box,
+.say-box{
+  background:linear-gradient(180deg,#fffdf8,#f6ebe0)!important;
+  background-image:none!important;
+  border:2px solid rgba(212,175,95,.7)!important;
+  color:#111!important;
+}
+#txt,
+.event-body{
+  color:#111!important;
+}
+#txt .nar{color:#222!important;}
+#txt .sys{color:#444!important;}
+#txt .npc{color:#8a3038!important;}
+#txt .me{color:#1a6a66!important;}
+#free-input,
+#talk-input{
+  color:#111!important;
+  border-bottom-color:rgba(120,80,40,.35)!important;
+}
+#free-input::placeholder,
+#talk-input::placeholder{
+  color:#666!important;
+  opacity:.85!important;
+}
+
+/* 內容卡維持淺底黑字（強化 v30） */
+.chip-card,
+#wmode-row .chip-card,
+.origin-grid .chip-card,
+#gender-row .chip-card{
+  background:linear-gradient(180deg,#fffdf8,#f5e8d8)!important;
+  color:#111!important;
+}
+.chip-card strong{color:#111!important;}
+.chip-card span{color:#222!important;}
+.quest-item,
+.bag-cell,
+.bag-item,
+.gear-card,
+.villager-card,
+.shop-item,
+.craft-item,
+.aff-mini,
+.enemy-preview,
+.parchment-mini,
+.chron-item,
+.hands-chip,
+.chip,
+.dungeon-stats span{
+  background:linear-gradient(180deg,#fffdf8,#f3e8da)!important;
+  border:1.5px solid rgba(184,50,58,.28)!important;
+  color:#111!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.08)!important;
+}
+.quest-item.quest-section{
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px dashed rgba(80,60,40,.35)!important;
+  box-shadow:none!important;
+  color:#111!important;
+}
+.quest-item strong,
+.shop-item b,
+.bag-section-title,
+.panel-h{
+  color:#111!important;
+  background:transparent!important;
+}
+.quest-item .quest-progress,
+.quest-item .quest-reward,
+.villager-card .muted,
+.craft-item .need,
+.note,.tiny,.muted,.mode-blurb,
+.crop-pick .label,
+.aff-num,
+.hp-num,
+.ver-line,
+.talk-line.sys,
+.equip-slot small,
+.eq-meta small,
+#sheet-act .note,
+#sheet-map .note{
+  color:#222!important;
+}
+.dir,.crop-btn,.seg,.fish-spot{
+  background:#fffaf4!important;
+  color:#111!important;
+  border-color:rgba(184,50,58,.35)!important;
+}
+.dir.active,.crop-btn.active,.fish-spot.active,.seg.active{
+  background:#c44a52!important;
+  color:#fff!important;
+}
+.plot-card{
+  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
+  color:#111!important;
+}
+.plot-card-head{
+  background:linear-gradient(180deg,#fff6ec,#ead9c4)!important;
+  color:#111!important;
+  border-bottom:1px solid rgba(184,50,58,.3)!important;
+}
+.plot-card-hint{color:#222!important;}
+.event-choices .btn,
+.event-choice{
+  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
+  color:#111!important;
+  border:2px solid rgba(184,50,58,.4)!important;
+}
+
+/* 白底面板內 ghost 按鈕改深字（唔同 create footer） */
+.career-wrap .btn.ghost,
+.parchment .btn.ghost,
+.sheet .btn.ghost,
+.modal-card .btn.ghost,
+#screen-career .btn.ghost{
+  background:#fffaf4!important;
+  color:#111!important;
+  border:2px solid rgba(212,175,95,.75)!important;
+}
+
+/* create footer 維持深藍 + 淺字／金主按鈕 */
+#screen-create .create-actions{
+  background:#121a2c!important;
+  border-top:1.5px solid rgba(212,175,95,.55)!important;
+}
+#screen-create .create-actions .btn.ghost{
+  background:rgba(36,48,80,.92)!important;
+  color:#f3e6d2!important;
+  border-color:rgba(212,175,95,.75)!important;
+}
+#screen-create .create-actions .btn.primary{
+  background:linear-gradient(180deg,#e0c070,#b89040 55%,#8a6828)!important;
+  color:#1a1208!important;
+  border-color:#f0d28c!important;
+}
+
+/* HUD／底欄／戰報／toast：維持深藍淺字（顯式保護，防誤傷） */
+#hCh{color:#f6e7c8!important;}
+#hCh .hud-career-wrap{color:#cbb89a!important;}
+#hStat span{color:#f6ebe0!important;}
+#hStat b{color:#f0d28c!important;}
+.hud-ver{color:#f0d28c!important;}
+#tabs button{color:#e8d9c4!important;}
+#tabs button.on{color:#f0d28c!important;}
+.battle-hud{color:#f3e6d2!important;}
+.wave-label{color:#f0d28c!important;}
+.toast,#toast{color:#f6e7c8!important;}
+#place-chip{color:#f0d28c!important;}
+.pin .pn{color:#f0d28c!important;}
+.hud-daypill,.hud-scroll{color:#f3e6d2!important;}
+
+/* 狀態列（對話盒內） */
+#status-text,.nar,#world-line,.world-line{
+  color:#111!important;
+}

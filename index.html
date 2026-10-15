@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v29 UI · parchment HUD · circular tabs · iso unify · face fix -->
+<!-- v31 white panels + black text · navy-gold HUD · circular tabs -->
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#f6ebe4">
 <title>墨夢莊周</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E墨%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=30">
+<link rel="stylesheet" href="style.css?v=31">
 </head>
 <body x-apple-data-detectors="false">
 <div id="app">
@@ -20,15 +20,15 @@
   <section id="screen-title" class="screen on">
     <div class="title-bg" aria-hidden="true">
       <picture>
-        <source srcset="assets/bg_title.webp?v=30" type="image/webp">
-        <img src="assets/bg_title.jpg?v=30" alt="" decoding="async">
+        <source srcset="assets/bg_title.webp?v=31" type="image/webp">
+        <img src="assets/bg_title.jpg?v=31" alt="" decoding="async">
       </picture>
       <div class="title-bg-shade"></div>
     </div>
     <div class="title-content title-poster">
       <div class="title-hero-block">
         <div class="title-brand-row">
-          <img class="tseal-img" src="assets/seal_mo.webp?v=30" alt="墨" width="64" height="64" decoding="async">
+          <img class="tseal-img" src="assets/seal_mo.webp?v=31" alt="墨" width="64" height="64" decoding="async">
           <p class="title-ver-inline" id="game-version">版本 v29</p>
         </div>
         <h1>墨夢莊周</h1>
@@ -100,8 +100,8 @@
     <!-- 全屏場景 -->
     <div class="vn-stage" id="adventure-scene">
       <picture id="scene-pic">
-        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=30" type="image/webp">
-        <img id="scene-img" src="assets/bg_busy_farm.webp?v=30" alt="場景" class="scene-img" decoding="async">
+        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=31" type="image/webp">
+        <img id="scene-img" src="assets/bg_busy_farm.webp?v=31" alt="場景" class="scene-img" decoding="async">
       </picture>
       <div class="season-tint" id="season-tint" data-season="0"></div>
       <canvas id="worker-layer" class="worker-layer" aria-hidden="true"></canvas>
@@ -115,7 +115,7 @@
     <header id="hud" class="hud-scroll">
       <div class="hud-left">
         <button type="button" id="hSeal" class="hud-avatar-btn" aria-label="狀態" title="開啟行事">
-          <img id="hud-avatar" src="assets/face_hero.webp?v=30" alt="主角" width="56" height="56" decoding="async">
+          <img id="hud-avatar" src="assets/face_hero.webp?v=31" alt="主角" width="56" height="56" decoding="async">
           <span id="hDaySeal" class="hud-seal-badge">春</span>
           <small id="hPer" hidden>晨</small>
         </button>
@@ -171,21 +171,21 @@
 
     <!-- 底欄 · v26 圓形圖標 Dock -->
     <nav id="tabs" class="tabs-dock" aria-label="主選單">
-      <button type="button" id="tab-map" data-t="map"><i class="tab-ico"><img src="assets/ui/pin_map.webp?v=30" alt="" width="40" height="40" decoding="async"></i><span>地圖</span><em class="tab-dot" id="map-dot" hidden></em></button>
-      <button type="button" id="btn-bag" data-t="bag"><i class="tab-ico"><img src="assets/ui/pin_bag.webp?v=30" alt="" width="40" height="40" decoding="async"></i><span>行囊</span></button>
-      <button type="button" id="tab-ppl" data-t="ppl"><i class="tab-ico"><img src="assets/ui/pin_ppl.webp?v=30" alt="" width="40" height="40" decoding="async"></i><span>人脈</span><em class="tab-dot" id="ppl-dot" hidden></em></button>
-      <button type="button" id="btn-quest" data-t="quest"><i class="tab-ico"><img src="assets/ui/pin_quest.webp?v=30" alt="" width="40" height="40" decoding="async"></i><span>差事</span><em id="quest-dot" hidden></em></button>
-      <button type="button" id="btn-menu" data-t="menu"><i class="tab-ico"><img src="assets/ui/pin_menu.webp?v=30" alt="" width="40" height="40" decoding="async"></i><span>選單</span><em class="tab-dot" id="menu-dot" hidden></em></button>
+      <button type="button" id="tab-map" data-t="map"><i class="tab-ico"><img src="assets/ui/pin_map.webp?v=31" alt="" width="40" height="40" decoding="async"></i><span>地圖</span><em class="tab-dot" id="map-dot" hidden></em></button>
+      <button type="button" id="btn-bag" data-t="bag"><i class="tab-ico"><img src="assets/ui/pin_bag.webp?v=31" alt="" width="40" height="40" decoding="async"></i><span>行囊</span></button>
+      <button type="button" id="tab-ppl" data-t="ppl"><i class="tab-ico"><img src="assets/ui/pin_ppl.webp?v=31" alt="" width="40" height="40" decoding="async"></i><span>人脈</span><em class="tab-dot" id="ppl-dot" hidden></em></button>
+      <button type="button" id="btn-quest" data-t="quest"><i class="tab-ico"><img src="assets/ui/pin_quest.webp?v=31" alt="" width="40" height="40" decoding="async"></i><span>差事</span><em id="quest-dot" hidden></em></button>
+      <button type="button" id="btn-menu" data-t="menu"><i class="tab-ico"><img src="assets/ui/pin_menu.webp?v=31" alt="" width="40" height="40" decoding="async"></i><span>選單</span><em class="tab-dot" id="menu-dot" hidden></em></button>
     </nav>
     <!-- 職業裝飾列（主畫面底部點綴，窄屏可捲） -->
     <div id="career-strip" class="career-strip" aria-hidden="true">
-      <figure><img src="assets/char_farmer_m.webp?v=30" alt=""><figcaption>農夫</figcaption></figure>
-      <figure><img src="assets/char_doctor.webp?v=30" alt=""><figcaption>醫者</figcaption></figure>
-      <figure><img src="assets/char_merchant.webp?v=30" alt=""><figcaption>商賈</figcaption></figure>
-      <figure><img src="assets/char_soldier.webp?v=30" alt=""><figcaption>武卒</figcaption></figure>
-      <figure><img src="assets/char_craftsman.webp?v=30" alt=""><figcaption>工匠</figcaption></figure>
-      <figure><img src="assets/char_hunter.webp?v=30" alt=""><figcaption>獵戶</figcaption></figure>
-      <figure><img src="assets/char_ranger.webp?v=30" alt=""><figcaption>遊俠</figcaption></figure>
+      <figure><img src="assets/char_farmer_m.webp?v=31" alt=""><figcaption>農夫</figcaption></figure>
+      <figure><img src="assets/char_doctor.webp?v=31" alt=""><figcaption>醫者</figcaption></figure>
+      <figure><img src="assets/char_merchant.webp?v=31" alt=""><figcaption>商賈</figcaption></figure>
+      <figure><img src="assets/char_soldier.webp?v=31" alt=""><figcaption>武卒</figcaption></figure>
+      <figure><img src="assets/char_craftsman.webp?v=31" alt=""><figcaption>工匠</figcaption></figure>
+      <figure><img src="assets/char_hunter.webp?v=31" alt=""><figcaption>獵戶</figcaption></figure>
+      <figure><img src="assets/char_ranger.webp?v=31" alt=""><figcaption>遊俠</figcaption></figure>
     </div>
 
     <!-- 隱藏舊 mode-tab 供腳本切換狀態（地圖內按鈕會同步） -->
@@ -335,7 +335,7 @@
       </div>
       <div class="sbody act-body">
         <div class="act-scene" id="act-scene">
-          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=30" alt="場景" class="act-scene-img" decoding="async">
+          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=31" alt="場景" class="act-scene-img" decoding="async">
           <canvas id="act-worker-layer" class="act-worker-layer" aria-hidden="true"></canvas>
           <div class="act-scene-cap" id="act-scene-cap">場景人物走動</div>
         </div>
@@ -712,7 +712,7 @@
   <div id="modal-talk" class="modal" hidden>
     <div class="modal-card wide parchment talk-card">
       <div class="talk-head">
-        <img id="talk-face" class="talk-face" src="assets/face_scholar.webp?v=30" alt="" width="72" height="72" decoding="async">
+        <img id="talk-face" class="talk-face" src="assets/face_scholar.webp?v=31" alt="" width="72" height="72" decoding="async">
         <h2 id="talk-npc-name">鄉鄰</h2>
       </div>
       <div class="talk-present" id="talk-present" aria-label="在場之人"></div>
@@ -799,7 +799,7 @@
   <div id="modal-event" class="modal" hidden>
     <div class="modal-card wide parchment">
       <div class="event-head">
-        <img id="event-face" class="event-face" src="assets/face_merchant.webp?v=30" alt="來訪" width="72" height="72" decoding="async">
+        <img id="event-face" class="event-face" src="assets/face_merchant.webp?v=31" alt="來訪" width="72" height="72" decoding="async">
         <h2 id="event-title">來訪</h2>
       </div>
       <p id="event-body" class="event-body"></p>
@@ -885,7 +885,7 @@
       </div>
       <div class="wave-label" id="wave-label">第 1／3 波</div>
       <div class="hp-block player">
-        <img class="battle-hero" src="assets/char_hero.webp?v=30" alt="" decoding="async">
+        <img class="battle-hero" src="assets/char_hero.webp?v=31" alt="" decoding="async">
         <div class="hp-name">你</div>
         <div class="hp-bar"><div class="hp-fill player" id="player-hp-fill"></div></div>
         <div class="hp-num" id="player-hp-num">0/0</div>
@@ -900,15 +900,15 @@
   </div>
 
 </div>
-<script src="equip.js?v=30"></script>
-<script src="plots.js?v=30"></script>
-<script src="ai.js?v=30"></script>
-<script src="factions.js?v=30"></script>
-<script src="world.js?v=30"></script>
-<script src="story.js?v=30"></script>
-<script src="workers.js?v=30"></script>
-<script src="npc_ai.js?v=30"></script>
-<script src="game.js?v=30"></script>
+<script src="equip.js?v=31"></script>
+<script src="plots.js?v=31"></script>
+<script src="ai.js?v=31"></script>
+<script src="factions.js?v=31"></script>
+<script src="world.js?v=31"></script>
+<script src="story.js?v=31"></script>
+<script src="workers.js?v=31"></script>
+<script src="npc_ai.js?v=31"></script>
+<script src="game.js?v=31"></script>
 </body>
 </html>
 
