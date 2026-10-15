@@ -195,18 +195,25 @@
   };
 
 
-  /** v42 自由行動：想說／想做 → 在場 NPC 依性格反應（JSON） */
+  /** v44 自由行動：想說／想做 → NPC 對白＋行動＋可推進劇情節點（JSON） */
   AI.freeAct = function (ctx) {
     var sys = '你是《墨夢莊周》世界引擎。秦王政元年前後。繁體中文，略文言。' +
       '玩家在劇情場景中自由輸入「想說」或「想做」。你必須以當前焦點人物身份反應，合乎性格、好感、記憶、扮相與地點門禁。' +
       '禁止抄錄任何現成小說原文；禁止宣布鎖定結局（不可寫死 fate_* 最終鍵）；不可引入現代事物。' +
       '只輸出一個 JSON 物件，無Markdown圍欄，欄位：' +
-      'narration(旁白40字內), npcId, npcName, reply(人物對白40～120字), sets(物件，可含 plotFlags.xxx 或 flags.xxx 或 access.palace 布林), ' +
-      'aff(物件，npcId→整數加減), toast(可空), advance(null|"period"), goldDelta(整數，賄絡才用負數)。' +
+      'narration(旁白40字內), npcId, npcName, reply(人物對白40～120字), ' +
+      'npcAction(物件：type=leave|gift|follow|open_gate|attack|invite|schedule_meet|none，label短標，detail一句行動描述；可選 goldDelta/hpDelta/meetDay/place/bag), ' +
+      'choiceId(若玩家意圖明顯對應【當前可選】某項的 id 則填該 id，否則 null), ' +
+      'jumpTo(若應轉场到其他劇情 nodeId 且 choiceId 為 null 才填；只許現有節點如 ch1_hub,xy_palace_gate,xy_palace_in,side_vil_grain,side_scale,xy_taiyi,xy_xiangbang 等，不確定则 null), ' +
+      'sets(物件，可含 plotFlags.xxx 或 flags.xxx 或 access.palace 布林), ' +
+      'aff(物件，npcId→整數加減), toast(可空), advance(null|"period"), goldDelta(整數，賄絡才用負數), intent(短字串)。' +
       'sets 只允許輕量旗標（如 free_*、bond_*、want_palace、healer_seed），不可寫 plotFlags.fate_*。' +
+      'NPC 必須有具體行動傾向：不要只說話——可離去、回贈、跟隨、開門、拔刃、邀約、約期。' +
       (ctx.fateSummary ? '【既定命運】' + ctx.fateSummary + '（對白須合乎，勿推翻）' : '') +
       (ctx.flags ? '【旗標】' + ctx.flags : '') +
       (ctx.loc ? '【地點約束】' + ctx.loc : '') +
+      (ctx.nodeId ? '【當前節點】' + ctx.nodeId : '') +
+      (ctx.choices ? '【當前可選】' + ctx.choices : '') +
       (ctx.disguise ? '【扮相】' + ctx.disguise : '') +
       (ctx.palaceAccess ? '【門禁】已通宮城' : '【門禁】未通宮城') +
       (ctx.factionStance ? '【勢力】' + ctx.factionStance : '') +
@@ -222,7 +229,7 @@
     return AI.call([
       { role: 'system', content: sys },
       { role: 'user', content: user }
-    ], { maxTok: 500, temp: 0.75 });
+    ], { maxTok: 650, temp: 0.75 });
   };
 
   loadSettings();

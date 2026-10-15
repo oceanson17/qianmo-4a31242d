@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '43';
+  const GAME_VERSION = '44';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -1515,6 +1515,20 @@
     if (inp) inp.placeholder = freeActMode === 'do' ? '想做什麼？（例：賂門衛／潛入／贈藥）…' : '想說什麼？（例：請安／試探／表態）…';
   }
 
+  function showNpcActBanner(act) {
+    const el = $('story-npc-act');
+    if (!el) return;
+    if (!act || (!act.detail && act.type === 'none')) {
+      el.hidden = true;
+      el.innerHTML = '';
+      return;
+    }
+    const label = act.label || (window.QianFreeAct && window.QianFreeAct.ACTION_LABEL && window.QianFreeAct.ACTION_LABEL[act.type]) || act.type || '行動';
+    const who = act.npcName || '對方';
+    el.hidden = false;
+    el.innerHTML = '<span class="npc-act-tag">' + escapeHtml(label) + '</span> <b>' + escapeHtml(who) + '</b> · ' + escapeHtml(act.detail || '');
+  }
+
   async function storyFreeSend() {
     if (!S || !window.QianFreeAct) { toast('自由行動未載入'); return; }
     const input = $('story-free-input');
@@ -1546,20 +1560,34 @@
         pushStory(who + '：' + r.reply, 'npc');
         const sp = $('story-speaker');
         if (sp) sp.textContent = who;
-        const extra = document.createElement('div');
-        extra.className = 'story-free-echo';
-        extra.innerHTML = '<b>' + escapeHtml(who) + '</b>：' + escapeHtml(r.reply);
         if (beatEl && beatEl.parentNode) {
           let echo = $('story-free-echo');
           if (!echo) {
             echo = document.createElement('div');
             echo.id = 'story-free-echo';
             echo.className = 'story-free-echo';
-            beatEl.parentNode.insertBefore(echo, beatEl.nextSibling);
+            const actSlot = $('story-npc-act');
+            if (actSlot && actSlot.parentNode === beatEl.parentNode) {
+              beatEl.parentNode.insertBefore(echo, actSlot);
+            } else {
+              beatEl.parentNode.insertBefore(echo, beatEl.nextSibling);
+            }
           }
           echo.innerHTML = '<b>' + escapeHtml(who) + '</b>：' + escapeHtml(r.reply);
           echo.hidden = false;
         }
+      }
+      /* NPC 具體行動橫幅 */
+      if (r.npcAction) {
+        showNpcActBanner(r.npcAction);
+        if (r.npcAction.detail) pushStory('【行動】' + (r.npcAction.label || '') + ' · ' + r.npcAction.detail, 'nar');
+      } else {
+        showNpcActBanner(null);
+      }
+      if (r.plotAdvance) {
+        const pa = r.plotAdvance;
+        pushStory('【劇情】' + (pa.via === 'choice' ? '選項推進' : '轉場') + ' → ' + (pa.nodeId || ''), 'nar');
+        pushDashLog('plot', '自由行動推進 ' + (pa.nodeId || ''), { noise: false });
       }
       if (r.toast) toast(r.toast);
       if (r.advance === 'period' || r.advance === 'day') {
@@ -3521,7 +3549,7 @@
     if (S.hp < Math.max(10, S.maxHp * 0.28) && mode !== 'hut' && !battle) {
       showMode('hut'); hutRest(false); return;
     }
-    /* v43：閒務 AUTO 鎖定種田／打鐵／挖掘／副本，唔俾勢力偏好亂跳 */
+    /* v43/v44：閒務 AUTO 鎖定種田／打鐵／挖掘／副本，唔俾勢力偏好亂跳 */
     const idleTarget = idleModeTarget();
     const inIdleGrind = (idleCat === 'farm' && mode === 'farm')
       || (idleCat === 'forge' && mode === 'forge')

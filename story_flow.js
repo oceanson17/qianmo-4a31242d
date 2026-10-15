@@ -1,4 +1,4 @@
-/* 墨夢莊周 · v39 劇情主循環（接 v37 近側言情節點；UI 殼為 v35 羊皮紙）
+/* 墨夢莊周 · v44 劇情主循環（含 jumpTo）（接 v37 近側言情節點；UI 殼為 v35 羊皮紙）
  * 節點：id／speaker／text／bg／choices[{id,text,to,if,set,need,reward,advance}]
  * 旗標寫 S.flags／S.plotFlags／好感 aff:npc；時段 advance:'period'|'day'
  * 靈感可參考「近側醫士」題材——全部原創，唔抄任何小說原文／獨特情節句。
@@ -590,7 +590,36 @@
     };
   }
 
-  function rewardToast(r) {
+  /** 自由行動／腳本：直接跳到合法節點（不經選項） */
+  function jumpTo(S, nodeId, opts) {
+    ensure(S);
+    opts = opts || {};
+    if (!nodeId || !NODES[nodeId]) return { ok: false, toast: '節點不存在' };
+    var from = S.storyFlow.nodeId;
+    if (from === nodeId && !opts.force) {
+      return { ok: true, same: true, node: NODES[nodeId], fromId: from };
+    }
+    S.storyFlow.started = true;
+    S.storyFlow.nodeId = nodeId;
+    if (!S.storyFlow.seen) S.storyFlow.seen = {};
+    var seenKey = 'free::' + (from || '?') + '->' + nodeId;
+    if (!S.storyFlow.seen[seenKey]) S.storyFlow.seen[seenKey] = 1;
+    if (opts.set) applySet(S, opts.set);
+    var next = NODES[nodeId];
+    return {
+      ok: true,
+      jumped: true,
+      fromId: from,
+      nodeId: nodeId,
+      line: next.text,
+      speaker: next.speaker,
+      bg: next.bg,
+      node: next,
+      toast: opts.toast || null
+    };
+  }
+
+    function rewardToast(r) {
     if (!r) return null;
     var bits = [];
     if (r.gold) bits.push((r.gold > 0 ? '+' : '') + r.gold + '銀');
@@ -649,6 +678,7 @@
     getNode: getNode,
     visibleChoices: visibleChoices,
     applyChoice: applyChoice,
+    jumpTo: jumpTo,
     sceneFor: sceneFor,
     validate: validate,
     summary: summary,
