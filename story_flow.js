@@ -1,4 +1,4 @@
-/* 墨夢莊周 · v37 純文字言情／劇情主循環
+/* 墨夢莊周 · v39 劇情主循環（接 v37 近側言情節點；UI 殼為 v35 羊皮紙）
  * 節點：id／speaker／text／bg／choices[{id,text,to,if,set,need,reward,advance}]
  * 旗標寫 S.flags／S.plotFlags／好感 aff:npc；時段 advance:'period'|'day'
  * 靈感可參考「近側醫士」題材——全部原創，唔抄任何小說原文／獨特情節句。

@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '38';
+  const GAME_VERSION = '39';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -477,7 +477,7 @@
     const quest = Object.assign({ done: false, progress: 0 }, C.quest);
     const cast = (window.QianWorld && window.QianWorld.CAST) || [];
     const st = {
-      v: 8,
+      v: 9,
       career: careerId,
       name: (window.__createDraft && window.__createDraft.name) || '旅人',
       day: 1,
@@ -682,12 +682,17 @@
       }
       return o;
     }
-    if (o.v === 7 || o.v === 8) {
+    if (o.v === 7 || o.v === 8 || o.v === 9) {
       if (!o.storyFlow) o.storyFlow = { nodeId: null, seen: {}, started: false };
       if (!o.storyFlow.seen) o.storyFlow.seen = {};
       if (!o.dash) o.dash = { filterNoise: false, x2: false, realm: 'home', col: 'world' };
+      if (!o.plotFlags) o.plotFlags = {};
+      if (!o.arcProg) o.arcProg = {};
+      if (!o.readLog) o.readLog = [];
+      if (!o.chronicle) o.chronicle = [];
       if (window.QianStoryFlow) window.QianStoryFlow.ensure(o);
-      o.v = 8;
+      if (window.QianArcs && window.QianArcs.ensure) try { window.QianArcs.ensure(o); } catch (e) {}
+      o.v = 9;
       return o;
     }
     return null;
@@ -696,7 +701,7 @@
     if (!S) return;
     S.auto = autoOn;
     S.directive = directive;
-    S.v = 8;
+    S.v = 9;
     if (window.QianStoryFlow) window.QianStoryFlow.ensure(S);
     if (window.QianFactions) window.QianFactions.ensure(S);
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); toast('已存檔'); } catch (e) { toast('存檔失敗'); }
@@ -1929,7 +1934,7 @@
   }
   function saveQuiet() {
     if (!S) return;
-    S.auto = autoOn; S.directive = directive; S.v = 8;
+    S.auto = autoOn; S.directive = directive; S.v = 9;
     if (window.QianFactions) window.QianFactions.ensure(S);
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {}
   }
@@ -4230,7 +4235,7 @@
         el.classList.remove('on');
       }
     });
-    if ($('app')) $('app').classList.toggle('dash-live', id === 'screen-game');
+    if ($('app')) $('app').classList.remove('dash-live');
   }
   function showTitle() {
     showScreen('screen-title');
@@ -4320,16 +4325,18 @@
     refreshNpcs();
     showScreen('screen-game');
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
-    if ($('screen-game')) $('screen-game').classList.add('dash-mode');
-    if ($('app')) $('app').classList.add('dash-live');
+    if ($('screen-game')) {
+      $('screen-game').classList.remove('dash-mode');
+      $('screen-game').classList.add('vn-text-mode');
+    }
+    if ($('app')) $('app').classList.remove('dash-live');
     updateDisguiseMenu();
     const h = S.hero || {};
     const o = window.QianWorld ? window.QianWorld.originById(h.origin) : { name: '' };
     const modeTxt = S.worldMode === 'free' ? '高度自由世界' : '史實軌道';
     status('秦王政元年。你是' + (h.name || '旅人') + '，出身' + (o.name || '') + '，以' + CAREERS[careerId].name + '立足墨夢。（' + modeTxt + '）' +
-      (h.disguise === 'male' ? '女扮男裝潛行江湖。' : '') + '且看文字選項，如何改寫天下。');
-    toast('開局 · 儀表板 · ' + CAREERS[careerId].name + (h.disguise === 'male' ? ' · 男裝' : ''));
-    try { setDashCol('story'); } catch (e) {}
+      (h.disguise === 'male' ? '女扮男裝潛行江湖。' : '') + '點選劇情選項，改寫人物關係與結局。');
+    toast('開局 · 文字劇情 · ' + CAREERS[careerId].name + (h.disguise === 'male' ? ' · 男裝' : ''));
     if (window.QianStoryFlow) {
       window.QianStoryFlow.begin(S);
       applyStoryScene();
@@ -4343,8 +4350,11 @@
     showScreen('screen-game');
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
     refreshNpcs();
-    if ($('screen-game')) $('screen-game').classList.add('dash-mode');
-    if ($('app')) $('app').classList.add('dash-live');
+    if ($('screen-game')) {
+      $('screen-game').classList.remove('dash-mode');
+      $('screen-game').classList.add('vn-text-mode');
+    }
+    if ($('app')) $('app').classList.remove('dash-live');
     updateDisguiseMenu();
     toast('繼續 · ' + dayStr());
     pushStory('續寫 · ' + dayStr(), 'sys');
@@ -4360,7 +4370,6 @@
       renderStoryPanel();
     }
     setTimeout(maybeTriggerVisit, 600);
-    try { setDashCol('story'); } catch (e) {}
     renderHUD();
   }
 
@@ -4492,6 +4501,7 @@
       else panel.appendChild(host);
     }
     if (!host) return;
+    host.hidden = false;
     const AI = window.QianAI;
     const fate = window.QianArcs ? window.QianArcs.fateSummary(S) : '';
     if (AI && AI.ready() && AI.storyBeat) {
@@ -4566,11 +4576,6 @@
     pushDashLog('story', (r.line || '選擇推進').split('\n')[0], { noise: false });
     renderStoryPanel();
     renderHUD();
-    try {
-      const d = ensureDash(S);
-      if (d.col === 'story') setDashCol('story');
-      else openStoryModal();
-    } catch (e) { openStoryModal(); }
     applyStoryAiBeat(r);
     saveQuiet();
     if (r.pollArc || (S.flags && (S.flags.poll_arc || S.flags.want_arc))) {
@@ -4608,14 +4613,8 @@
     if (S.dashLog.length > 80) S.dashLog = S.dashLog.slice(0, 80);
   }
   function openStoryModal() {
-    const panel = $('story-panel');
-    const bd = $('dash-story-backdrop');
-    if (panel) {
-      panel.classList.add('dash-story-open');
-      panel.hidden = false;
-    }
-    if (bd) { bd.hidden = false; bd.classList.add('on'); }
-    renderStoryPanel();
+    /* v39：無 dash 殼時＝聚焦常駐劇情面板 */
+    focusStoryPanel();
   }
   function closeStoryModal() {
     const panel = $('story-panel');
@@ -4624,10 +4623,17 @@
     if (bd) { bd.classList.remove('on'); bd.hidden = true; }
   }
   function focusStoryPanel() {
-    openStoryModal();
+    const panel = $('story-panel');
+    if (panel) {
+      panel.hidden = false;
+      panel.classList.remove('dash-story-open');
+      try { panel.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { try { panel.scrollIntoView(true); } catch (e2) {} }
+    }
+    renderStoryPanel();
     toast('劇情');
   }
   function setDashCol(col) {
+    if (!$('dash-col-story') && !$('dash-mobile-tabs')) return;
     if (!S) return;
     const d = ensureDash(S);
     d.col = col || 'story';
@@ -4664,6 +4670,7 @@
     }).slice(0, 16);
   }
   function renderDash() {
+    if (!$('dash-shell') && !$('dash-col-story')) return; /* v39 無儀表板殼 */
     if (!S || !$('dash')) return;
     const d = ensureDash(S);
     const st = stats();
@@ -5262,6 +5269,11 @@
 
     // Guofeng chrome
     if ($('tab-story')) $('tab-story').addEventListener('click', () => { focusStoryPanel(); });
+    if ($('btn-menu-story')) $('btn-menu-story').addEventListener('click', () => { closeModal('modal-menu'); focusStoryPanel(); });
+    if ($('btn-menu-rel')) $('btn-menu-rel').addEventListener('click', () => { closeModal('modal-menu'); openRel(); });
+    if ($('btn-menu-codex')) $('btn-menu-codex').addEventListener('click', () => { closeModal('modal-menu'); openCodex(); });
+    if ($('btn-menu-read')) $('btn-menu-read').addEventListener('click', () => { closeModal('modal-menu'); openRead(); });
+
     /* v36 dash binds */
     if ($('dash-cultivate')) $('dash-cultivate').addEventListener('click', (ev) => { tapFeel($('dash-cultivate'), ev); dashCultivate(); });
     if ($('dash-save')) $('dash-save').addEventListener('click', () => { save(); });
