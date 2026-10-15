@@ -1,4 +1,4 @@
-// v34 modules · day rhythm · NPC FSM · day guide · juice
+// v35 text VN · story_flow · arcs · day rhythm · juice
 (() => {
   'use strict';
 
@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '34';
+  const GAME_VERSION = '35';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -543,8 +543,10 @@
       explore: { ruins: 1, crypt: 1, marsh: 1, gorge: 1, stone_forest: 1, ruinsBest: 0, cryptBest: 0, marshBest: 0, gorgeBest: 0, stone_forestBest: 0, bosses: {} },
       attrs: { wu: 0, hu: 0, shen: 0, zhi: 0, bian: 0, yun: 0 },
       plotFlags: {},
-      arcProg: {}
+      arcProg: {},
+      storyFlow: { nodeId: null, seen: {}, started: false }
     };
+    if (window.QianStoryFlow) window.QianStoryFlow.ensure(st);
     if (window.QianStory) {
       window.QianStory.ensure(st);
       if (window.__createDraft && window.__createDraft.disguise && st.hero.gender === 'f') {
@@ -589,7 +591,7 @@
       o.flags = o.flags || {};
       if (o.hands == null) o.hands = 0;
     }
-    if (o.v === 2 || o.v === 3 || o.v === 4 || o.v === 5 || o.v === 6) {
+    if (o.v === 2 || o.v === 3 || o.v === 4 || o.v === 5 || o.v === 6 || o.v === 7) {
       if (o.hands == null) o.hands = 0;
       if (o.mineFloor == null) o.mineFloor = 1;
       if (o.frontFloor == null) o.frontFloor = 1;
@@ -662,9 +664,12 @@
       if (!o.npcAI) o.npcAI = { loc: {}, state: {}, intent: {}, log: [], interrupted: {} };
       if (!o.npcAI.state) o.npcAI.state = {};
       if (!o.npcAI.intent) o.npcAI.intent = {};
-      o.v = 6;
+      if (!o.storyFlow) o.storyFlow = { nodeId: null, seen: {}, started: false };
+      if (!o.storyFlow.seen) o.storyFlow.seen = {};
+      o.v = 7;
       if (window.QianWorld) window.QianWorld.ensure(o);
       if (window.QianStory) window.QianStory.ensure(o);
+      if (window.QianStoryFlow) window.QianStoryFlow.ensure(o);
       if (window.QianFactions) window.QianFactions.ensure(o);
       if (window.QianPlots) {
         window.QianPlots.ensure(o);
@@ -674,13 +679,20 @@
       }
       return o;
     }
+    if (o.v === 7) {
+      if (!o.storyFlow) o.storyFlow = { nodeId: null, seen: {}, started: false };
+      if (!o.storyFlow.seen) o.storyFlow.seen = {};
+      if (window.QianStoryFlow) window.QianStoryFlow.ensure(o);
+      return o;
+    }
     return null;
   }
   function save() {
     if (!S) return;
     S.auto = autoOn;
     S.directive = directive;
-    S.v = 6;
+    S.v = 7;
+    if (window.QianStoryFlow) window.QianStoryFlow.ensure(S);
     if (window.QianFactions) window.QianFactions.ensure(S);
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); toast('已存檔'); } catch (e) { toast('存檔失敗'); }
   }
@@ -4289,23 +4301,28 @@
     S = newState(careerId);
     autoOn = false;
     directive = 'grain';
-    mode = 'farm';
+    mode = 'hut';
     refreshNpcs();
     $('screen-career').hidden = true;
     if ($('screen-create')) $('screen-create').hidden = true;
     $('screen-title').hidden = true;
     $('screen-game').hidden = false;
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
-    showMode('farm');
+    if ($('screen-game')) $('screen-game').classList.add('vn-text-mode');
     updateDisguiseMenu();
     const h = S.hero || {};
     const o = window.QianWorld ? window.QianWorld.originById(h.origin) : { name: '' };
     const modeTxt = S.worldMode === 'free' ? '高度自由世界' : '史實軌道';
     status('秦王政元年。你是' + (h.name || '旅人') + '，出身' + (o.name || '') + '，以' + CAREERS[careerId].name + '立足墨夢。（' + modeTxt + '）' +
-      (h.disguise === 'male' ? '女扮男裝潛行江湖。' : '') + '少年王即位，呂不韋為相邦——天下軌道可被你改寫。');
-    toast('開局 · ' + CAREERS[careerId].name + (h.disguise === 'male' ? ' · 男裝' : ''));
+      (h.disguise === 'male' ? '女扮男裝潛行江湖。' : '') + '且看文字選項，如何改寫天下。');
+    toast('開局 · 文字劇情 · ' + CAREERS[careerId].name + (h.disguise === 'male' ? ' · 男裝' : ''));
+    if (window.QianStoryFlow) {
+      window.QianStoryFlow.begin(S);
+      applyStoryScene();
+      renderStoryPanel();
+    }
     saveQuiet();
-    setTimeout(openActSheet, 350);
+    renderHUD();
   }
   function continueGame() {
     if (!load()) { toast('無存檔'); return; }
@@ -4313,12 +4330,23 @@
     $('screen-game').hidden = false;
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
     refreshNpcs();
-    showMode('farm');
+    if ($('screen-game')) $('screen-game').classList.add('vn-text-mode');
     updateDisguiseMenu();
     toast('繼續 · ' + dayStr());
     pushStory('續寫 · ' + dayStr(), 'sys');
     if (S.worldLine) pushStory('天下大勢：' + S.worldLine, 'sys');
+    if (window.QianStoryFlow) {
+      window.QianStoryFlow.ensure(S);
+      if (!S.storyFlow.started || !S.storyFlow.nodeId) {
+        window.QianStoryFlow.begin(S, { fromSave: true });
+      } else {
+        window.QianStoryFlow.begin(S, { resume: true });
+      }
+      applyStoryScene();
+      renderStoryPanel();
+    }
     setTimeout(maybeTriggerVisit, 600);
+    renderHUD();
   }
 
   function toggleAuto() {
@@ -4327,8 +4355,125 @@
     toast(autoOn ? 'AUTO 開' : 'AUTO 關');
   }
 
+
+  /* ---- v35 文字劇情面板 ---- */
+  const CHAPTER_LABEL = {
+    prologue: '序·墨夢',
+    ch1: '一·鄉野',
+    ch2: '二·驛道',
+    xianyang: '三·咸陽',
+    resume: '續卷'
+  };
+  function applyStoryScene() {
+    if (!S || !window.QianStoryFlow) return;
+    const bg = window.QianStoryFlow.sceneFor(S) || 'hut';
+    try {
+      mode = bg;
+      if (typeof setSceneArt === 'function') setSceneArt(bg);
+      if ($('place-chip-label')) $('place-chip-label').textContent = (MODE_LABELS && MODE_LABELS[bg]) || bg;
+      const scene = $('adventure-scene');
+      if (scene) {
+        scene.classList.remove('mode-farm', 'mode-work', 'in-battle');
+      }
+      /* 文遊模式隱藏所有操作面板 */
+      if (typeof ALL_MODES !== 'undefined') {
+        ALL_MODES.forEach((id) => {
+          const el = $(id + '-panel');
+          if (el) el.hidden = true;
+        });
+      }
+      if ($('qin-shared-panel')) $('qin-shared-panel').hidden = true;
+      if ($('beauty-shared-panel')) $('beauty-shared-panel').hidden = true;
+      const plot = $('plot-card');
+      if (plot) plot.style.display = 'none';
+    } catch (e) {}
+  }
+  function renderStoryPanel() {
+    if (!S || !window.QianStoryFlow) return;
+    window.QianStoryFlow.ensure(S);
+    const node = window.QianStoryFlow.getNode(S);
+    const panel = $('story-panel');
+    const textEl = $('story-text');
+    const sp = $('story-speaker');
+    const ch = $('story-chapter');
+    const box = $('story-choices');
+    if (!panel || !textEl || !box) return;
+    if (!node) {
+      textEl.textContent = '（劇情未載入）';
+      box.innerHTML = '';
+      return;
+    }
+    if (ch) ch.textContent = CHAPTER_LABEL[node.chapter] || node.chapter || '劇情';
+    if (sp) sp.textContent = node.speaker || '旁白';
+    textEl.textContent = node.text || '';
+    const choices = window.QianStoryFlow.visibleChoices(S);
+    box.innerHTML = choices.map((c) =>
+      '<button type="button" class="btn story-choice' + (c.locked ? ' locked' : '') + '" data-sid="' + c.id + '"' +
+      (c.locked ? ' disabled aria-disabled="true"' : '') + '>' + escapeHtml(c.text) + '</button>'
+    ).join('');
+    box.querySelectorAll('[data-sid]').forEach((b) => {
+      b.addEventListener('click', (ev) => {
+        tapFeel(b, ev);
+        if (b.disabled) { toast('條件不足'); return; }
+        pickStoryChoice(b.dataset.sid);
+      });
+    });
+    bindTapFeel(box);
+    const np = $('np-name');
+    if (np) np.textContent = node.speaker || '旁白';
+    applyStoryScene();
+  }
+  function pickStoryChoice(choiceId) {
+    if (!S || !window.QianStoryFlow) return;
+    const r = window.QianStoryFlow.applyChoice(S, choiceId);
+    if (!r || !r.ok) {
+      toast((r && r.toast) || '無法選擇');
+      try { juiceShake(0.15); } catch (e) {}
+      return;
+    }
+    if (r.toast) toast(r.toast);
+    if (r.line) {
+      pushStory((r.speaker ? '【' + r.speaker + '】' : '') + r.line.replace(/\n/g, ' '), 'nar');
+      status(r.line.split('\n')[0]);
+    }
+    try { juiceShake(0.18); } catch (e) {}
+    if (r.advance === 'period' || r.advance === 'day') {
+      try {
+        if (r.advance === 'day') {
+          let guard = 0;
+          const day0 = S.day;
+          while (guard++ < 6) {
+            nextDay();
+            if (S.day !== day0) break;
+          }
+        } else {
+          nextDay(); /* 過一時 */
+        }
+      } catch (e) {}
+    }
+    renderStoryPanel();
+    renderHUD();
+    saveQuiet();
+    /* 弧線：在咸陽靜候或旗標要求時 poll */
+    if (r.pollArc || (S.flags && (S.flags.poll_arc || S.flags.want_arc))) {
+      S.flags.poll_arc = 0;
+      S.flags.want_arc = 0;
+      setTimeout(maybeTriggerVisit, 280);
+    }
+  }
+  function focusStoryPanel() {
+    const panel = $('story-panel');
+    if (panel) {
+      try { panel.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { panel.scrollIntoView(true); }
+    }
+    renderStoryPanel();
+    /* 若僅一項且文字含「繼續／醒來／回去」可提示 */
+    toast('劇情');
+  }
+
   /* ---- Bind ---- */
   function bind() {
+
     $('btn-new').addEventListener('click', showCreate);
     $('btn-continue').addEventListener('click', continueGame);
     $('btn-career-back').addEventListener('click', showCreate);
@@ -4566,6 +4711,7 @@
     }, true);
 
     // Guofeng chrome
+    if ($('tab-story')) $('tab-story').addEventListener('click', () => { focusStoryPanel(); });
     if ($('tab-map')) $('tab-map').addEventListener('click', openMapSheet);
     if ($('q-act')) $('q-act').addEventListener('click', openActSheet);
     if ($('hSeal')) $('hSeal').addEventListener('click', openActSheet);
@@ -4671,7 +4817,8 @@
       endings: S.endings || [],
       pending: S.pendingEvent && S.pendingEvent.id,
       npcStates: npcStates,
-      guide: ($('day-guide') && $('day-guide').textContent) || ''
+      guide: ($('day-guide') && $('day-guide').textContent) || '',
+      story: window.QianStoryFlow ? window.QianStoryFlow.summary(S) : null
     });
   };
 
