@@ -9,7 +9,13 @@
     { id: 'soldier', name: '軍戶', desc: '編戶壯丁，體魄較佳。', bag: { wheat: 1 }, skills: { mart: 1 }, gold: 5, hp: 8 },
     { id: 'tradoc', name: '醫門', desc: '懸壺傳家，草藥稍備。', bag: { herb: 2 }, skills: { med: 1 }, gold: 15, people: 2 },
     { id: 'guest', name: '客籍', desc: '他鄉入秦，人情淡卻眼界闊。', bag: { rice: 1 }, skills: { trade: 1 }, gold: 25, fame: 2 },
-    { id: 'exile', name: '罪謫後人', desc: '家門曾罹禍，民心難開，志或更堅。', bag: { wheat: 1 }, skills: { lit: 1 }, gold: 5, people: -4, fame: -2 }
+    { id: 'exile', name: '罪謫後人', desc: '家門曾罹禍，民心難開，志或更堅。', bag: { wheat: 1 }, skills: { lit: 1 }, gold: 5, people: -4, fame: -2 },
+    { id: 'artisan', name: '百工', desc: '作坊傳藝，礦石與手藝並重。', bag: { ore: 2, wheat: 1 }, skills: { craft: 1 }, gold: 18 },
+    { id: 'clerk', name: '小吏後', desc: '刀筆門第，略通官樣文書。', bag: { flower: 1, wheat: 1 }, skills: { lit: 1 }, gold: 22, fame: 3 },
+    { id: 'shaman', name: '巫祝後', desc: '里社香火，辨草問兆略知一二。', bag: { herb: 2, flower: 1 }, skills: { med: 1 }, gold: 12, people: 1 },
+    { id: 'fallennoble', name: '沒落公族', desc: '舊門餘輝，名尚在而囊漸空。', bag: { flower: 2 }, skills: { lit: 1 }, gold: 8, fame: 8 },
+    { id: 'outlaw', name: '草莽遺脈', desc: '野路出身，拳腳硬、鄉望薄。', bag: { wheat: 1, herb: 1 }, skills: { mart: 1 }, gold: 12, people: -2, hp: 6 },
+    { id: 'steppe', name: '塞外歸附', desc: '自邊市入關，口音異而眼界闊。', bag: { ore: 1, flower: 1 }, skills: { trade: 1 }, gold: 28, fame: 2 }
   ];
 
   var GENDERS = [
@@ -192,6 +198,23 @@
         st.skills[k] = (st.skills[k] || 0) + o.skills[k];
       });
     }
+    /* v45：出身影響後續劇情／勢力起點 */
+    if (!st.flags) st.flags = {};
+    if (!st.plotFlags) st.plotFlags = {};
+    if (!st.factions) st.factions = { lu: 0, qin: 0, sai: 0 };
+    st.flags.origin_id = o.id;
+    st.plotFlags['origin_' + o.id] = 1;
+    if (o.id === 'tradoc' || o.id === 'shaman') st.plotFlags.healer_lean = 1;
+    if (o.id === 'merchant' || o.id === 'guest' || o.id === 'steppe') st.plotFlags.trade_lean = 1;
+    if (o.id === 'soldier' || o.id === 'outlaw') st.plotFlags.martial_lean = 1;
+    if (o.id === 'gentry' || o.id === 'clerk' || o.id === 'fallennoble') st.plotFlags.lit_lean = 1;
+    if (o.id === 'artisan') st.plotFlags.craft_lean = 1;
+    if (o.id === 'exile') st.plotFlags.exile_mark = 1;
+    if (o.id === 'clerk') st.factions.qin = (st.factions.qin || 0) + 4;
+    if (o.id === 'merchant' || o.id === 'guest') st.factions.lu = (st.factions.lu || 0) + 3;
+    if (o.id === 'steppe' || o.id === 'outlaw') st.factions.sai = (st.factions.sai || 0) + 4;
+    if (o.id === 'soldier') st.factions.qin = (st.factions.qin || 0) + 3;
+    if (o.id === 'fallennoble') st.factions.qin = (st.factions.qin || 0) + 2;
     return st;
   }
 
@@ -276,9 +299,10 @@
     var h = S.hero || {};
     var o = originById(h.origin || 'farm');
     var g = h.gender === 'm' ? '男' : (h.gender === 'f' ? '女' : '不顯');
+    var careerBit = S.career ? ('，職業鍵' + S.career) : '';
     return '姓名' + (h.name || S.name || '旅人') + '，性別' + g +
       (h.disguise === 'male' && h.gender === 'f' ? '（現女扮男裝）' : (h.disguise === 'female' && h.gender === 'm' ? '（現男扮女裝）' : '')) +
-      '，出身' + o.name +
+      '，出身' + o.name + careerBit +
       (h.goal ? '，志向「' + h.goal + '」' : '') +
       '，世界模式：' + (S.worldMode === 'free' ? '高度自由' : '史實軌道');
   }

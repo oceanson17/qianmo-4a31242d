@@ -1,4 +1,4 @@
-/* 墨夢莊周 · v44 自由行動（想說／想做）
+/* 墨夢莊周 · v45 自由行動（出身／職業影響意圖）
  * AI／離線模板 → 旗標／好感／NPC 行動／劇情節點推進（jump／匹配選項）
  * 原創對白與規則，不抄錄任何小說原文。
  */
@@ -132,6 +132,7 @@
       nodeId: curNodeId(S),
       fateSummary: global.QianArcs && global.QianArcs.fateSummary ? global.QianArcs.fateSummary(S) : '',
       career: (S.career || '') + '',
+      origin: (S.hero && S.hero.origin) || '',
       dayStr: global.QianWorld && global.QianWorld.dayLabel ? global.QianWorld.dayLabel(S.day || 1) : ('第' + (S.day || 1) + '日'),
       worldMode: S.worldMode === 'free' ? '高度自由' : '史實軌道',
       heroCtx: global.QianWorld && global.QianWorld.heroContext ? global.QianWorld.heroContext(S) : '',
@@ -156,7 +157,7 @@
     if (/投靠|效命|追隨|願為|願隨|入府|入門|跟你/.test(t)) return 'join';
     if (/約|改日|再見|再會|後日|明日見|約在/.test(t)) return 'schedule';
     if (/請|邀|一道|同行|跟我來|來客棧/.test(t)) return 'invite';
-    if (/運糧|幫林嫂|假秤|夜診|支線|密語|關市|皮貨|書塾|辯法|無名書|代送/.test(t)) return 'side';
+    if (/運糧|幫林嫂|假秤|夜診|支線|密語|關市|皮貨|書塾|辯法|無名書|代送|巡夜|毒草|水車|洗名|換馬|戶籍|抄籍/.test(t)) return 'side';
     if (/太醫署|署吏|自薦/.test(t)) return 'taiyi';
     if (/相邦|呂不韋|呂府/.test(t)) return 'xiangbang';
     if (/太后|趙姬/.test(t)) return 'taihou';
@@ -226,6 +227,24 @@
     }
     if ((intent === 'palace' || intent === 'bribe') && S.access && S.access.palace) {
       line = '門禁你已通。再往宮城，便是你的腳步。';
+    }
+    /* v45：出身／職業微調語氣 */
+    var origin = (S.hero && S.hero.origin) || '';
+    var career = S.career || '';
+    if (intent === 'bribe' && (/merchant|guest|steppe/.test(origin) || /merchant|agent|courier/.test(career))) {
+      line = '你袖中銀兩份量，我識得。通融可以——別張揚。';
+    }
+    if (intent === 'heal' && (/tradoc|shaman/.test(origin) || /healer|herbalist/.test(career))) {
+      line = '醫門／採藥路數，我聞得出。坐，把脈。';
+    }
+    if (intent === 'join' && (/clerk|gentry|fallennoble/.test(origin) || /scribe|scholar/.test(career))) {
+      line = '你文墨尚可。先辦一件文書實事，再談名分。';
+    }
+    if (intent === 'threat' && (/soldier|outlaw/.test(origin) || /soldier|ranger|boatman/.test(career))) {
+      line = '你身上有刀氣。收住——此處不是野路。';
+    }
+    if (intent === 'sneak' && (origin === 'outlaw' || career === 'agent')) {
+      line = '夜影是你的熟路。別在禁地炫技。';
     }
     return line;
   }
@@ -315,6 +334,33 @@
     if (/關市|皮貨/.test(t) && !flags.side_pass && inXy) return ok('side_pass');
     if (/書塾|辯法|成郎/.test(t) && !flags.side_school && inXy) return ok('side_school');
     if (/無名書|代送/.test(t) && !flags.side_letter && inXy) return ok('side_letter');
+    if (/巡夜|校場幫哨|幫哨/.test(t) && !flags.side_drill) return ok('side_drill_help');
+    if (/毒草|辨草/.test(t) && !flags.side_witch) return ok('side_witch_herb');
+    if (/水車|渠軸|修軸/.test(t) && !flags.side_canal) return ok('side_canal_labor');
+    if (/洗名|貼告/.test(t) && !flags.side_exile) return ok('side_exile_mark');
+    if (/換馬|邊市皮/.test(t) && !flags.side_sai && (inXy || flags.visited_xianyang)) return ok('side_sai_trade');
+    if (/戶籍|抄籍/.test(t) && !flags.side_clerk && (inXy || flags.visited_xianyang)) return ok('side_clerk_doc');
+    /* 出身／職業偏向：自由輸入「支線」時優先推相關節點 */
+    if (intent === 'side') {
+      var origin = (S.hero && S.hero.origin) || '';
+      var career = S.career || '';
+      if (inVil || ch === 'ch1') {
+        if (!flags.side_drill && (/soldier|outlaw/.test(origin) || /soldier|boatman|ranger|hunter/.test(career))) return ok('side_drill_help');
+        if (!flags.side_witch && (/tradoc|shaman/.test(origin) || /healer|herbalist|diviner/.test(career))) return ok('side_witch_herb');
+        if (!flags.side_canal && (origin === 'artisan' || /craftsman|smith/.test(career))) return ok('side_canal_labor');
+        if (!flags.side_exile && origin === 'exile') return ok('side_exile_mark');
+        if (!flags.side_vil_grain) return ok('side_vil_grain');
+      }
+      if (inXy || flags.visited_xianyang) {
+        if (!flags.side_sai && (/steppe|guest|outlaw/.test(origin) || /ranger|courier|agent/.test(career))) return ok('side_sai_trade');
+        if (!flags.side_clerk && (/clerk|gentry|fallennoble/.test(origin) || /scribe|scholar|diviner/.test(career))) return ok('side_clerk_doc');
+        if (!flags.side_clinic && (/tradoc|shaman/.test(origin) || /healer|herbalist/.test(career))) return ok('side_nightclinic');
+        if (!flags.side_scale && (/merchant|guest/.test(origin) || career === 'merchant')) return ok('side_scale');
+        if (!flags.side_school && (/gentry|clerk|fallennoble/.test(origin) || /scholar|scribe|diviner/.test(career))) return ok('side_school');
+        return ok('xy_side');
+      }
+      return ok('ch1_hub');
+    }
     if (intent === 'side' && inXy) return ok('xy_side');
     if (intent === 'side' && inVil) return ok('ch1_hub');
 

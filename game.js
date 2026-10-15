@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '44';
+  const GAME_VERSION = '45';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -70,6 +70,58 @@
       bag: { rice: 2, flower: 2, potion: 1 },
       startGear: { slot: 'accessory', name: '行旅佩', atk: 2, def: 1, hp: 6, rarity: 'green' },
       quest: { id: 'q_ranger', title: '邊塵初試', desc: '邊塞最深達 3', needFlag: 'frontBest', needVal: 3, gold: 60, food: 2 }
+    },
+    scribe: {
+      id: 'scribe', name: '書吏', desc: '刀筆文書，易近官署與客館。開局文才較高。',
+      gold: 95, food: 11, hp: 72, atk: 4, def: 1,
+      skills: { farm: 0, med: 0, trade: 1, mart: 0, lit: 3 },
+      bag: { flower: 3, wheat: 2 },
+      quest: { id: 'q_scribe', title: '刀筆初成', desc: '任一鄉鄰好感達 25', needFlag: 'maxAff', needVal: 25, gold: 48, food: 2 }
+    },
+    courier: {
+      id: 'courier', name: '驛使', desc: '奔走驛道，身健路熟，易觸關市與邊塞。',
+      gold: 80, food: 14, hp: 88, atk: 7, def: 2,
+      skills: { farm: 0, med: 0, trade: 1, mart: 1, lit: 1, agi: 2 },
+      bag: { rice: 2, wheat: 2, herb: 1 },
+      startGear: { slot: 'accessory', name: '行旅佩', atk: 1, def: 1, hp: 4, rarity: 'white' },
+      quest: { id: 'q_courier', title: '驛路首達', desc: '邊塞最深達 2', needFlag: 'frontBest', needVal: 2, gold: 50, food: 2 }
+    },
+    smith: {
+      id: 'smith', name: '鐵匠', desc: '爐火鍛器，礦石與防具見長。',
+      gold: 100, food: 12, hp: 90, atk: 8, def: 4,
+      skills: { farm: 0, med: 0, trade: 1, mart: 1, lit: 0, craft: 3 },
+      bag: { ore: 5, rice: 2 },
+      quest: { id: 'q_smith', title: '爐火再旺', desc: '累計持有礦石 10', need: { ore: 10 }, gold: 58, food: 2 }
+    },
+    agent: {
+      id: 'agent', name: '細作', desc: '潛行打聽，輕功與辯才並用；宮門小路較熟。',
+      gold: 110, food: 10, hp: 82, atk: 8, def: 2,
+      skills: { farm: 0, med: 0, trade: 1, mart: 1, lit: 1, agi: 3 },
+      bag: { flower: 2, potion: 1, anesthetic: 1 },
+      startGear: { slot: 'accessory', name: '行旅佩', atk: 2, def: 0, hp: 4, rarity: 'green' },
+      quest: { id: 'q_agent', title: '耳目初立', desc: '任一鄉鄰好感達 28', needFlag: 'maxAff', needVal: 28, gold: 55, food: 2 }
+    },
+    boatman: {
+      id: 'boatman', name: '津卒', desc: '河津碼頭出身，體健善守，易結軍候。',
+      gold: 70, food: 15, hp: 98, atk: 8, def: 3,
+      skills: { farm: 1, med: 0, trade: 1, mart: 2, lit: 0 },
+      bag: { rice: 3, wheat: 2 },
+      startGear: { slot: 'weapon', name: '桐木劍', atk: 2, def: 0, hp: 0, rarity: 'white' },
+      quest: { id: 'q_boat', title: '津口守護', desc: '戰勝 3 場', needFlag: 'wins', needVal: 3, gold: 50, food: 3 }
+    },
+    herbalist: {
+      id: 'herbalist', name: '採藥人', desc: '專事山徑採藥，藥術與草藥更豐。',
+      gold: 75, food: 13, hp: 85, atk: 6, def: 2,
+      skills: { farm: 1, med: 3, trade: 0, mart: 1, lit: 0 },
+      bag: { herb: 6, rice: 2, flower: 2 },
+      quest: { id: 'q_herb', title: '藥囊初滿', desc: '煉成回春散 2 帖', need: { potion: 2 }, gold: 52, food: 2 }
+    },
+    diviner: {
+      id: 'diviner', name: '卜者', desc: '問兆觀象，運勢與見聞並重；易近巫祝／客館。',
+      gold: 88, food: 11, hp: 74, atk: 4, def: 1,
+      skills: { farm: 0, med: 1, trade: 1, mart: 0, lit: 2 },
+      bag: { flower: 3, herb: 2, wheat: 1 },
+      quest: { id: 'q_div', title: '一卦成名', desc: '名聲達 18', needFlag: 'maxAff', needVal: 20, gold: 48, food: 2 }
     }
   };
 
@@ -171,7 +223,14 @@
       scholar: 'scholar',
       craftsman: 'craftsman',
       hunter: 'hunter',
-      ranger: 'ranger'
+      ranger: 'ranger',
+      scribe: 'scholar',
+      courier: 'ranger',
+      smith: 'craftsman',
+      agent: 'ranger',
+      boatman: 'soldier',
+      herbalist: 'hunter',
+      diviner: 'scholar'
     };
     return map[careerId] || 'hero';
   }
@@ -179,9 +238,12 @@
     const titles = {
       farmer: '田畝小道', healer: '懸壺小道', merchant: '坊市行賈',
       soldier: '校場武卒', scholar: '青衿書生', craftsman: '爐邊工匠',
-      hunter: '山徑獵戶', ranger: '遊俠浪客'
+      hunter: '山徑獵戶', ranger: '遊俠浪客',
+      scribe: '刀筆書吏', courier: '驛路信使', smith: '爐邊鐵匠',
+      agent: '暗巷細作', boatman: '津口卒役', herbalist: '山徑採藥',
+      diviner: '問兆卜者'
     };
-    return titles[careerId] || '修仙小道';
+    return titles[careerId] || '墨夢旅人';
   }
   function heroLevel() {
     if (!S) return 1;
@@ -497,7 +559,9 @@
       /* 依職業再贈一件良品 */
       const careerGift = {
         farmer: 'tie_chu', healer: 'yao_dai', scholar: 'wen_bi', merchant: 'sai_shi_huan',
-        soldier: 'bian_jun_kai', craftsman: 'ge_dai', hunter: 'shan_gong', ranger: 'pi_lv'
+        soldier: 'bian_jun_kai', craftsman: 'ge_dai', hunter: 'shan_gong', ranger: 'pi_lv',
+        scribe: 'wen_bi', courier: 'pi_lv', smith: 'ge_dai', agent: 'sai_shi_huan',
+        boatman: 'bian_jun_kai', herbalist: 'yao_dai', diviner: 'wen_bi'
       };
       const gid = careerGift[careerId];
       if (gid) {
@@ -602,6 +666,18 @@
       window.QianPlots.ensure(st);
       window.QianPlots.initAttrsFromCareer(st, careerId);
     }
+    /* v45：職業影響後續劇情旗標 */
+    if (!st.flags) st.flags = {};
+    if (!st.plotFlags) st.plotFlags = {};
+    st.flags.career_id = careerId;
+    st.plotFlags['career_' + careerId] = 1;
+    if (careerId === 'healer' || careerId === 'herbalist') st.plotFlags.healer_lean = 1;
+    if (careerId === 'merchant' || careerId === 'courier') st.plotFlags.trade_lean = 1;
+    if (careerId === 'soldier' || careerId === 'boatman' || careerId === 'ranger') st.plotFlags.martial_lean = 1;
+    if (careerId === 'scholar' || careerId === 'scribe' || careerId === 'diviner') st.plotFlags.lit_lean = 1;
+    if (careerId === 'craftsman' || careerId === 'smith') st.plotFlags.craft_lean = 1;
+    if (careerId === 'agent') { st.plotFlags.agent_lean = 1; st.skills.agi = (st.skills.agi || 0) + 1; }
+    if (careerId === 'hunter' || careerId === 'herbalist') st.plotFlags.wild_lean = 1;
     return st;
   }
 
@@ -1396,11 +1472,11 @@
     return '<img class="face-thumb" src="' + faceUrl(faceKey) + '" alt="' + (name || '') + '" width="52" height="52" decoding="async">';
   }
   function openSheet(id) {
-    ['sheet-map', 'sheet-act', 'sheet-idle'].forEach((x) => { if ($(x)) $(x).hidden = true; });
+    ['sheet-map', 'sheet-act', 'sheet-idle', 'sheet-side'].forEach((x) => { if ($(x)) $(x).hidden = true; });
     if ($(id)) $(id).hidden = false;
   }
   function closeSheets() {
-    ['sheet-map', 'sheet-act', 'sheet-idle'].forEach((x) => { if ($(x)) $(x).hidden = true; });
+    ['sheet-map', 'sheet-act', 'sheet-idle', 'sheet-side'].forEach((x) => { if ($(x)) $(x).hidden = true; });
   }
   function openActSheet() {
     if ($('act-title')) $('act-title').textContent = MODE_LABELS[mode] || '行事';
@@ -1408,6 +1484,67 @@
     openSheet('sheet-act');
     if (mode === 'farm') requestAnimationFrame(drawFarm);
     paintWorkers(true);
+  }
+  /** v45：支線面板——列出可玩／已完／鎖定的劇情支線，點擊 jumpTo */
+  function openSideSheet() {
+    if (!S) { toast('請先開局'); return; }
+    const list = $('side-list');
+    const sub = $('side-sub');
+    const Flow = window.QianStoryFlow;
+    if (!Flow || !Flow.listSides) {
+      toast('支線系統未載入');
+      return;
+    }
+    Flow.ensure(S);
+    const sides = Flow.listSides(S);
+    const openN = sides.filter((s) => s.state === 'open').length;
+    const doneN = sides.filter((s) => s.state === 'done').length;
+    if (sub) {
+      const o = window.QianWorld ? window.QianWorld.originById((S.hero && S.hero.origin) || 'farm') : { name: '' };
+      const cn = (CAREERS[S.career] && CAREERS[S.career].name) || S.career || '';
+      sub.textContent = (o.name || '') + ' · ' + cn + ' · 可接' + openN + ' · 已完' + doneN;
+    }
+    if (!list) { openSheet('sheet-side'); return; }
+    if (!sides.length) {
+      list.innerHTML = '<p class="muted side-empty">暫無支線。推進主線至村口／咸陽後會解鎖。</p>';
+    } else {
+      list.innerHTML = sides.map((s) => {
+        const cls = 'side-card state-' + s.state + (s.boosted ? ' boosted' : '');
+        const tag = s.state === 'done' ? '已完' : (s.state === 'locked' ? '未解鎖' : '可接');
+        const why = s.state === 'locked' && s.lockReason ? ('<span class="side-lock">' + escapeHtml(s.lockReason) + '</span>') : '';
+        const boost = s.boosted ? '<span class="side-boost">出身／職業相關</span>' : '';
+        const disabled = s.state === 'done' || s.state === 'locked';
+        return '<button type="button" class="' + cls + '" data-side="' + s.id + '"' +
+          (disabled ? ' disabled' : '') + '>' +
+          '<div class="side-card-top"><strong>' + escapeHtml(s.title) + '</strong><em>' + tag + '</em></div>' +
+          '<p>' + escapeHtml(s.desc || '') + '</p>' + boost + why +
+          '</button>';
+      }).join('');
+      list.querySelectorAll('[data-side]').forEach((b) => {
+        b.addEventListener('click', (ev) => {
+          tapFeel(b, ev);
+          if (b.disabled) return;
+          const sid = b.dataset.side;
+          const r = Flow.jumpTo(S, sid, { toast: '進入支線' });
+          if (!r || !r.ok) { toast((r && r.toast) || '無法進入'); return; }
+          closeSheets();
+          try {
+            if ($('screen-game')) {
+              $('screen-game').classList.remove('dash-mode');
+              $('screen-game').classList.add('vn-text-mode');
+            }
+          } catch (e) {}
+          applyStoryScene();
+          renderStoryPanel();
+          pushStory('【支線】' + (r.speaker || '') + ' · ' + sid, 'sys');
+          toast('支線：' + (sides.find((x) => x.id === sid) || {}).title || sid);
+          saveQuiet();
+          renderHUD();
+        });
+      });
+      bindTapFeel(list);
+    }
+    openSheet('sheet-side');
   }
   function openMapSheet() {
     if ($('map-date')) $('map-date').textContent = dayStr();
@@ -4547,12 +4684,12 @@
     if ($('disguise-m-field')) $('disguise-m-field').hidden = d.gender !== 'm';
     if ($('create-disguise-m')) $('create-disguise-m').checked = !!d.disguiseM;
     const og = $('origin-grid');
-    if (og && window.QianWorld && !og.dataset.ready) {
+    if (og && window.QianWorld) {
       og.innerHTML = window.QianWorld.ORIGINS.map((o) =>
         '<button type="button" class="chip-card' + (d.origin === o.id ? ' active' : '') + '" data-origin="' + o.id + '">' +
         '<strong>' + o.name + '</strong><span>' + o.desc + '</span></button>'
       ).join('');
-      og.dataset.ready = '1';
+      og.dataset.ready = 'v45';
       og.querySelectorAll('[data-origin]').forEach((b) => {
         b.addEventListener('click', (ev) => {
           tapFeel(b, ev);
@@ -4589,7 +4726,9 @@
     const draft = window.__createDraft || {};
     const strip = [
       ['farmer_m','農夫'],['doctor','醫者'],['merchant','商賈'],['soldier','武卒'],
-      ['craftsman','工匠'],['hunter','獵戶'],['ranger','遊俠']
+      ['scholar','書生'],['craftsman','工匠'],['hunter','獵戶'],['ranger','遊俠'],
+      ['scholar','書吏'],['ranger','驛使'],['craftsman','鐵匠'],['ranger','細作'],
+      ['soldier','津卒'],['hunter','採藥'],['scholar','卜者']
     ].map(function (pair) {
       return '<figure><img src="assets/char_' + pair[0] + '.webp' + ASSET_V + '" alt=""><figcaption>' + pair[1] + '</figcaption></figure>';
     }).join('');
@@ -4679,6 +4818,7 @@
     ch2: '二·驛道',
     xianyang: '三·咸陽',
     court: '四·近側',
+    side: '支線',
     resume: '續卷'
   };
   function applyStoryScene() {
@@ -4708,7 +4848,8 @@
   function renderStoryPanel() {
     if (!S || !window.QianStoryFlow) return;
     window.QianStoryFlow.ensure(S);
-    const node = window.QianStoryFlow.getNode(S);
+    let node = window.QianStoryFlow.getNode(S);
+    if (node && window.QianStoryFlow.decorateNode) node = window.QianStoryFlow.decorateNode(S, node) || node;
     const panel = $('story-panel');
     const textEl = $('story-text');
     const sp = $('story-speaker');
@@ -5671,11 +5812,12 @@
 
     if ($('tab-map')) $('tab-map').addEventListener('click', openMapSheet);
     if ($('tab-idle')) $('tab-idle').addEventListener('click', openIdleSheet);
-    if ($('q-act')) $('q-act').addEventListener('click', openActSheet);
+    if ($('q-act')) $('q-act').addEventListener('click', openSideSheet);
     if ($('hSeal')) $('hSeal').addEventListener('click', openActSheet);
     if ($('map-x')) $('map-x').addEventListener('click', closeSheets);
     if ($('act-x')) $('act-x').addEventListener('click', closeSheets);
     if ($('idle-x')) $('idle-x').addEventListener('click', closeSheets);
+    if ($('side-x')) $('side-x').addEventListener('click', closeSheets);
     document.querySelectorAll('#map-pins .pin').forEach((p) => {
       p.addEventListener('click', () => travelTo(p.dataset.mode));
     });

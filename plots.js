@@ -453,7 +453,14 @@
     scholar:   { wu: 0, hu: 0, shen: 1, zhi: 3, bian: 2, yun: 1 },
     craftsman: { wu: 1, hu: 2, shen: 0, zhi: 2, bian: 1, yun: 1 },
     hunter:    { wu: 2, hu: 1, shen: 2, zhi: 1, bian: 0, yun: 1 },
-    ranger:    { wu: 2, hu: 1, shen: 2, zhi: 1, bian: 1, yun: 2 }
+    ranger:    { wu: 2, hu: 1, shen: 2, zhi: 1, bian: 1, yun: 2 },
+    scribe:    { wu: 0, hu: 0, shen: 1, zhi: 3, bian: 2, yun: 1 },
+    courier:   { wu: 1, hu: 1, shen: 3, zhi: 1, bian: 1, yun: 2 },
+    smith:     { wu: 2, hu: 3, shen: 0, zhi: 2, bian: 0, yun: 1 },
+    agent:     { wu: 1, hu: 0, shen: 3, zhi: 2, bian: 2, yun: 2 },
+    boatman:   { wu: 2, hu: 2, shen: 2, zhi: 0, bian: 1, yun: 1 },
+    herbalist: { wu: 1, hu: 1, shen: 2, zhi: 2, bian: 0, yun: 2 },
+    diviner:   { wu: 0, hu: 0, shen: 1, zhi: 2, bian: 2, yun: 3 }
   };
 
   function initAttrsFromCareer(S, careerId) {

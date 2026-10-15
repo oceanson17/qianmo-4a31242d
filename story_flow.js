@@ -1,4 +1,4 @@
-/* 墨夢莊周 · v44 劇情主循環（含 jumpTo）（接 v37 近側言情節點；UI 殼為 v35 羊皮紙）
+/* 墨夢莊周 · v45 劇情主循環（支線目錄／出身職業門檻／jumpTo）
  * 節點：id／speaker／text／bg／choices[{id,text,to,if,set,need,reward,advance}]
  * 旗標寫 S.flags／S.plotFlags／好感 aff:npc；時段 advance:'period'|'day'
  * 靈感可參考「近側醫士」題材——全部原創，唔抄任何小說原文／獨特情節句。
@@ -41,6 +41,8 @@
         if (!!got !== want) return false;
       } else if (typeof want === 'number') {
         if ((got || 0) < want) return false;
+      } else if (Object.prototype.toString.call(want) === '[object Array]') {
+        if (want.indexOf(got) < 0) return false;
       } else {
         if (got !== want) return false;
       }
@@ -135,7 +137,7 @@
     /* 第一章：備廷——節奏教→練；無種田格子 */
     ch1_hub: {
       id: 'ch1_hub', chapter: 'ch1', speaker: '旁白', bg: 'village',
-      text: '村口風起。要踏上咸陽，你至少得留下兩樁「能被宮廷或市井記得」的痕跡：藥性、見聞、或一口能說服人的硬氣。\n（選擇會推進時辰，並改寫好感與旗標。）',
+      text: '村口風起。要踏上咸陽，你至少得留下兩樁「能被宮廷或市井記得」的痕跡：藥性、見聞、或一口能說服人的硬氣。\n（選擇會推進時辰，並改寫好感與旗標。出身與職業會開不同小路。）',
       choices: [
         { id: 'herb', text: '上山採藥（文字遭遇）', to: 'ch1_herb', if: { 'flags.ch1_herb_done': false } },
         { id: 'med', text: '往藥廬跟診', to: 'ch1_clinic', if: { 'flags.ch1_med_done': false } },
@@ -143,6 +145,29 @@
         { id: 'mkt', text: '市井打聽咸陽缺什麼人', to: 'ch1_market', if: { 'flags.ch1_mkt_done': false } },
         { id: 'rest', text: '回陋室歇息，過一時', to: 'ch1_rest' },
         { id: 'vil_side', text: '村中支線：幫林嫂運糧', to: 'side_vil_grain', if: { 'flags.side_vil_grain': false } },
+        { id: 'drill_side', text: '【出身／職業】幫伍叔巡夜／校場幫哨', to: 'side_drill_help',
+          if: function (S) {
+            if (S.flags && S.flags.side_drill) return false;
+            var o = (S.hero && S.hero.origin) || '';
+            var c = S.career || '';
+            return /^(soldier|outlaw)$/.test(o) || /^(soldier|boatman|ranger|hunter)$/.test(c);
+          } },
+        { id: 'herb_side', text: '【出身／職業】辨認毒草一束', to: 'side_witch_herb',
+          if: function (S) {
+            if (S.flags && S.flags.side_witch) return false;
+            var o = (S.hero && S.hero.origin) || '';
+            var c = S.career || '';
+            return /^(tradoc|shaman)$/.test(o) || /^(healer|herbalist|diviner)$/.test(c);
+          } },
+        { id: 'craft_side', text: '【出身／職業】替渠量修水車軸', to: 'side_canal_labor',
+          if: function (S) {
+            if (S.flags && S.flags.side_canal) return false;
+            var o = (S.hero && S.hero.origin) || '';
+            var c = S.career || '';
+            return o === 'artisan' || /^(craftsman|smith)$/.test(c);
+          } },
+        { id: 'exile_side', text: '【罪謫後人】洗名貼告於里門', to: 'side_exile_mark',
+          if: { 'flags.side_exile': false, 'hero.origin': 'exile' } },
         { id: 'next', text: '準備妥當——啟程赴咸陽', to: 'ch2_road', if: { 'flags.ch1_ready': true }, set: { 'flags.left_village': 1 } }
       ]
     },
@@ -203,6 +228,60 @@
         { id: 'a', text: '老實運完', to: 'ch1_hub', set: { 'flags.side_vil_grain': 1, 'plotFlags.side_honest': 1, 'aff:lin': 5 }, reward: { people: 3, food: 2 }, advance: 'period' },
         { id: 'b', text: '扣下一袋（險）', to: 'ch1_hub', set: { 'flags.side_vil_grain': 1, 'plotFlags.side_theft': 1, 'aff:lin': -3 }, reward: { food: 4, people: -2 }, advance: 'period' },
         { id: 'c', text: '改叫里中少年來幫', to: 'ch1_hub', set: { 'flags.side_vil_grain': 1, 'aff:lin': 2, 'aff:cheng': 1 }, reward: { people: 1 }, advance: 'period' }
+      ]
+    },
+    side_drill_help: {
+      id: 'side_drill_help', chapter: 'side', speaker: '伍叔', bg: 'drill',
+      text: '伍叔把木矛往你手心一塞：「夜巡兩更。軍戶／武業出身的，腿腳該懂。遇見生人，先喊口令——別先動手。」',
+      choices: [
+        { id: 'a', text: '認真巡完，帶回一點聲息', to: 'ch1_hub', set: { 'flags.side_drill': 1, 'plotFlags.martial_lean': 1, 'aff:wu': 5, 'access.ying': true }, reward: { fame: 2, people: 1 }, advance: 'period' },
+        { id: 'b', text: '偷懶歇在草垛', to: 'ch1_hub', set: { 'flags.side_drill': 1, 'aff:wu': -2 }, reward: { hp: 4 }, advance: 'period' },
+        { id: 'c', text: '教里中少年一同巡', to: 'ch1_hub', set: { 'flags.side_drill': 1, 'aff:wu': 3, 'aff:cheng': 2 }, reward: { people: 2 }, advance: 'period' }
+      ]
+    },
+    side_witch_herb: {
+      id: 'side_witch_herb', chapter: 'side', speaker: '蘇娘', bg: 'clinic',
+      text: '蘇娘攤開兩束似是而非的葉：「醫門／採藥／巫祝的眼，該分得出——哪束救命，哪束要命。」',
+      choices: [
+        { id: 'a', text: '正確辨出毒草', to: 'ch1_hub', set: { 'flags.side_witch': 1, 'plotFlags.healer_seed': 1, 'plotFlags.healer_lean': 1, 'aff:su': 6 }, reward: { fame: 3, bag: { herb: 2 } }, advance: 'period' },
+        { id: 'b', text: '拿不準，請她指點', to: 'ch1_hub', set: { 'flags.side_witch': 1, 'plotFlags.healer_seed': 1, 'aff:su': 3 }, reward: { bag: { herb: 1 }, fame: 1 }, advance: 'period' },
+        { id: 'c', text: '誤認——被她敲手背', to: 'ch1_hub', set: { 'flags.side_witch': 1, 'aff:su': 1 }, reward: { hp: -2, bag: { herb: 1 } }, advance: 'period' }
+      ]
+    },
+    side_canal_labor: {
+      id: 'side_canal_labor', chapter: 'side', speaker: '工匠頭石', bg: 'hejin',
+      text: '石把頭拍水車軸：「百工／工匠的手，不該只會空談。替我修這軸——渠議若起，關中記得幫忙的人。」',
+      choices: [
+        { id: 'a', text: '修好並記下尺寸', to: 'ch1_hub', set: { 'flags.side_canal': 1, 'plotFlags.craft_lean': 1, 'plotFlags.zhengguo_hint': 1, 'aff:gongjiang': 5 }, reward: { fame: 2, gold: 8, bag: { ore: 1 } }, advance: 'period' },
+        { id: 'b', text: '只換工錢，不多問', to: 'ch1_hub', set: { 'flags.side_canal': 1, 'aff:gongjiang': 2 }, reward: { gold: 14 }, advance: 'period' },
+        { id: 'c', text: '建議改用別材（險被斥）', to: 'ch1_hub', set: { 'flags.side_canal': 1, 'plotFlags.craft_lean': 1, 'aff:gongjiang': 1 }, reward: { fame: 1 }, advance: 'period' }
+      ]
+    },
+    side_exile_mark: {
+      id: 'side_exile_mark', chapter: 'side', speaker: '何伯', bg: 'village',
+      text: '何伯壓低聲：「罪謫之後，里門議論未散。你若肯在里門貼一紙自新告示——有人笑，有人讓三分。不貼，也有人永遠側目。」',
+      choices: [
+        { id: 'a', text: '貼告自新', to: 'ch1_hub', set: { 'flags.side_exile': 1, 'plotFlags.exile_cleared': 1, 'aff:he': 4 }, reward: { people: 4, fame: 2 }, advance: 'period' },
+        { id: 'b', text: '不貼，以本事說話', to: 'ch1_hub', set: { 'flags.side_exile': 1, 'plotFlags.exile_proud': 1 }, reward: { fame: 3, people: -1 }, advance: 'period' },
+        { id: 'c', text: '只私下請里正一頓酒', to: 'ch1_hub', set: { 'flags.side_exile': 1, 'aff:he': 2 }, reward: { gold: -6, people: 2 }, advance: 'period' }
+      ]
+    },
+    side_sai_trade: {
+      id: 'side_sai_trade', chapter: 'side', speaker: '匈奴使節', bg: 'frontier',
+      text: '邊市風硬。使節（質譯）打量你：「塞外歸附／遊邊之人，懂馬價。這一車皮貨換關中帛——你幫腔，還是幫關吏？」',
+      choices: [
+        { id: 'a', text: '幫互市談成', to: 'xy_hub', set: { 'flags.side_sai': 1, 'flags.xy_side': 1, 'plotFlags.side_trade': 1, 'aff:sai_envoy': 5, 'factions.sai': 3 }, reward: { gold: 16, fame: 2 }, advance: 'period' },
+        { id: 'b', text: '幫關吏嚴查', to: 'xy_hub', set: { 'flags.side_sai': 1, 'flags.xy_side': 1, 'plotFlags.side_strict': 1, 'factions.qin': 3 }, reward: { fame: 3, gold: 6 }, advance: 'period' },
+        { id: 'c', text: '兩不得罪，只作證', to: 'xy_hub', set: { 'flags.side_sai': 1, 'flags.xy_side': 1 }, reward: { fame: 1 }, advance: 'period' }
+      ]
+    },
+    side_clerk_doc: {
+      id: 'side_clerk_doc', chapter: 'side', speaker: '內史小吏', bg: 'xianyang',
+      text: '小吏把一卷半殘戶籍推過來：「小吏後／書吏的手，該識得官樣。幫我抄清三頁——抄錯，你擔；抄好，我記你一筆。」',
+      choices: [
+        { id: 'a', text: '仔細抄清', to: 'xy_hub', set: { 'flags.side_clerk': 1, 'flags.xy_side': 1, 'plotFlags.lit_lean': 1, 'aff:neishi': 4, 'factions.qin': 2 }, reward: { fame: 3, gold: 10 }, advance: 'period' },
+        { id: 'b', text: '抄快，略有錯字', to: 'xy_hub', set: { 'flags.side_clerk': 1, 'flags.xy_side': 1, 'aff:neishi': 1 }, reward: { gold: 6 }, advance: 'period' },
+        { id: 'c', text: '拒抄，怕惹禍', to: 'xy_hub', set: { 'flags.side_clerk': 1, 'flags.xy_side': 1 }, reward: { fame: 1 }, advance: 'period' }
       ]
     },
     ch2_road: {
@@ -270,6 +349,13 @@
       choices: [
         { id: 'a', text: '呈藥樣與跟診經歷', to: 'xy_taiyi_ok', set: { 'flags.visited_taiyi': 1, 'plotFlags.court_healer': 1, 'aff:yiguan': 4 }, reward: { fame: 4 }, advance: 'period',
           if: { 'plotFlags.healer_seed': true } },
+        { id: 'a2', text: '【醫門／醫者／採藥】以出身藥籍自薦', to: 'xy_taiyi_ok', set: { 'flags.visited_taiyi': 1, 'plotFlags.court_healer': 1, 'plotFlags.healer_seed': 1, 'aff:yiguan': 5 }, reward: { fame: 5 }, advance: 'period',
+          if: function (S) {
+            if (S.plotFlags && S.plotFlags.healer_seed) return false;
+            var o = (S.hero && S.hero.origin) || '';
+            var c = S.career || '';
+            return /^(tradoc|shaman)$/.test(o) || /^(healer|herbalist)$/.test(c);
+          } },
         { id: 'b', text: '坦言願守口、效命近側', to: 'xy_taiyi_ok', set: { 'flags.visited_taiyi': 1, 'plotFlags.court_healer': 1, 'aff:yiguan': 3 }, reward: { fame: 3 }, advance: 'period', need: { bian: 2 } },
         { id: 'c', text: '先留下名刺，改日再來', to: 'xy_hub', set: { 'flags.visited_taiyi': 1, 'aff:yiguan': 1 }, reward: { fame: 1 }, advance: 'period' },
         { id: 'd', text: '退回街市', to: 'xy_hub', advance: 'period' }
@@ -321,6 +407,19 @@
       text: '宮門如獄。衛士横戈：「報出名號，或出示符節——否則退後。」你掂量腰間銀兩、輕功、藥囊，與此刻裝束。\n（與輿圖「宮城外」門禁相同：擇一路通關，即可入宮行事。）',
       choices: [
         { id: 'bribe', text: '收買門衙（銀28；女扮男裝則較廉）', to: 'xy_palace_in', set: { 'access.palace': true, 'flags.visited_palace': 1, 'flags.palace_bribe': 1 }, reward: { gold: -28, fame: 2 }, advance: 'period', if: { gold: 28 } },
+        { id: 'bribe_trade', text: '【商戶／商賈／客籍】薄賄門衙（銀18）', to: 'xy_palace_in', set: { 'access.palace': true, 'flags.visited_palace': 1, 'flags.palace_bribe': 1 }, reward: { gold: -18, fame: 2 }, advance: 'period',
+          if: function (S) {
+            if ((S.gold || 0) < 18) return false;
+            var o = (S.hero && S.hero.origin) || '';
+            var c = S.career || '';
+            return /^(merchant|guest|steppe)$/.test(o) || /^(merchant|courier|agent)$/.test(c);
+          } },
+        { id: 'sneak_agent', text: '【細作／草莽】借夜影潛入（耗體）', to: 'xy_palace_in', set: { 'access.palace': true, 'flags.visited_palace': 1, 'flags.palace_sneak': 1 }, reward: { hp: -10, fame: 2 }, advance: 'period',
+          if: function (S) {
+            var o = (S.hero && S.hero.origin) || '';
+            var c = S.career || '';
+            return o === 'outlaw' || c === 'agent' || c === 'ranger';
+          } },
         { id: 'bribe_m', text: '以男裝通融收買（銀18）', to: 'xy_palace_in', set: { 'access.palace': true, 'flags.visited_palace': 1, 'flags.palace_bribe': 1 }, reward: { gold: -18, fame: 2 }, advance: 'period',
           if: { gold: 18, 'hero.disguise': 'male' } },
         { id: 'agi', text: '輕功潛入（需輕功≥3、體力充足）', to: 'xy_palace_in', set: { 'access.palace': true, 'flags.visited_palace': 1, 'flags.palace_agi': 1 }, reward: { hp: -4, fame: 3 }, advance: 'period', need: { shen: 2 } },
@@ -371,6 +470,20 @@
         { id: 'pass', text: '關市：護一車皮貨過卡', to: 'side_pass', if: { 'flags.side_pass': false } },
         { id: 'school', text: '書塾：與成郎辯「法與情」', to: 'side_school', if: { 'flags.side_school': false } },
         { id: 'letter', text: '驛道：代送一封無名書', to: 'side_letter', if: { 'flags.side_letter': false } },
+        { id: 'sai', text: '【出身／職業】邊市換馬談皮貨', to: 'side_sai_trade',
+          if: function (S) {
+            if (S.flags && S.flags.side_sai) return false;
+            var o = (S.hero && S.hero.origin) || '';
+            var c = S.career || '';
+            return /^(steppe|guest|outlaw)$/.test(o) || /^(ranger|courier|agent)$/.test(c);
+          } },
+        { id: 'clerk', text: '【出身／職業】幫抄半殘戶籍', to: 'side_clerk_doc',
+          if: function (S) {
+            if (S.flags && S.flags.side_clerk) return false;
+            var o = (S.hero && S.hero.origin) || '';
+            var c = S.career || '';
+            return /^(clerk|gentry|fallennoble)$/.test(o) || /^(scribe|scholar|diviner)$/.test(c);
+          } },
         { id: 'done', text: '（已遊數則）任意閒逛換薄利', to: 'side_wander', if: { 'flags.xy_side': true } },
         { id: 'back', text: '暫回咸陽樞紐', to: 'xy_hub' }
       ]
@@ -671,6 +784,144 @@
     return bits[Math.floor(Math.random() * bits.length)];
   }
 
+
+  var ORIGIN_OPEN = {
+    farm: '袖間尚有麥芒刺——農家子弟的夢，也會撞上宮牆。',
+    gentry: '案頭餘墨未乾。士族出身，進退之間多一分禮，也多一分自負。',
+    merchant: '袖中銅錢輕響。商戶門第教你：人情與銀兩，往往同路。',
+    soldier: '掌心還有校場繭。軍戶的血，聞刀風會醒。',
+    tradoc: '藥香似從夢裡跟來。醫門子弟，先救人，再談名。',
+    guest: '口音未盡改。客籍入秦，靠的是眼界，不是鄉黨。',
+    exile: '里門曾有指點與竊語。罪謫之後，你學得更沉。',
+    artisan: '指節有鍛打薄繭。百工人家，信手藝勝過空名。',
+    clerk: '腦中還轉著官樣套語。小吏之後，懂文書亦懂眉眼。',
+    shaman: '裡社香灰似還沾在袖。巫祝之後，問兆與辨草，本來同源。',
+    fallennoble: '舊玉佩涼意入骨。沒落公族，名尚在，路要自己重新踩。',
+    outlaw: '野路風還在領口。草莽遺脈，先活命，再談是非。',
+    steppe: '邊市膻氣未散。塞外歸附者，馬背與互市，都是課本。'
+  };
+  var CAREER_OPEN = {
+    farmer: '你想起田壟上的節奏——先把眼前一季過穩。',
+    healer: '指尖還記得把脈的分寸。',
+    merchant: '市聲在耳：貴買賤賣，先看人臉色。',
+    soldier: '呼吸仍按校場鼓點。',
+    scholar: '書卷氣未褪，進退思量比刀快。',
+    craftsman: '鐺鐺爐響似還在夢外。',
+    hunter: '山風氣味一閃而過。',
+    ranger: '江湖路遠，名與刀都要自己背。',
+    scribe: '刀筆比刀劍更先出鞘。',
+    courier: '驛道塵土，似還沾在靴底。',
+    smith: '爐火映過眼底一瞬。',
+    agent: '你習慣先看門洞與退路。',
+    boatman: '河津潮聲隱隱。',
+    herbalist: '藥囊輕響，葉脈圖譜浮上心頭。',
+    diviner: '一卦未成，先問自己要什麼結局。'
+  };
+
+  function decorateNode(S, node) {
+    if (!S || !node) return node;
+    var o = (S.hero && S.hero.origin) || 'farm';
+    var c = S.career || '';
+    var extra = [];
+    if (node.id === 'pro_01' || node.id === 'pro_02') {
+      if (ORIGIN_OPEN[o]) extra.push(ORIGIN_OPEN[o]);
+      if (CAREER_OPEN[c]) extra.push(CAREER_OPEN[c]);
+    }
+    if (node.id === 'ch1_hub') {
+      if (S.plotFlags && S.plotFlags.healer_lean) extra.push('（醫／藥出身：藥廬與太醫署小路更亮。）');
+      if (S.plotFlags && S.plotFlags.martial_lean) extra.push('（武／軍出身：校場與門禁或有援。）');
+      if (S.plotFlags && S.plotFlags.trade_lean) extra.push('（商／客出身：銀兩與關市更好說話。）');
+      if (S.plotFlags && S.plotFlags.lit_lean) extra.push('（文／吏出身：書簡與官署更易近。）');
+      if (S.plotFlags && S.plotFlags.craft_lean) extra.push('（百工出身：渠作與礦坊記得你的手。）');
+      if (S.plotFlags && S.plotFlags.exile_mark) extra.push('（罪謫陰影未散：或可洗名，或可傲骨到底。）');
+      if (S.plotFlags && S.plotFlags.agent_lean) extra.push('（細作路數：夜影與耳目是你的第二呼吸。）');
+    }
+    if (!extra.length) return node;
+    var copy = {};
+    for (var k in node) if (Object.prototype.hasOwnProperty.call(node, k)) copy[k] = node[k];
+    copy.text = (node.text || '') + '\n' + extra.join('\n');
+    return copy;
+  }
+
+  /** 支線目錄：供「支線」按鈕列出／跳轉 */
+  var SIDE_CATALOG = [
+    { id: 'side_vil_grain', title: '幫林嫂運糧', desc: '村中：運糧到里倉。', done: 'side_vil_grain', where: 'vil',
+      boostOrigin: ['farm'], boostCareer: ['farmer'] },
+    { id: 'side_drill_help', title: '巡夜／校場幫哨', desc: '軍戶／武業相關。', done: 'side_drill', where: 'vil',
+      needOrigin: ['soldier', 'outlaw'], needCareer: ['soldier', 'boatman', 'ranger', 'hunter'],
+      boostOrigin: ['soldier', 'outlaw'], boostCareer: ['soldier', 'boatman', 'ranger'] },
+    { id: 'side_witch_herb', title: '辨認毒草', desc: '醫門／採藥／巫祝相關。', done: 'side_witch', where: 'vil',
+      needOrigin: ['tradoc', 'shaman'], needCareer: ['healer', 'herbalist', 'diviner'],
+      boostOrigin: ['tradoc', 'shaman'], boostCareer: ['healer', 'herbalist'] },
+    { id: 'side_canal_labor', title: '修水車軸', desc: '百工／工匠相關。', done: 'side_canal', where: 'vil',
+      needOrigin: ['artisan'], needCareer: ['craftsman', 'smith'],
+      boostOrigin: ['artisan'], boostCareer: ['craftsman', 'smith'] },
+    { id: 'side_exile_mark', title: '洗名貼告', desc: '罪謫後人專屬。', done: 'side_exile', where: 'vil',
+      needOrigin: ['exile'], boostOrigin: ['exile'] },
+    { id: 'side_scale', title: '市井假秤', desc: '咸陽：辯一樁假秤。', done: 'side_scale', where: 'xy',
+      boostOrigin: ['merchant', 'guest'], boostCareer: ['merchant'] },
+    { id: 'side_nightclinic', title: '藥廬夜診', desc: '咸陽：夜診無名傷者。', done: 'side_clinic', where: 'xy',
+      boostOrigin: ['tradoc', 'shaman'], boostCareer: ['healer', 'herbalist'] },
+    { id: 'side_inn', title: '客館密語', desc: '咸陽：聽楚齊口音。', done: 'side_inn', where: 'xy',
+      boostOrigin: ['guest', 'steppe'], boostCareer: ['agent', 'courier', 'ranger'] },
+    { id: 'side_pass', title: '關市皮貨', desc: '咸陽：護車過卡。', done: 'side_pass', where: 'xy',
+      boostOrigin: ['merchant', 'steppe'], boostCareer: ['merchant', 'courier'] },
+    { id: 'side_school', title: '書塾辯法', desc: '咸陽：與成郎辯法與情。', done: 'side_school', where: 'xy',
+      boostOrigin: ['gentry', 'clerk', 'fallennoble'], boostCareer: ['scholar', 'scribe', 'diviner'] },
+    { id: 'side_letter', title: '代送無名書', desc: '咸陽：驛道送信。', done: 'side_letter', where: 'xy',
+      boostCareer: ['courier', 'scribe', 'agent'] },
+    { id: 'side_sai_trade', title: '邊市換馬', desc: '塞外／遊邊相關。', done: 'side_sai', where: 'xy',
+      needOrigin: ['steppe', 'guest', 'outlaw'], needCareer: ['ranger', 'courier', 'agent'],
+      boostOrigin: ['steppe'], boostCareer: ['ranger', 'agent'] },
+    { id: 'side_clerk_doc', title: '抄半殘戶籍', desc: '小吏／文業相關。', done: 'side_clerk', where: 'xy',
+      needOrigin: ['clerk', 'gentry', 'fallennoble'], needCareer: ['scribe', 'scholar', 'diviner'],
+      boostOrigin: ['clerk'], boostCareer: ['scribe'] }
+  ];
+
+  function listSides(S) {
+    ensure(S);
+    var o = (S.hero && S.hero.origin) || '';
+    var c = S.career || '';
+    var flags = S.flags || {};
+    var inXy = !!(flags.visited_xianyang || flags.left_village);
+    var out = [];
+    for (var i = 0; i < SIDE_CATALOG.length; i++) {
+      var s = SIDE_CATALOG[i];
+      if (!NODES[s.id]) continue;
+      var done = !!(flags[s.done]);
+      var state = 'open';
+      var lockReason = '';
+      if (done) state = 'done';
+      else {
+        if (s.where === 'xy' && !inXy && !flags.visited_xianyang) {
+          /* allow listing as locked until xianyang */
+          state = 'locked';
+          lockReason = '需先赴咸陽／離開村落';
+        }
+        if (s.needOrigin || s.needCareer) {
+          var okO = s.needOrigin && s.needOrigin.indexOf(o) >= 0;
+          var okC = s.needCareer && s.needCareer.indexOf(c) >= 0;
+          if (!okO && !okC) {
+            state = 'locked';
+            lockReason = lockReason || '需對應出身或職業';
+          }
+        }
+      }
+      var boosted = false;
+      if (s.boostOrigin && s.boostOrigin.indexOf(o) >= 0) boosted = true;
+      if (s.boostCareer && s.boostCareer.indexOf(c) >= 0) boosted = true;
+      /* 通用村支線在開局即可 */
+      if (s.id === 'side_vil_grain' && state === 'locked' && !done) {
+        state = 'open'; lockReason = '';
+      }
+      out.push({
+        id: s.id, title: s.title, desc: s.desc, state: state,
+        lockReason: lockReason, boosted: boosted, where: s.where
+      });
+    }
+    return out;
+  }
+
   global.QianStoryFlow = {
     NODES: NODES,
     ensure: ensure,
@@ -683,6 +934,9 @@
     validate: validate,
     summary: summary,
     condOk: condOk,
-    offlineBeat: offlineBeat
+    offlineBeat: offlineBeat,
+    listSides: listSides,
+    decorateNode: decorateNode,
+    SIDE_CATALOG: SIDE_CATALOG
   };
 })(typeof window !== 'undefined' ? window : globalThis);
