@@ -1,4 +1,4 @@
-/* v29 contrast+layout · navy-gold kit · cute pixel · circular dock · face-safe */
+/* v30 black text + contrast · navy-gold kit · cute pixel · circular dock · face-safe */
 /* ===== 墨夢莊周：國風文字 RPG 殼（宣紙・金線・朱砂） ===== */
 :root{
   --paper:#fbf4ee;--paper2:#f4e7dd;--paper3:#ead8c8;
@@ -1904,8 +1904,8 @@ input,textarea,select{font-family:inherit;}
   --paper:#1a2438;
   --paper2:#223050;
   --paper3:#2a3a58;
-  --ink:#f3e6d2;
-  --ink2:#cbb89a;
+  --ink:#111111;
+  --ink2:#2a2a2a;
   --gold:var(--kit-gold);
   --gold2:var(--kit-gold2);
   --ver:#c44a52;
@@ -2414,3 +2414,174 @@ html,body{background:#0e1424;color:var(--ink);}
   #gender-row .chip-card{font-size:15px;letter-spacing:.12em;padding:10px 4px;}
   .origin-grid{grid-template-columns:1fr 1fr;gap:8px;}
 }
+
+
+/* ===== v30: 正文改黑色（可讀優先） ===== */
+:root{
+  --ink:#111111;
+  --ink2:#222222;
+}
+html,body,#app{color:#111!important;}
+
+/* 身世／擇業／羊皮紙內容：淺底黑字 */
+#screen-create .create-wrap,
+#screen-career .career-wrap,
+.career-wrap.parchment,
+.parchment,
+.modal-card.parchment,
+.sheet .sbody,
+#box,
+#txt,
+.event-body{
+  color:#111!important;
+}
+.create-wrap h2,
+.career-wrap h2,
+.parchment h2,
+.sheet .shead h2,
+.modal-card.parchment h2,
+.panel-h,
+.bag-section-title,
+.quest-item strong,
+.shop-item b{
+  color:#111!important;
+}
+.create-wrap .field,
+.create-wrap .flabel,
+.create-wrap .field.check,
+#disguise-field .field.check,
+.career-blurb,
+.career-card h3,
+.career-card p,
+.career-card .stats,
+.chip-card,
+.chip-card strong,
+.chip-card span,
+.quest-item,
+.quest-item .quest-progress,
+.quest-item .quest-reward,
+.bag-cell,
+.bag-item,
+.gear-card,
+.villager-card,
+.villager-card .muted,
+.shop-item,
+.craft-item,
+.craft-item .need,
+.aff-mini,
+.aff-num,
+.note,.tiny,.muted,.mode-blurb,
+.crop-pick .label,
+.pin .pcost,
+.hp-num,
+.shead-sub,
+.ver-line,
+.talk-line.sys,
+.equip-slot small,
+.eq-meta small,
+#txt .nar,#txt .sys,
+#sheet-act .note,#sheet-map .note,
+#sheet-act .sbody,#sheet-map .sbody,
+#sheet-bag .sbody,#sheet-quest .sbody,
+#sheet-ppl .sbody,#sheet-menu .sbody{
+  color:#111!important;
+}
+.chip-card span,
+.career-card p,
+.career-card .stats,
+.quest-item .quest-progress,
+.quest-item .quest-reward,
+.villager-card .muted,
+.craft-item .need,
+.note,.tiny,.muted,.mode-blurb,
+.shead-sub,#txt .nar,#txt .sys{
+  color:#222!important;
+}
+
+/* 內容卡改回淺底，配合黑字 */
+.chip-card,
+#wmode-row .chip-card,
+.origin-grid .chip-card,
+#gender-row .chip-card{
+  background:linear-gradient(180deg,#fffdf8,#f5e8d8)!important;
+  color:#111!important;
+}
+.chip-card.active,
+#wmode-row .chip-card.active,
+.origin-grid .chip-card.active{
+  color:#111!important;
+}
+.career-card{
+  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
+  color:#111!important;
+  border:1.5px solid rgba(184,50,58,.35)!important;
+}
+.quest-item,
+.bag-cell,
+.bag-item,
+.gear-card,
+.villager-card,
+.shop-item,
+.craft-item,
+.aff-mini,
+.enemy-preview,
+.parchment-mini,
+.chron-item,
+.hands-chip,
+.chip{
+  background:linear-gradient(180deg,#fffdf8,#f3e8da)!important;
+  border:1.5px solid rgba(184,50,58,.28)!important;
+  color:#111!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.08)!important;
+}
+.quest-item.quest-section{
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px dashed rgba(80,60,40,.35)!important;
+  box-shadow:none!important;
+  color:#111!important;
+}
+.dir,.crop-btn,.seg,.fish-spot{
+  background:#fffaf4!important;
+  color:#111!important;
+  border-color:rgba(184,50,58,.35)!important;
+}
+.dir.active,.crop-btn.active,.fish-spot.active,.seg.active{
+  background:#c44a52!important;
+  color:#fff!important;
+}
+.plot-card{
+  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
+  color:#111!important;
+}
+.plot-card-head{
+  background:linear-gradient(180deg,#fff6ec,#ead9c4)!important;
+  color:#111!important;
+  border-bottom:1px solid rgba(184,50,58,.3)!important;
+}
+.plot-card-hint{color:#222!important;}
+.event-choices .btn,.event-choice{
+  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
+  color:#111!important;
+  border:2px solid rgba(184,50,58,.4)!important;
+}
+.create-wrap input[type=text],
+#create-name,#create-goal,
+.field input:not([type=checkbox]):not([type=radio]),
+.field select,
+#talk-input,#free-input,
+.crop-pick select{
+  color:#111!important;
+  background:#fff!important;
+}
+.create-wrap input[type=text]::placeholder,
+#create-name::placeholder,
+#create-goal::placeholder,
+.field input::placeholder,
+#talk-input::placeholder,
+#free-input::placeholder{
+  color:#555!important;
+  opacity:.85!important;
+}
+
+/* HUD／底欄深蓝底維持淺字，正文已改黑 */
