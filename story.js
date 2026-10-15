@@ -492,17 +492,23 @@
     var bribeNeed = g.bribe;
     var agiNeed = g.agi;
     if (disguiseActive(S)) { bribeNeed = Math.max(8, Math.floor(bribeNeed * 0.7)); agiNeed = Math.max(1, agiNeed - 1); }
+    if (mode === 'taihou' && disguiseFemaleActive(S)) {
+      bribeNeed = Math.max(8, Math.floor(bribeNeed * 0.75));
+      agiNeed = Math.max(1, agiNeed - 1);
+    }
+    var maleTag = disguiseActive(S);
+    var femTag = (mode === 'taihou' && disguiseFemaleActive(S));
     opts.push({
       id: 'bribe',
-      label: '收買門衙' + (disguiseActive(S) ? '（男裝）' : ''),
-      tip: '銀' + bribeNeed + (disguiseActive(S) ? ' · 扮男易通' : ''),
+      label: '收買門衙' + (maleTag ? '（男裝）' : (femTag ? '（女裝）' : '')),
+      tip: '銀' + bribeNeed + (maleTag ? ' · 扮男易通' : (femTag ? ' · 女裝易近' : '')),
       ok: (S.gold || 0) >= bribeNeed,
       reason: (S.gold || 0) >= bribeNeed ? '' : '銀不足（需' + bribeNeed + '）',
       cost: bribeNeed
     });
     opts.push({
       id: 'agi',
-      label: '輕功潛入' + (disguiseActive(S) ? '（男裝）' : ''),
+      label: '輕功潛入' + (maleTag ? '（男裝）' : (femTag ? '（女裝）' : '')),
       tip: '輕功≥' + agiNeed + '（現' + skillAgi(S) + '）· 體力-4',
       ok: skillAgi(S) >= agiNeed && (S.hp || 0) > 4,
       reason: skillAgi(S) < agiNeed ? ('輕功不足（需' + agiNeed + '）') : ((S.hp || 0) <= 4 ? '體力不足' : ''),
@@ -755,6 +761,20 @@
   function disguiseActive(S) {
     return !!(S && S.hero && S.hero.disguise === 'male' && S.hero.gender === 'f');
   }
+  /* 男扮女裝：易近女眷／太后宮外，宮城門禁無男裝加成 */
+  function disguiseFemaleActive(S) {
+    return !!(S && S.hero && S.hero.disguise === 'female' && S.hero.gender === 'm');
+  }
+  function presentingAsMale(S) {
+    if (!S || !S.hero) return false;
+    if (S.hero.gender === 'm' && !disguiseFemaleActive(S)) return true;
+    return disguiseActive(S);
+  }
+  function presentingAsFemale(S) {
+    if (!S || !S.hero) return false;
+    if (S.hero.gender === 'f' && !disguiseActive(S)) return true;
+    return disguiseFemaleActive(S);
+  }
 
   global.QianStory = {
     START_KNOWN: START_KNOWN,
@@ -784,6 +804,9 @@
     logNpc: logNpc,
     feelLine: feelLine,
     fullMem: fullMem,
-    disguiseActive: disguiseActive
+    disguiseActive: disguiseActive,
+    disguiseFemaleActive: disguiseFemaleActive,
+    presentingAsMale: presentingAsMale,
+    presentingAsFemale: presentingAsFemale
   };
 })(window);

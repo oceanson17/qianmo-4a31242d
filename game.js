@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '40';
+  const GAME_VERSION = '41';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -123,7 +123,7 @@
     { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
     { id: 'hire', name: '僱長工', desc: '田莊人手+1', gold: 0 }
   ];
-  const FACE_V = '40';
+  const FACE_V = GAME_VERSION;
   function allNpcs() {
     if (window.QianWorld && window.QianWorld.CAST) return window.QianWorld.CAST;
     return [];
@@ -141,10 +141,10 @@
   function faceUrl(key) {
     return 'assets/face_' + key + '.webp?v=' + FACE_V;
   }
-  /** 女／不顯：主角頭像用 face_hero（女主角圖）；男：按職業 */
+  /** 頭像：女／不顯→face_hero；男→職業臉；男扮女裝→face_hero_f；女扮男裝→職業男臉 */
   function careerFaceKey(careerId, gender) {
     const g = gender || (S && S.hero && S.hero.gender) || 'x';
-    if (g === 'f' || g === 'x') return 'hero';
+    const h = S && S.hero;
     const map = {
       farmer: 'farmer_m',
       healer: 'doctor',
@@ -155,6 +155,9 @@
       hunter: 'hunter',
       ranger: 'ranger'
     };
+    if (h && h.gender === 'm' && h.disguise === 'female') return 'hero_f';
+    if (h && h.gender === 'f' && h.disguise === 'male') return map[careerId] || 'farmer_m';
+    if (g === 'f' || g === 'x') return 'hero';
     return map[careerId] || 'hero';
   }
   /** 擇業立繪仍按職業／性別變體（與 HUD 頭像分開） */
@@ -394,10 +397,22 @@
   function disguiseOn() {
     return !!(window.QianStory && window.QianStory.disguiseActive(S));
   }
+  function disguiseFemaleOn() {
+    return !!(window.QianStory && window.QianStory.disguiseFemaleActive
+      ? window.QianStory.disguiseFemaleActive(S)
+      : (S && S.hero && S.hero.gender === 'm' && S.hero.disguise === 'female'));
+  }
   function heroPresentingMale() {
     if (!S || !S.hero) return false;
-    if (S.hero.gender === 'm') return true;
+    if (window.QianStory && window.QianStory.presentingAsMale) return window.QianStory.presentingAsMale(S);
+    if (S.hero.gender === 'm' && !disguiseFemaleOn()) return true;
     return disguiseOn();
+  }
+  function heroPresentingFemale() {
+    if (!S || !S.hero) return false;
+    if (window.QianStory && window.QianStory.presentingAsFemale) return window.QianStory.presentingAsFemale(S);
+    if (S.hero.gender === 'f' && !disguiseOn()) return true;
+    return disguiseFemaleOn();
   }
 
   function status(msg) {
@@ -566,6 +581,9 @@
       window.QianStory.ensure(st);
       if (window.__createDraft && window.__createDraft.disguise && st.hero.gender === 'f') {
         st.hero.disguise = 'male';
+      }
+      if (window.__createDraft && window.__createDraft.disguiseM && st.hero.gender === 'm') {
+        st.hero.disguise = 'female';
       }
     }
     if (window.QianWorld) {
@@ -1065,7 +1083,7 @@
     if (!ST) return;
     const g = ST.gateInfo(m);
     $('gate-title').textContent = (g.name || MODE_LABELS[m]) + ' · 門禁';
-    $('gate-blurb').textContent = g.blurb + (disguiseOn() ? '（你正女扮男裝，門路略寬）' : '');
+    $('gate-blurb').textContent = g.blurb + (disguiseOn() ? '（你正女扮男裝，門路略寬）' : (disguiseFemaleOn() ? '（你正男扮女裝，女眷之所略易近）' : ''));
     const sk = $('gate-skills');
     if (sk) {
       sk.innerHTML = '武' + (S.skills.mart||0) + ' · 輕功' + (S.skills.agi||0) +
@@ -1391,7 +1409,7 @@
   function openMapSheet() {
     if ($('map-date')) $('map-date').textContent = dayStr();
     if (S && S.hp < Math.max(10, (S.maxHp || 80) * 0.3)) highlightHutHint();
-    else if ($('map-note')) $('map-note').textContent = '秦王政元年輿圖。點選地點前往（耗體力）。禁地需收買／輕功／麻醉。陋室可回體。';
+    else if ($('map-note')) $('map-note').textContent = '秦王政元年輿圖。點「宮城外」可入宮（門禁：收買／輕功／麻醉／扮相，同舊秦風）。禁地需過關。陋室可回體／更衣。';
     const bar = $('map-battle-bar');
     if (bar) {
       bar.hidden = !battle;
@@ -2237,7 +2255,7 @@
           npcName: npc.name, npcRole: npc.role, aff: st.aff,
           mem: (window.QianStory ? window.QianStory.fullMem(S, npc.id) : st.mem.slice(-6).join('；')),
           feel: window.QianStory ? window.QianStory.feelLine(S, npc.id) : '',
-          disguise: disguiseOn() ? '女扮男裝中' : (S.hero && S.hero.gender === 'f' ? '女裝' : (S.hero && S.hero.gender === 'm' ? '男子' : '不顯')),
+          disguise: disguiseOn() ? '女扮男裝中' : (disguiseFemaleOn() ? '男扮女裝中' : (S.hero && S.hero.gender === 'f' ? '女裝' : (S.hero && S.hero.gender === 'm' ? '男子' : '不顯'))),
           mode: sayMode === 'cmd' ? 'cmd' : 'say',
           text: text + discNote, career: CAREERS[S.career].name, dayStr: dayStr(),
           bio: npc.bio || '',
@@ -3137,6 +3155,7 @@
         saveQuiet();
       });
     });
+    syncBagDisguiseBtn();
     $('modal-bag').hidden = false;
   }
   function openQuest() {
@@ -3170,7 +3189,7 @@
     body += '<div class="quest-item"><strong>六維屬性</strong><p>' + (window.QianPlots ? window.QianPlots.fmtAttrs(S) : ('武'+(ha.wu||0)+' 護'+(ha.hu||0)+' 身'+(ha.shen||0)+' 智'+(ha.zhi||0)+' 辯'+(ha.bian||0)+' 運'+(ha.yun||0))) + '（含裝備）</p></div>';
     body += '<div class="quest-item"><strong>技能</strong><p>農' + (sk.farm||0) + ' 醫/藥理' + (sk.med||0) + ' 商' + (sk.trade||0) +
       ' 武' + (sk.mart||0) + ' 輕功' + (sk.agi||0) + ' 文' + (sk.lit||0) + ' 工' + (sk.craft||0) +
-      (disguiseOn() ? ' · 女扮男裝中' : '') + '</p></div>';
+      (disguiseOn() ? ' · 女扮男裝中' : (disguiseFemaleOn() ? ' · 男扮女裝中' : '')) + '</p></div>';
     $('quest-list').innerHTML = body;
     $('modal-quest').hidden = false;
     const ql = $('quest-list');
@@ -4135,15 +4154,17 @@
     }
     const btnD = $('btn-hut-disguise');
     if (btnD) {
-      const show = S.hero && S.hero.gender === 'f';
+      const g = S.hero && S.hero.gender;
+      const show = g === 'f' || g === 'm';
       btnD.hidden = !show;
-      if (show) btnD.textContent = disguiseOn() ? '卸下男裝' : '更衣：女扮男裝';
+      if (g === 'f') btnD.textContent = disguiseOn() ? '卸下男裝' : '更衣：女扮男裝';
+      else if (g === 'm') btnD.textContent = disguiseFemaleOn() ? '卸下女裝' : '更衣：男扮女裝';
     }
     const blurb = $('hut-blurb');
     if (blurb) {
-      blurb.textContent = disguiseOn()
-        ? '陋室燈下，男子裝束疊於床頭。外面仍當你是漢子。'
-        : '自家陋室。可免費歇息回體，亦可小憩半日。';
+      if (disguiseOn()) blurb.textContent = '陋室燈下，男子裝束疊於床頭。外面仍當你是漢子。';
+      else if (disguiseFemaleOn()) blurb.textContent = '陋室燈下，女衫與花鈿備妥。外面或當你是閨中人。';
+      else blurb.textContent = '自家陋室。可免費歇息回體，亦可小憩半日。更衣扮相可改頭像。';
     }
   }
   function hutRest(full) {
@@ -4203,25 +4224,56 @@
   }
   function toggleDisguise() {
     if (!S || !S.hero) return;
-    if (S.hero.gender !== 'f') { toast('僅女子可女扮男裝'); return; }
-    if (disguiseOn()) {
-      S.hero.disguise = null;
-      toast('已卸男裝，恢復女裝');
-      pushStory('你換回女裝。', 'sys');
+    const g = S.hero.gender;
+    if (g === 'f') {
+      if (disguiseOn()) {
+        S.hero.disguise = null;
+        toast('已卸男裝，恢復女裝');
+        pushStory('你換回女裝。', 'sys');
+      } else {
+        S.hero.disguise = 'male';
+        toast('女扮男裝 · 禁地門路略寬，然有識破之險');
+        pushStory('你換上男子裝束，束髮改顏。', 'sys');
+      }
+    } else if (g === 'm') {
+      if (disguiseFemaleOn()) {
+        S.hero.disguise = null;
+        toast('已卸女裝，恢復男裝');
+        pushStory('你換回男子裝束。', 'sys');
+      } else {
+        S.hero.disguise = 'female';
+        toast('男扮女裝 · 女眷／后宮外略易近，然有識破之險');
+        pushStory('你換上女衫，改了眉目。', 'sys');
+      }
     } else {
-      S.hero.disguise = 'male';
-      toast('女扮男裝 · 禁地門路略寬，然有識破之險');
-      pushStory('你換上男子裝束，束髮改顏。', 'sys');
+      toast('不顯性別者暫無更衣扮相');
+      return;
     }
     renderHut();
     updateDisguiseMenu();
+    syncBagDisguiseBtn();
+    renderHUD();
     saveQuiet();
+  }
+  function disguiseBtnLabel() {
+    if (!S || !S.hero) return '更衣扮相';
+    if (S.hero.gender === 'f') return disguiseOn() ? '卸下男裝' : '女扮男裝';
+    if (S.hero.gender === 'm') return disguiseFemaleOn() ? '卸下女裝' : '男扮女裝';
+    return '更衣扮相';
   }
   function updateDisguiseMenu() {
     const b = $('btn-toggle-disguise');
     if (!b || !S || !S.hero) return;
-    b.hidden = S.hero.gender !== 'f';
-    if (S.hero.gender === 'f') b.textContent = disguiseOn() ? '卸下男裝' : '女扮男裝';
+    const g = S.hero.gender;
+    b.hidden = !(g === 'f' || g === 'm');
+    if (!b.hidden) b.textContent = disguiseBtnLabel();
+  }
+  function syncBagDisguiseBtn() {
+    const b = $('btn-bag-disguise');
+    if (!b || !S || !S.hero) return;
+    const g = S.hero.gender;
+    b.hidden = !(g === 'f' || g === 'm');
+    if (!b.hidden) b.textContent = disguiseBtnLabel();
   }
   function exploreDeeper(where) {
     if (!S || battle) { toast(battle ? '戰鬥中' : ''); return; }
@@ -4270,6 +4322,8 @@
     document.querySelectorAll('[data-wmode]').forEach((b) => b.classList.toggle('active', b.dataset.wmode === d.worldMode));
     if ($('disguise-field')) $('disguise-field').hidden = d.gender !== 'f';
     if ($('create-disguise')) $('create-disguise').checked = !!d.disguise;
+    if ($('disguise-m-field')) $('disguise-m-field').hidden = d.gender !== 'm';
+    if ($('create-disguise-m')) $('create-disguise-m').checked = !!d.disguiseM;
     const og = $('origin-grid');
     if (og && window.QianWorld && !og.dataset.ready) {
       og.innerHTML = window.QianWorld.ORIGINS.map((o) =>
@@ -4295,6 +4349,7 @@
     d.origin = d.origin || 'tradoc';
     d.worldMode = d.worldMode || 'history';
     d.disguise = !!(d.gender === 'f' && $('create-disguise') && $('create-disguise').checked);
+    d.disguiseM = !!(d.gender === 'm' && $('create-disguise-m') && $('create-disguise-m').checked);
     window.__createDraft = d;
     return d;
   }
@@ -4348,8 +4403,8 @@
     const o = window.QianWorld ? window.QianWorld.originById(h.origin) : { name: '' };
     const modeTxt = S.worldMode === 'free' ? '高度自由世界' : '史實軌道';
     status('秦王政元年。你是' + (h.name || '旅人') + '，出身' + (o.name || '') + '，以' + CAREERS[careerId].name + '立足墨夢。（' + modeTxt + '）' +
-      (h.disguise === 'male' ? '女扮男裝潛行江湖。' : '') + '點選劇情選項，改寫人物關係與結局。');
-    toast('開局 · 文字劇情 · ' + CAREERS[careerId].name + (h.disguise === 'male' ? ' · 男裝' : ''));
+      (h.disguise === 'male' ? '女扮男裝潛行江湖。' : (h.disguise === 'female' ? '男扮女裝行走江湖。' : '')) + '點選劇情選項，改寫人物關係與結局。');
+    toast('開局 · 文字劇情 · ' + CAREERS[careerId].name + (h.disguise === 'male' ? ' · 男裝' : (h.disguise === 'female' ? ' · 女裝' : '')));
     if (window.QianStoryFlow) {
       window.QianStoryFlow.begin(S);
       applyStoryScene();
@@ -4712,6 +4767,7 @@
       const g = h.gender === 'm' ? '男' : (h.gender === 'f' ? '女' : '不顯');
       const tags = [g, o.name || '出身', career.name, S.joined ? ((window.QianFactions && window.QianFactions.FACTIONS[S.joined] && window.QianFactions.FACTIONS[S.joined].short) || S.joined) : '遊士'];
       if (h.disguise === 'male') tags.push('男裝');
+      if (h.disguise === 'female') tags.push('女裝');
       $('dash-tags').innerHTML = tags.map((t) => '<span class="dash-tag">' + escapeHtml(t) + '</span>').join('');
     }
     if ($('dash-attrs')) {
@@ -5085,6 +5141,9 @@
         const df = $('disguise-field');
         if (df) df.hidden = b.dataset.gender !== 'f';
         if (b.dataset.gender !== 'f' && $('create-disguise')) $('create-disguise').checked = false;
+        const dm = $('disguise-m-field');
+        if (dm) dm.hidden = b.dataset.gender !== 'm';
+        if (b.dataset.gender !== 'm' && $('create-disguise-m')) $('create-disguise-m').checked = false;
       });
     });
     document.querySelectorAll('[data-wmode]').forEach((b) => {
@@ -5435,6 +5494,7 @@
     if ($('btn-hut-eat')) $('btn-hut-eat').addEventListener('click', (e) => { tapFeel(e.currentTarget, e); hutEat(); });
     if ($('btn-hut-disguise')) $('btn-hut-disguise').addEventListener('click', (e) => { tapFeel(e.currentTarget, e); toggleDisguise(); });
     if ($('btn-toggle-disguise')) $('btn-toggle-disguise').addEventListener('click', () => { $('modal-menu').hidden = true; toggleDisguise(); });
+    if ($('btn-bag-disguise')) $('btn-bag-disguise').addEventListener('click', (e) => { tapFeel(e.currentTarget, e); toggleDisguise(); openBag(); });
     [['ruins','btn-ruins-fight','btn-ruins-boss','btn-ruins-deeper','btn-flee-ruins'],
      ['crypt','btn-crypt-fight','btn-crypt-boss','btn-crypt-deeper','btn-flee-crypt'],
      ['marsh','btn-marsh-fight','btn-marsh-boss','btn-marsh-deeper','btn-flee-marsh']].forEach((row) => {
@@ -5459,6 +5519,9 @@
           const g = document.querySelector('#gender-row .chip-card.active');
           const f = $('disguise-field');
           if (f) f.hidden = !(g && g.dataset.gender === 'f');
+          const fm = $('disguise-m-field');
+          if (fm) fm.hidden = !(g && g.dataset.gender === 'm');
+          if (g && g.dataset.gender !== 'm' && $('create-disguise-m')) $('create-disguise-m').checked = false;
         }, 0);
       });
     });

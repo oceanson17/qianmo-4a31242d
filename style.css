@@ -2756,3 +2756,152 @@ html,body{
 .hud-avatar-btn img{
   object-position:50% 18%!important;
 }
+
+/* ========== v41：劇情區唔疊 FAB／底欄 · iPhone Safari 安全帶 · 扮相 HUD ========== */
+:root{
+  --vn-tools:56px;
+}
+/* HUD 唔出多餘捲軸 */
+#hud.hud-scroll,#hud{
+  overflow:visible!important;
+  max-height:none;
+}
+#hud .hud-left,#hStat.hud-res{
+  overflow:visible;
+}
+#meters{overflow:visible;pointer-events:none;}
+
+/* 底欄：bottom 已含 safe-area，唔好再喺 padding 疊一次 sab */
+#tabs.tabs-dock,#tabs{
+  bottom:max(env(safe-area-inset-bottom,0px),6px)!important;
+  padding:8px 4px 10px!important;
+  box-sizing:border-box;
+}
+
+/* VN：場景再矮啲，畀劇情／選項 */
+.vn-text-mode #adventure-scene.vn-stage,
+.vn-text-mode #adventure-scene{
+  height:min(20vh,140px)!important;
+  min-height:96px!important;
+  max-height:22vh!important;
+  z-index:1;
+}
+/* VN：工具列（回顧／AUTO／存檔／支線）收進 #box 內，唔再浮喺羊皮紙上 */
+.vn-text-mode #box.vn-log-box{
+  position:absolute!important;
+  left:8px;right:8px;
+  bottom:calc(var(--tabh) + 4px)!important;
+  z-index:7;
+  max-height:none!important;
+  min-height:0!important;
+  height:auto!important;
+  padding:8px 10px 8px!important;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  opacity:1;
+  overflow:visible;
+}
+.vn-text-mode #box.vn-log-box #nameplate,
+.vn-text-mode #box.vn-log-box #nameplate.on{
+  position:relative!important;
+  left:auto!important;top:auto!important;
+  align-self:flex-start;
+  margin:0;
+  height:22px;
+  font-size:10px;
+  z-index:1;
+}
+.vn-text-mode #box.vn-log-box #quick{
+  position:relative!important;
+  left:auto!important;right:auto!important;
+  top:auto!important;bottom:auto!important;
+  display:flex!important;
+  justify-content:space-between;
+  align-items:center;
+  gap:6px;
+  pointer-events:auto;
+  margin:0;
+  z-index:2;
+}
+.vn-text-mode #box.vn-log-box #quick button,
+.vn-text-mode #box.vn-log-box #quick .fab{
+  width:44px!important;height:40px!important;
+  min-width:44px!important;min-height:40px!important;
+  font-size:10px!important;
+  border-radius:12px;
+}
+.vn-text-mode #box.vn-log-box #quick .fab-primary{
+  width:48px!important;height:44px!important;
+  min-width:48px!important;min-height:44px!important;
+}
+.vn-text-mode #box.vn-log-box #txt,
+.vn-text-mode #box.vn-log-box #inrow,
+.vn-text-mode #box.vn-log-box #auto-label{
+  display:none!important;
+}
+/* 劇情羊皮紙：頂接場景，底停喺工具列之上，內部可捲，選項永遠到得 */
+.vn-text-mode #story-panel.story-panel,
+.vn-text-mode #story-panel{
+  position:absolute!important;
+  left:8px;right:8px;
+  top:calc(var(--sat) + min(20vh,140px) + 4px)!important;
+  bottom:calc(var(--tabh) + var(--vn-tools) + 28px)!important;
+  max-height:none!important;
+  margin:0!important;
+  z-index:5;
+  overflow-x:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding:12px 12px 14px!important;
+  display:flex!important;
+  flex-direction:column;
+}
+.vn-text-mode #story-panel .story-text{
+  flex:0 0 auto;
+  min-height:0;
+  margin-bottom:10px;
+}
+.vn-text-mode #story-panel .story-choices{
+  flex:0 0 auto;
+  padding-bottom:4px;
+}
+.vn-text-mode #story-panel .story-hint{
+  flex:0 0 auto;
+  margin-top:8px;
+  padding-bottom:4px;
+}
+.vn-text-mode #place-chip{display:none!important;}
+
+@media (max-width:420px){
+  :root{--vn-tools:52px;--tabh:calc(72px + var(--sab));}
+  .vn-text-mode #adventure-scene.vn-stage,
+  .vn-text-mode #adventure-scene{
+    height:min(16vh,110px)!important;
+    min-height:72px!important;
+    max-height:18vh!important;
+  }
+  .vn-text-mode #story-panel.story-panel,
+  .vn-text-mode #story-panel{
+    top:calc(var(--sat) + min(16vh,110px) + 2px)!important;
+    bottom:calc(var(--tabh) + var(--vn-tools) + 24px)!important;
+    padding:10px 10px 12px!important;
+  }
+  .vn-text-mode #box.vn-log-box{
+    bottom:calc(var(--tabh) + 2px)!important;
+    padding:6px 8px!important;
+  }
+  .story-choice{min-height:46px;font-size:14px;padding:10px 12px;}
+}
+/* 極矮屏（Safari 工具列佔位）*/
+@media (max-height:700px){
+  .vn-text-mode #adventure-scene.vn-stage,
+  .vn-text-mode #adventure-scene{
+    height:72px!important;min-height:64px!important;max-height:88px!important;
+  }
+  .vn-text-mode #story-panel.story-panel,
+  .vn-text-mode #story-panel{
+    top:calc(var(--sat) + 76px)!important;
+  }
+}

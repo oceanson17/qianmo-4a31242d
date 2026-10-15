@@ -241,7 +241,14 @@
     ensurePeriod(S);
     var d = S.day || 1;
     if (QIN_COURT_MODES.indexOf(mode) >= 0 && d < COURT_UNLOCK_DAY) {
-      return { ok: false, msg: '宮廷關隘尚遠（約第' + COURT_UNLOCK_DAY + '日後可入）· 先穩田莊人脈' };
+      var fl = (S && S.flags) || {};
+      var acc = (S && S.access) || {};
+      var sf = (S && S.storyFlow && S.storyFlow.nodeId) || '';
+      var storyOpen = !!(fl.visited_xianyang || fl.left_village || fl.visited_palace || acc.palace ||
+        /^(xy_|ch2_)/.test(sf));
+      if (!storyOpen) {
+        return { ok: false, msg: '宮廷關隘尚遠（約第' + COURT_UNLOCK_DAY + '日後可入，或先循劇情赴咸陽）· 先穩田莊人脈' };
+      }
     }
     if (EXPLORE_MODES.indexOf(mode) >= 0 && d < EXPLORE_SOFT_DAY && mode !== 'wild') {
       return { ok: false, msg: '探索尚早（第' + EXPLORE_SOFT_DAY + '日起）· 先熟悉田莊／市井／對談' };

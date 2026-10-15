@@ -89,9 +89,10 @@
       var maxHp = (S.maxHp != null ? S.maxHp : 80);
       S.hp = Math.max(1, Math.min(maxHp, (S.hp || maxHp) + reward.hp));
     }
-    if (reward.bag && S.bag) {
+    if (reward.bag) {
+      if (!S.bag) S.bag = {};
       Object.keys(reward.bag).forEach(function (k) {
-        S.bag[k] = (S.bag[k] || 0) + reward.bag[k];
+        S.bag[k] = Math.max(0, (S.bag[k] || 0) + reward.bag[k]);
       });
     }
   }
@@ -241,6 +242,10 @@
       choices: [
         { id: 'tai_yi', text: '往太醫署求見署吏', to: 'xy_taiyi' },
         { id: 'palace', text: '往宮城外觀望', to: 'xy_palace' },
+        { id: 'enter_palace', text: '設法入宮（門禁：收買／輕功／麻醉／扮相）', to: 'xy_palace_gate',
+          if: { 'access.palace': false } },
+        { id: 'in_palace', text: '再入宮城（已通門禁）', to: 'xy_palace_in',
+          if: { 'access.palace': true } },
         { id: 'xiang', text: '設法近相邦府', to: 'xy_xiangbang' },
         { id: 'tai', text: '聽太后宮外傳聞', to: 'xy_taihou' },
         { id: 'side', text: '遊歷一則短文（支線）', to: 'xy_side' },
@@ -293,11 +298,40 @@
     },
     xy_palace: {
       id: 'xy_palace', chapter: 'xianyang', speaker: '衛士', bg: 'palace',
-      text: '宮城外戈戟如林。衛士冷眼：「無符節者退後三十步。」遠處殿脊金光一閃，似有少年身影掠過回廊。',
+      text: '宮城外戈戟如林。衛士冷眼：「無符節者退後三十步。」遠處殿脊金光一閃，似有少年身影掠過回廊。\n（入宮與往日秦風相同：可收買、輕功、麻醉，或憑扮相通融。）',
       choices: [
         { id: 'a', text: '遠遠行禮，留下名帖之意', to: 'xy_hub', set: { 'flags.visited_palace': 1, 'plotFlags.palace_watch': 1, 'aff:yingzheng': 1 }, reward: { fame: 2 }, advance: 'period' },
-        { id: 'b', text: '買通小吏打聽（耗銀）', to: 'xy_hub', set: { 'flags.visited_palace': 1, 'access.palace': true }, reward: { gold: -28, fame: 3 }, advance: 'period', if: { gold: 28 } },
+        { id: 'gate', text: '設法入宮（門禁）', to: 'xy_palace_gate', set: { 'flags.visited_palace': 1 } },
+        { id: 'b', text: '買通小吏打聽內情（耗銀，兼得門路）', to: 'xy_palace_in', set: { 'flags.visited_palace': 1, 'access.palace': true }, reward: { gold: -28, fame: 3 }, advance: 'period', if: { gold: 28 } },
         { id: 'c', text: '退回街市', to: 'xy_hub', advance: 'period' }
+      ]
+    },
+    xy_palace_gate: {
+      id: 'xy_palace_gate', chapter: 'court', speaker: '衛士', bg: 'palace',
+      text: '宮門如獄。衛士横戈：「報出名號，或出示符節——否則退後。」你掂量腰間銀兩、輕功、藥囊，與此刻裝束。\n（與輿圖「宮城外」門禁相同：擇一路通關，即可入宮行事。）',
+      choices: [
+        { id: 'bribe', text: '收買門衙（銀28；女扮男裝則較廉）', to: 'xy_palace_in', set: { 'access.palace': true, 'flags.visited_palace': 1, 'flags.palace_bribe': 1 }, reward: { gold: -28, fame: 2 }, advance: 'period', if: { gold: 28 } },
+        { id: 'bribe_m', text: '以男裝通融收買（銀18）', to: 'xy_palace_in', set: { 'access.palace': true, 'flags.visited_palace': 1, 'flags.palace_bribe': 1 }, reward: { gold: -18, fame: 2 }, advance: 'period',
+          if: { gold: 18, 'hero.disguise': 'male' } },
+        { id: 'agi', text: '輕功潛入（需輕功≥3、體力充足）', to: 'xy_palace_in', set: { 'access.palace': true, 'flags.visited_palace': 1, 'flags.palace_agi': 1 }, reward: { hp: -4, fame: 3 }, advance: 'period', need: { shen: 2 } },
+        { id: 'drug', text: '麻醉迷倒守卒（藥理≥2·麻醉藥×1）', to: 'xy_palace_in', set: { 'access.palace': true, 'flags.visited_palace': 1, 'flags.palace_drug': 1 }, reward: { fame: 3, bag: { anesthetic: -1 } }, advance: 'period',
+          if: { 'skills.med': 2, 'bag.anesthetic': 1 } },
+        { id: 'disguise_talk', text: '（男裝）以男子之禮請見', to: 'xy_palace_in', set: { 'access.palace': true, 'flags.visited_palace': 1, 'flags.palace_disguise': 1 }, reward: { fame: 2 }, advance: 'period',
+          if: { 'hero.disguise': 'male' } },
+        { id: 'fem', text: '（女裝）稱入宮探后妃湯藥', to: 'xy_palace_in', set: { 'access.palace': true, 'flags.visited_palace': 1, 'flags.palace_fem': 1, 'plotFlags.taihou_rumor': 1 }, reward: { fame: 2 }, advance: 'period',
+          if: { 'hero.disguise': 'female' } },
+        { id: 'back', text: '暫且退去', to: 'xy_hub' }
+      ]
+    },
+    xy_palace_in: {
+      id: 'xy_palace_in', chapter: 'court', speaker: '旁白', bg: 'palace',
+      text: '廊回路轉，宮牆內燈火稀疏。你已入宮城範圍——可打聽王位、投書內廷，或尋近側傳召之縫。少年王的影子，似乎比牆外更近一分。',
+      choices: [
+        { id: 'rumor', text: '打聽王位傳聞', to: 'xy_hub', set: { 'flags.palace_rumor': 1, 'aff:yingzheng': 2, 'factions.qin': 1 }, reward: { fame: 2 }, advance: 'period' },
+        { id: 'letter', text: '投書內廷（耗銀）', to: 'xy_hub', set: { 'flags.palace_letter': 1, 'factions.qin': 3 }, reward: { gold: -12, fame: 3 }, advance: 'period', if: { gold: 12 } },
+        { id: 'near', text: '設法近側一見（若已通太醫署更易）', to: 'xy_near_wait', set: { 'flags.await_summon': 1 }, advance: 'period' },
+        { id: 'taihou', text: '繞往太后宮外一帶', to: 'xy_taihou', advance: 'period' },
+        { id: 'back', text: '退出宮門，回咸陽街市', to: 'xy_hub', advance: 'period' }
       ]
     },
     xy_xiangbang: {
@@ -353,7 +387,7 @@
     /* 舊檔續玩入口 */
     resume_hub: {
       id: 'resume_hub', chapter: 'resume', speaker: '旁白', bg: 'xianyang',
-      text: '墨夢續卷。自此刻起，主線以文字選擇推進——近側、宮爭、人物緣分。種田與田莊已不再是主玩法；你可當自己站在咸陽街口，或補一段備廷往事。',
+      text: '墨夢續卷。自此刻起，主線以文字選擇推進——近側、入宮門禁、宮爭、人物緣分。底欄「場景」可開輿圖直奔宮城外（門禁如舊秦風）。種田已非主玩法。',
       choices: [
         { id: 'xy', text: '以咸陽／近側為中心繼續', to: 'xy_hub', set: { 'flags.visited_xianyang': 1 } },
         { id: 'vil', text: '先補備廷準備（藥／信）', to: 'ch1_hub' }

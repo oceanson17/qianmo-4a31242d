@@ -183,7 +183,7 @@
       (ctx.worldMode ? '【世界模式】' + ctx.worldMode : '') +
       (ctx.mem ? '【往來全記】' + ctx.mem : '') +
       (ctx.feel ? '【情感】' + ctx.feel : '') +
-      (ctx.disguise ? '【玩家扮相】' + ctx.disguise + '（若女扮男裝，可略疑，但勿一口咬定，除非懷疑很高）' : '') +
+      (ctx.disguise ? '【玩家扮相】' + ctx.disguise + '（若女扮男裝或男扮女裝，可略疑，但勿一口咬定，除非懷疑很高）' : '') +
       (ctx.factionStance ? '【玩家勢力】' + ctx.factionStance : '') +
       (ctx.fateSummary ? '【人物命運旗標】' + ctx.fateSummary + '（對白須合乎這些已發生之選擇後果，勿推翻既定旗標）' : '');
     var user = (ctx.mode === 'cmd' ? '【指令】玩家要你執行：' : '【對白】玩家說：') + ctx.text +
