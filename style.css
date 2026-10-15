@@ -1,4 +1,4 @@
-/* v27 navy-gold UI kit · cute pixel faces · circular dock · face-safe · iPhone safe inset */
+/* v29 contrast+layout · navy-gold kit · cute pixel · circular dock · face-safe */
 /* ===== 墨夢莊周：國風文字 RPG 殼（宣紙・金線・朱砂） ===== */
 :root{
   --paper:#fbf4ee;--paper2:#f4e7dd;--paper3:#ead8c8;
@@ -871,10 +871,10 @@ input,textarea,select{font-family:inherit;}
   box-shadow: inset 0 0 0 1px #0002, 0 2px 6px #0002;
 }
 .pin.pin-art[data-art="farm"] .ps{
-  background-image: url('assets/bg_busy_farm.webp?v=25');
+  background-image: url('assets/bg_busy_farm.webp?v=29');
 }
 .pin.pin-art[data-art="hut"] .ps{
-  background-image: url('assets/bg_homestead.webp?v=25');
+  background-image: url('assets/bg_homestead.webp?v=29');
 }
 
 
@@ -1498,11 +1498,11 @@ input,textarea,select{font-family:inherit;}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
 }
 .pin.pin-art[data-art="farm"] .ps{
-  background-image:url('assets/ui/pin_farm.webp?v=25'),url('assets/bg_busy_farm.webp?v=25');
+  background-image:url('assets/ui/pin_farm.webp?v=29'),url('assets/bg_busy_farm.webp?v=29');
   background-size:cover,cover;background-position:center;color:transparent;text-shadow:none;
 }
 .pin.pin-art[data-art="hut"] .ps{
-  background-image:url('assets/ui/pin_hut.webp?v=25'),url('assets/bg_homestead.webp?v=25');
+  background-image:url('assets/ui/pin_hut.webp?v=29'),url('assets/bg_homestead.webp?v=29');
   background-size:cover,cover;background-position:center;color:transparent;text-shadow:none;
 }
 
@@ -1589,12 +1589,12 @@ input,textarea,select{font-family:inherit;}
 }
 
 /* v25 map pin icon covers (original ui/pin_*.webp) */
-.pin.pin-art[data-art="village"] .ps{background-image:url('assets/ui/pin_village.webp?v=25');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="market"] .ps{background-image:url('assets/ui/pin_market.webp?v=25');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="clinic"] .ps{background-image:url('assets/ui/pin_clinic.webp?v=25');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="drill"] .ps{background-image:url('assets/ui/pin_drill.webp?v=25');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="wild"] .ps{background-image:url('assets/ui/pin_wild.webp?v=25');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="garden"] .ps{background-image:url('assets/ui/pin_garden.webp?v=25');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="village"] .ps{background-image:url('assets/ui/pin_village.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="market"] .ps{background-image:url('assets/ui/pin_market.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="clinic"] .ps{background-image:url('assets/ui/pin_clinic.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="drill"] .ps{background-image:url('assets/ui/pin_drill.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="wild"] .ps{background-image:url('assets/ui/pin_wild.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="garden"] .ps{background-image:url('assets/ui/pin_garden.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
 
 
 /* ===== v26 parchment HUD · circular dock · face-safe · career strip ===== */
@@ -1859,14 +1859,14 @@ input,textarea,select{font-family:inherit;}
 }
 
 /* Map pin cache bust v26 */
-.pin.pin-art[data-art="farm"] .ps{background-image:url('assets/ui/pin_farm.webp?v=28'),url('assets/bg_busy_farm.webp?v=28');}
-.pin.pin-art[data-art="hut"] .ps{background-image:url('assets/ui/pin_hut.webp?v=28'),url('assets/bg_homestead.webp?v=28');}
-.pin.pin-art[data-art="village"] .ps{background-image:url('assets/ui/pin_village.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="market"] .ps{background-image:url('assets/ui/pin_market.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="clinic"] .ps{background-image:url('assets/ui/pin_clinic.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="drill"] .ps{background-image:url('assets/ui/pin_drill.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="wild"] .ps{background-image:url('assets/ui/pin_wild.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="garden"] .ps{background-image:url('assets/ui/pin_garden.webp?v=28');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="farm"] .ps{background-image:url('assets/ui/pin_farm.webp?v=29'),url('assets/bg_busy_farm.webp?v=29');}
+.pin.pin-art[data-art="hut"] .ps{background-image:url('assets/ui/pin_hut.webp?v=29'),url('assets/bg_homestead.webp?v=29');}
+.pin.pin-art[data-art="village"] .ps{background-image:url('assets/ui/pin_village.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="market"] .ps{background-image:url('assets/ui/pin_market.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="clinic"] .ps{background-image:url('assets/ui/pin_clinic.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="drill"] .ps{background-image:url('assets/ui/pin_drill.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="wild"] .ps{background-image:url('assets/ui/pin_wild.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="garden"] .ps{background-image:url('assets/ui/pin_garden.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
 
 /* v26 polish pass */
 .hud-ver{
@@ -2128,4 +2128,289 @@ html,body{background:#0e1424;color:var(--ink);}
 #career-dock, .career-row, .job-row{
   background:rgba(16,22,40,.75);
   border-top:1px solid rgba(212,175,95,.35);
+}
+
+/* ===== V29 CONTRAST + CREATE LAYOUT ===== */
+:root{
+  --ink-dark:#1a1520;
+  --ink-body:#2c2636;
+  --ink-mute:#5a5348;
+}
+
+/* Create screen: scrollable form + pinned footer (never washed out) */
+#screen-create{
+  display:flex!important;
+  flex-direction:column;
+  background:#121a2c;
+  overflow:hidden;
+  -webkit-overflow-scrolling:touch;
+  min-height:100%;
+  min-height:100dvh;
+  min-height:100svh;
+}
+#screen-create[hidden]{display:none!important;}
+#screen-create .create-wrap{
+  flex:1 1 auto;
+  min-height:0;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  margin:calc(var(--sat) + 12px) 12px 8px!important;
+  padding:16px 14px 20px!important;
+  max-height:none!important;
+}
+#screen-create .create-actions{
+  position:relative!important;
+  flex:0 0 auto;
+  z-index:40;
+  margin:0!important;
+  padding:10px 14px calc(12px + env(safe-area-inset-bottom, 0px))!important;
+  display:flex;
+  gap:10px;
+  justify-content:space-between;
+  background:#121a2c!important;
+  border-top:1.5px solid rgba(212,175,95,.55)!important;
+  box-shadow:0 -8px 20px rgba(0,0,0,.35)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#screen-create.create-kb .create-actions{padding-bottom:12px!important;}
+#screen-create .create-actions .btn{
+  flex:1;
+  min-height:48px;
+  height:48px;
+}
+#screen-create .create-actions .btn.ghost{
+  background:rgba(36,48,80,.92)!important;
+  color:#f3e6d2!important;
+  border-color:rgba(212,175,95,.75)!important;
+}
+#screen-create .create-actions .btn.primary{
+  background:linear-gradient(180deg,#e0c070,#b89040 55%,#8a6828)!important;
+  color:#1a1208!important;
+  border-color:#f0d28c!important;
+}
+
+/* Light chip / origin cards → dark ink (readable) */
+.chip-card{
+  background:linear-gradient(180deg,#fffdf9,#f3e6d4)!important;
+  border:1.5px solid rgba(212,175,95,.88)!important;
+  color:#1a1520!important;
+  font-weight:700;
+  text-shadow:none!important;
+}
+.chip-card strong{
+  display:block;
+  color:#1a1520!important;
+  font-weight:700;
+  letter-spacing:.06em;
+}
+.chip-card span{
+  display:block;
+  color:#2c2636!important;
+  opacity:1!important;
+  font-weight:600;
+  margin-top:4px;
+  line-height:1.45;
+  font-size:12px;
+}
+.chip-card.active{
+  background:linear-gradient(180deg,#fff4e6,#edd4b8)!important;
+  box-shadow:inset 0 0 0 2.5px #c44a52, 0 0 0 1px rgba(212,175,95,.4)!important;
+  color:#1a1520!important;
+}
+#gender-row .chip-card{
+  text-align:center;
+  font-size:16px;
+  letter-spacing:.18em;
+  padding:12px 6px;
+  min-height:48px;
+}
+
+/* Create / form inputs: white field + dark text */
+.create-wrap input[type=text],
+#create-name,#create-goal,
+.field input:not([type=checkbox]):not([type=radio]),
+.field select,
+.talk-input-row input,
+#talk-input{
+  background:#fffaf6!important;
+  color:#1a1520!important;
+  border:1.5px solid rgba(212,175,95,.8)!important;
+  caret-color:#1a1520;
+  border-radius:10px;
+}
+.create-wrap input[type=text]::placeholder,
+#create-name::placeholder,
+#create-goal::placeholder,
+.field input::placeholder,
+#talk-input::placeholder{
+  color:#5a5348!important;
+  opacity:.75!important;
+}
+
+/* Labels on navy panels stay light */
+.create-wrap .field,
+.create-wrap .flabel{color:#e8d9c4!important;}
+.create-wrap .field.check,
+#disguise-field .field.check{
+  color:#e8d9c4!important;
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  flex-wrap:wrap;
+  white-space:normal;
+  word-break:break-word;
+  line-height:1.5;
+  font-size:13px;
+}
+#disguise-field .field.check input{margin-top:3px;flex:0 0 auto;}
+
+/* Career screen readable */
+#screen-career{
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+}
+#screen-career .career-wrap{
+  margin-bottom:calc(var(--sab) + 24px);
+}
+.career-card{
+  background:rgba(22,32,56,.88)!important;
+  color:#f3e6d2!important;
+}
+.career-card h3{color:#f0d28c!important;}
+.career-card p,.career-card .stats{color:#d4c4a8!important;}
+
+/* Sheet / modal list cards on navy */
+.quest-item,
+.bag-cell,
+.bag-item,
+.gear-card,
+.villager-card,
+.shop-item,
+.craft-item,
+.aff-mini,
+.enemy-preview,
+.parchment-mini,
+.chron-item,
+.hands-chip,
+.dungeon-stats span{
+  background:linear-gradient(180deg,rgba(40,56,88,.94),rgba(22,32,56,.96))!important;
+  border:1.5px solid rgba(212,175,95,.62)!important;
+  color:#f3e6d2!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 8px rgba(0,0,0,.2)!important;
+}
+.chip{
+  background:rgba(36,52,80,.9)!important;
+  border:1px solid rgba(212,175,95,.65)!important;
+  color:#f3e6d2!important;
+}
+.quest-item.quest-section{
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px dashed rgba(212,175,95,.4)!important;
+  box-shadow:none!important;
+  color:#f0d28c!important;
+}
+.quest-item .quest-progress,
+.quest-item .quest-reward,
+.villager-card .muted,
+.craft-item .need,
+.note,.tiny,.muted,.mode-blurb,
+.crop-pick .label,
+.pin .pcost,
+.aff-num,
+.hp-num,
+.shead-sub,
+.ver-line,
+.talk-line.sys{
+  color:#cbb89a!important;
+}
+.quest-item strong,
+.shop-item b,
+.bag-section-title,
+.panel-h,
+.sheet .shead h2,
+.modal-card.parchment h2,
+.parchment h2{
+  color:#f0d28c!important;
+}
+.quest-item .ok,.ok{color:#6fd4a0!important;}
+
+/* 行事 plot-card：頭欄深藍高對比；畫布保持泥土色（唔用全局 navy 蓋） */
+.plot-card{
+  background:linear-gradient(180deg,rgba(40,56,88,.96),rgba(22,32,56,.98))!important;
+  border:1.5px solid rgba(212,175,95,.7)!important;
+  color:#f3e6d2!important;
+  box-shadow:0 3px 12px rgba(0,0,0,.28)!important;
+}
+.plot-card-head{
+  background:linear-gradient(180deg,#2a4060,#1a2838)!important;
+  color:#f6e7c8!important;
+  border-bottom:1px solid rgba(212,175,95,.45)!important;
+  font-weight:700;
+}
+.plot-card-hint{color:#d4c4a8!important;font-weight:600;}
+.plot-canvas-wrap{
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(139,110,80,.22), transparent 55%),
+    linear-gradient(180deg,#5d4636 0%,#3e2e24 100%)!important;
+}
+
+/* Segment / crop / fish / directives */
+.dir,.crop-btn,.seg,.fish-spot{
+  background:rgba(36,52,80,.92)!important;
+  color:#f3e6d2!important;
+  border-color:rgba(212,175,95,.75)!important;
+  font-weight:700;
+}
+.dir.active,.crop-btn.active,.fish-spot.active,.seg.active{
+  background:#c44a52!important;
+  color:#fff6ef!important;
+  border-color:#e07078!important;
+}
+.crop-pick select,
+.field select{
+  background:#fffaf6!important;
+  color:#1a1520!important;
+}
+
+/* Place chip + dialogue */
+#place-chip{
+  background:linear-gradient(180deg,#2a4060,#1a2838)!important;
+  border:1.5px solid rgba(212,175,95,.8)!important;
+  color:#f0d28c!important;
+}
+#txt,.event-body{color:#e8d9c4!important;}
+#txt .nar{color:#d4c4a8!important;}
+#txt .sys{color:#cbb89a!important;}
+#txt .npc{color:#f0a8b0!important;}
+#txt .me{color:#7ec8c4!important;}
+.event-choices .btn,.event-choice{
+  background:linear-gradient(180deg,#3a4a6a,#243050)!important;
+  color:#f3e6d2!important;
+  border:2px solid rgba(212,175,95,.7)!important;
+}
+#free-input::placeholder{color:#a89880!important;opacity:.8!important;}
+
+/* Sheet act / map notes readable */
+#sheet-act .sbody,
+#sheet-map .sbody,
+#sheet-bag .sbody,
+#sheet-quest .sbody,
+#sheet-ppl .sbody,
+#sheet-menu .sbody{color:#e8d9c4;}
+#sheet-act .note,#sheet-map .note{color:#d4c4a8!important;}
+
+/* Equip empty / secondary */
+.equip-slot small,.eq-meta small{color:#cbb89a!important;}
+
+/* Tabs stay visible above overlays */
+#tabs{z-index:50;}
+
+/* Narrow phone */
+@media (max-width:390px){
+  #screen-create .create-actions{padding-bottom:calc(14px + env(safe-area-inset-bottom, 0px))!important;}
+  #screen-create .create-wrap{margin-left:10px!important;margin-right:10px!important;}
+  #gender-row .chip-card{font-size:15px;letter-spacing:.12em;padding:10px 4px;}
+  .origin-grid{grid-template-columns:1fr 1fr;gap:8px;}
 }
