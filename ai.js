@@ -123,6 +123,55 @@
       { role: 'user', content: 'ping' }
     ], { maxTok: 32, timeout: 25, model: AI.isReasoner() ? 'deepseek-chat' : SET.model });
   };
+
+  /** 章節選項後短反應：必須服從 plotFlags／好感，不可亂改結局 */
+  AI.storyBeat = function (ctx) {
+    var sys = '你是《墨夢莊周》說書人／旁白。繁體中文，略帶文言，40～90字。' +
+      '只寫氣氛與內心餘波，不可宣布新結局，不可推翻既定旗標，不可引入現代事物，不可輸出JSON。' +
+      '不可抄錄任何現成小說原文。' +
+      (ctx.fateSummary ? '【既定命運旗標】' + ctx.fateSummary + '（必須合乎，勿推翻）' : '') +
+      (ctx.flags ? '【劇情旗標】' + ctx.flags : '') +
+      (ctx.affLine ? '【人物好感】' + ctx.affLine : '') +
+      (ctx.mode ? '【世界模式】' + ctx.mode : '');
+    var user = '玩家剛選：「' + (ctx.choiceText || '') + '」\n下一段節點摘要：「' + String(ctx.nextLine || '').slice(0, 160) +
+      '」\n請接一句短反應（非重複原文）。';
+    return AI.call([
+      { role: 'system', content: sys },
+      { role: 'user', content: user }
+    ], { maxTok: 220, temp: 0.75 });
+  };
+
+  /** 紀事／世界線摘要：受旗標約束 */
+  AI.chronicleDigest = function (ctx) {
+    var sys = '你是《墨夢莊周》史官。繁體中文，一文80～140字。總結近日動向。' +
+      '必須合乎既定旗標與好感，不可發明已結束之命運弧結局，不可抄小說原文，不可JSON。' +
+      (ctx.fateSummary ? '【命運旗標】' + ctx.fateSummary : '') +
+      (ctx.flags ? '【旗標】' + ctx.flags : '') +
+      (ctx.recent ? '【近日紀事】' + ctx.recent : '');
+    var user = '請寫一則「墨夢紀事」摘要，供儀表板風聞欄。日序：' + (ctx.dayStr || '');
+    return AI.call([
+      { role: 'system', content: sys },
+      { role: 'user', content: user }
+    ], { maxTok: 320, temp: 0.7 });
+  };
+
+  /** 說書人接寫／介入：沿主線或平行；可自建角色 intervening */
+  AI.storytellerContinue = function (ctx) {
+    var sys = '你是《墨夢莊周》說書人。秦王政元年前後，繁體中文，略文言。' +
+      '根據人物關係、狀態、既往事件接寫 80～160 字。' +
+      (ctx.intervene ? '玩家要求介入改劇情：在既定旗標內給出可選分岔暗示，但不可直接鎖定結局鍵。' : '閱讀模式接寫：沿主線推進氣氛，少給結論。') +
+      (ctx.parallel ? '允許開平行小支線，但須標明「或然」。' : '') +
+      (ctx.customNpc ? '玩家自建角色「' + ctx.customNpc + '」可短暫 intervening，須合乎時代身份。' : '') +
+      '不可抄任何小說原文；不可推翻：' + (ctx.fateSummary || '無') +
+      '；旗標：' + (ctx.flags || '無');
+    var user = (ctx.prompt || '請繼續下一小段。') + '\n【關係】' + (ctx.relLine || '') +
+      '\n【近事】' + (ctx.recent || '');
+    return AI.call([
+      { role: 'system', content: sys },
+      { role: 'user', content: user }
+    ], { maxTok: 420, temp: 0.8 });
+  };
+
   AI.npcReply = function (ctx) {
     var sys = '你是古風單機遊戲《墨夢莊周》中的人物「' + ctx.npcName + '」（' + ctx.npcRole + '）。' +
       '時代為秦王政元年前後（嬴政剛即位、呂不韋為相邦、太后／私門暗湧、六國尚存）。繁體中文，略帶文言，短句，回覆 40～120 字。' +

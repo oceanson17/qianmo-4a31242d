@@ -1,4 +1,4 @@
-/* v36 dashboard · dark forest/gold cultivation shell · Qin content */
+/* v37 dashboard · dark forest/gold cultivation shell · Qin content */
 :root{
   --dash-bg:#1a1d1c;
   --dash-card:#2d3e34;
@@ -411,3 +411,89 @@ body:has(#app.dash-live) #toast.err{
 #screen-game.dash-mode > #story-panel .story-meta{
   position:absolute;left:14px;top:10px;right:48px;
 }
+
+/* ---- v37 romance / codex / rel / read ---- */
+.dash-live #farm-panel,
+.dash-live canvas#farm,
+.dash-live .pin[data-mode="farm"],
+.dash-live .mode-tab[data-mode="farm"],
+.dash-live #plot-card { display: none !important; }
+
+.dash-center-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.dash-center-acts button {
+  min-height: 44px; padding: 8px 12px; border-radius: 999px;
+  border: 1px solid rgba(212,175,55,.45); background: rgba(10,28,22,.75);
+  color: #f3e6c0; font-size: 14px;
+}
+.dash-center-acts button.gold {
+  background: linear-gradient(180deg,#d4af37,#a67c00); color: #1a1205; font-weight: 700;
+}
+
+.dash-modal .codex-card {
+  width: min(560px, 94vw); max-height: min(86vh, 720px);
+  overflow: auto; background: #0d1f1a; color: #f3e6c0;
+  border: 1px solid rgba(212,175,55,.55); border-radius: 16px; padding: 14px 14px 18px;
+}
+.codex-card .modal-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.codex-card .modal-head h2 { margin:0; font-size:1.15rem; color:#f5e6b8; }
+.codex-card .modal-x { background:transparent; border:0; color:#f3e6c0; font-size:1.2rem; min-width:44px; min-height:44px; }
+.codex-tabs { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
+.codex-tabs button {
+  min-height:40px; padding:6px 12px; border-radius:999px;
+  border:1px solid rgba(212,175,55,.35); background:rgba(0,0,0,.25); color:#e8d9a8;
+}
+.codex-tabs button.on { background:rgba(212,175,55,.25); border-color:#d4af37; color:#fff5d0; }
+.codex-list { display:flex; flex-direction:column; gap:10px; }
+.codex-item {
+  background: rgba(255,255,255,.04); border:1px solid rgba(212,175,55,.22);
+  border-radius:12px; padding:10px 12px;
+}
+.codex-item h3 { margin:0 0 4px; font-size:1rem; color:#ffe9a8; }
+.codex-item .tags { opacity:.8; font-size:.8rem; margin-bottom:4px; }
+.codex-item p { margin:0; line-height:1.45; color:#e9dfc4; font-size:.92rem; }
+.codex-foot, .codex-lead { font-size:.8rem; opacity:.75; margin-top:10px; }
+
+.rel-toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px; }
+.rel-hint { font-size:.75rem; opacity:.7; }
+.rel-viewport {
+  height: min(52vh, 380px); border-radius:12px; overflow:hidden;
+  border:1px solid rgba(212,175,55,.3); background:#071410; touch-action:none;
+}
+#rel-svg { width:100%; height:100%; transform-origin: 50% 50%; }
+.rel-node circle { stroke:#d4af37; stroke-width:.4; fill:#1a3a30; }
+.rel-node text { fill:#f5e6b8; font-size:3.2px; text-anchor:middle; }
+.rel-node.dim circle { opacity:.35; stroke-dasharray:1 1; }
+.rel-edge { stroke:rgba(212,175,55,.55); fill:none; }
+.rel-center circle { fill:#d4af37; }
+
+.read-toolbar { display:flex; flex-wrap:wrap; gap:12px; margin:8px 0; font-size:.9rem; }
+.read-tog { display:flex; align-items:center; gap:6px; min-height:44px; }
+.read-body {
+  min-height:120px; max-height:40vh; overflow:auto; padding:12px;
+  background:#f7f0de; color:#1a1208; border-radius:12px; line-height:1.55; white-space:pre-wrap;
+}
+.read-tip {
+  margin-top:8px; padding:8px 10px; border-radius:10px;
+  background:rgba(212,175,55,.12); border:1px dashed rgba(212,175,55,.45);
+  font-size:.85rem; color:#e8d9a8;
+}
+.read-prompt, .share-text {
+  width:100%; margin-top:10px; box-sizing:border-box; border-radius:12px;
+  border:1px solid rgba(212,175,55,.35); background:#0a1814; color:#f3e6c0;
+  padding:10px; font-size:16px; /* iOS no zoom */
+}
+.read-acts { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.read-acts button { min-height:44px; padding:8px 14px; border-radius:999px; }
+
+#story-panel .story-ai-beat {
+  margin-top:8px; padding:8px 10px; border-left:3px solid #d4af37;
+  background:rgba(212,175,55,.08); color:#e8d9a8; font-size:.9rem; border-radius:0 8px 8px 0;
+}
+
+.modal.dash-modal {
+  position: fixed; inset: 0; z-index: 80;
+  display: flex; align-items: center; justify-content: center;
+  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+  background: rgba(0,0,0,.55);
+}
+.modal.dash-modal[hidden] { display: none !important; }

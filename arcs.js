@@ -174,8 +174,9 @@
       npc: 'yingzheng',
       face: 'scholar',
       faction: 'qin',
-      startIf: { day: 14, 'known:yingzheng': true, 'arcProg.arc_ying.ended': null },
-      altStartIf: { day: 18, 'access:palace': true, 'arcProg.arc_ying.ended': null },
+      startIf: { day: 10, 'known:yingzheng': true, 'arcProg.arc_ying.ended': null },
+      altStartIf: { day: 8, 'plotFlags.court_healer': true, 'arcProg.arc_ying.ended': null },
+      altStartIf2: { day: 14, 'access:palace': true, 'arcProg.arc_ying.ended': null },
       nodes: {
         start: {
           line: '宮牆外燈火稀疏。少年秦王並未升座，只立於影中問你：「邊野編戶，可曾厭官府？仲父總事——鄉里怎麼說寡人？」\n（你的回答，或成日後王心裡的一枚釘。）',
@@ -183,7 +184,9 @@
             { id: 'y_honest', text: '實言：民畏賦役，亦畏私門', to: 'counsel', set: { 'plotFlags.ying_heard_folk': 1 }, need: { bian: 3 } },
             { id: 'y_flatter', text: '稱頌王德、淡化私門', to: 'flatter_path', set: { 'plotFlags.ying_flattered': 1 } },
             { id: 'y_guard', text: '謹慎不答，只言耕織', to: 'cold_seed' },
-            { id: 'y_probe', text: '反問王欲親政否', to: 'counsel', set: { 'plotFlags.ying_probe': 1 }, need: { zhi: 5 } }
+            { id: 'y_probe', text: '反問王欲親政否', to: 'counsel', set: { 'plotFlags.ying_probe': 1 }, need: { zhi: 5 } },
+            { id: 'y_pulse', text: '以診脈分寸進言（近側醫）', to: 'near_ask', set: { 'plotFlags.ying_pulse': 1 },
+              if: { 'plotFlags.court_healer': true } }
           ]
         },
         counsel: {
@@ -192,7 +195,9 @@
             { id: 'y_ear', text: '願為耳目，通邊野實情', to: 'end_confidant', set: { 'plotFlags.ying_ear': 1 } },
             { id: 'y_wall', text: '願為牆，擋私門風雨', to: 'end_shield', need: { hu: 4 } },
             { id: 'y_both', text: '智計兩全：耳目有限、牆亦有門', to: 'end_confidant', need: { zhi: 6 }, set: { 'plotFlags.ying_balanced': 1 } },
-            { id: 'y_refuse', text: '田畝之人，不敢預朝爭', to: 'end_wary' }
+            { id: 'y_refuse', text: '田畝之人，不敢預朝爭', to: 'end_wary' },
+            { id: 'y_near', text: '若王許近側藥囊……', to: 'near_ask', set: { 'plotFlags.ying_near_ask': 1 },
+              if: { 'plotFlags.court_healer': true } }
           ]
         },
         flatter_path: {
@@ -244,6 +249,60 @@
             fame: 1, faction: { qin: -2 },
             aff: { yingzheng: -4 },
             diverge: { id: 'ying_fate', note: '王與邊野之士緣淺，耳目另擇他人' }
+          }
+        },
+        /* v37：近側／伴側／敬畏／改史 —— 原創，非小說情節 */
+        near_ask: {
+          line: '又一個深夜，王忽然問：「若寡人要你常侍藥囊於側——非寵，是用。你敢否？」燈影顫了一下。',
+          choices: [
+            { id: 'y_comp', text: '願伴側，守分寸', to: 'end_companion', set: { 'plotFlags.ying_companion': 1 } },
+            { id: 'y_awe', text: '不敢近褻，只願遠承王命', to: 'end_awe', set: { 'plotFlags.ying_awe': 1 } },
+            { id: 'y_alter', text: '勸王先改一樁苛斂，再談近側', to: 'alter_seed', need: { bian: 5 }, set: { 'plotFlags.ying_alter_ask': 1 } },
+            { id: 'y_back', text: '仍願為耳目／外牆，不入近側', to: 'counsel' }
+          ]
+        },
+        alter_seed: {
+          line: '王沉默良久：「改史……從一樁賦役起？」他目光如刃，「你敢署名，寡人便敢試。成，你進近側；敗，你先承擔。」',
+          choices: [
+            { id: 'y_al_yes', text: '署名承擔', to: 'end_alter', set: { 'plotFlags.ying_alter': 1 } },
+            { id: 'y_al_no', text: '退一步，只求伴側不涉政', to: 'end_companion', set: { 'plotFlags.ying_companion': 1 } },
+            { id: 'y_al_flee', text: '膽怯告退', to: 'end_wary' }
+          ]
+        },
+        end_companion: {
+          end: true,
+          endingKey: 'ying_companion',
+          fate: { 'plotFlags.fate_ying': 'companion' },
+          line: '自此你常以藥囊侍於廊側。王不多言溫軟，卻在召見之間，把「你」二字說得極準。伴側非佳話——是一根細而韌的線。',
+          toast: '秦王線·伴側',
+          rewards: {
+            gold: 50, fame: 8, faction: { qin: 16, lu: -6 },
+            attrs: { bian: 1 }, aff: { yingzheng: 22 },
+            diverge: { id: 'ying_fate', note: '近側醫士常侍，王府私語多一雙耳目與一味藥' }
+          }
+        },
+        end_awe: {
+          end: true,
+          endingKey: 'ying_awe',
+          fate: { 'plotFlags.fate_ying': 'awe' },
+          line: '王點頭：「遠承也好。」他賜你一枚無字小印——不必近，卻須在。敬畏長於溫存，亦是一種緣。',
+          toast: '秦王線·疏離敬畏',
+          rewards: {
+            gold: 30, fame: 5, faction: { qin: 10 },
+            aff: { yingzheng: 10 },
+            diverge: { id: 'ying_fate', note: '王與近側保持距離，敬多於親' }
+          }
+        },
+        end_alter: {
+          end: true,
+          endingKey: 'ying_alter',
+          fate: { 'plotFlags.fate_ying': 'alter', 'flags.history_nudge': 1 },
+          line: '一紙緩賦令自王府出。史冊軌道微微一顫——也許不足改寫百年，卻夠改寫你與他的距離。你倖存於署名之後，近側之門半開。',
+          toast: '秦王線·改史倖存',
+          rewards: {
+            gold: 40, fame: 10, people: 6, faction: { qin: 12, lu: -8 },
+            attrs: { zhi: 1, bian: 1 }, aff: { yingzheng: 16 },
+            diverge: { id: 'ying_fate', note: '緩賦一令改寫局部軌道，近側醫士之名入王冊' }
           }
         }
       }
@@ -638,6 +697,9 @@
     { id: 'ying_confidant', tier: 'arc', name: '秦王心腹（邊野耳目）', when: '少年秦王以你為邊野耳目，親政之心漸堅。', fate: 'confidant', npc: 'ying' },
     { id: 'ying_shield', tier: 'arc', name: '王府外牆', when: '你成王府外圍屏障，私門稍斂。', fate: 'shield', npc: 'ying' },
     { id: 'ying_wary', tier: 'arc', name: '秦王緣淺', when: '宮門一合，王不再問邊野之士。', fate: 'wary', npc: 'ying' },
+    { id: 'ying_companion', tier: 'arc', name: '伴側長隨', when: '藥囊侍廊側，近側細線韌而長。', fate: 'companion', npc: 'ying' },
+    { id: 'ying_awe', tier: 'arc', name: '疏離敬畏', when: '王賜無字印：不必近，卻須在。', fate: 'awe', npc: 'ying' },
+    { id: 'ying_alter', tier: 'arc', name: '改史倖存', when: '緩賦一令顫動軌道，署名者倖存近側。', fate: 'alter', npc: 'ying' },
     { id: 'lu_patron', tier: 'arc', name: '呂氏門客', when: '相邦府記你為長線門客，命運與呂氏相綁。', fate: 'patron', npc: 'lu' },
     { id: 'lu_merchant', tier: 'arc', name: '呂網商結', when: '你成呂氏商網上的邊野節點。', fate: 'merchant', npc: 'lu' },
     { id: 'lu_broker', tier: 'arc', name: '呂／王雙線', when: '中道留線，雨來時最難站——亦最活。', fate: 'broker', npc: 'lu' },
@@ -669,6 +731,7 @@
     if (p.started && p.node) return false; /* 進行中由 pollContinue 處理 */
     if (condOk(S, arc.startIf)) return true;
     if (arc.altStartIf && condOk(S, arc.altStartIf)) return true;
+    if (arc.altStartIf2 && condOk(S, arc.altStartIf2)) return true;
     return false;
   }
 
