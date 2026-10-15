@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '42';
+  const GAME_VERSION = '43';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -233,6 +233,9 @@
   let S = null;
   let mode = 'hut';
   let autoOn = false;
+  let idleCat = 'farm'; /* farm | forge | mine | dungeon */
+  let idleDungeon = 'wild';
+  let idleAutoArmed = false; /* true = AUTO 由閒務頁啟動，鎖定該類 */
   let selectedCrop = 'rice';
   let directive = 'grain';
   let selectedNpc = 'he';
@@ -1393,11 +1396,11 @@
     return '<img class="face-thumb" src="' + faceUrl(faceKey) + '" alt="' + (name || '') + '" width="52" height="52" decoding="async">';
   }
   function openSheet(id) {
-    ['sheet-map', 'sheet-act'].forEach((x) => { if ($(x)) $(x).hidden = true; });
+    ['sheet-map', 'sheet-act', 'sheet-idle'].forEach((x) => { if ($(x)) $(x).hidden = true; });
     if ($(id)) $(id).hidden = false;
   }
   function closeSheets() {
-    ['sheet-map', 'sheet-act'].forEach((x) => { if ($(x)) $(x).hidden = true; });
+    ['sheet-map', 'sheet-act', 'sheet-idle'].forEach((x) => { if ($(x)) $(x).hidden = true; });
   }
   function openActSheet() {
     if ($('act-title')) $('act-title').textContent = MODE_LABELS[mode] || '行事';
@@ -3147,11 +3150,100 @@
     }
     document.querySelectorAll('.auto-btn').forEach((b) => b.classList.toggle('on', autoOn));
     if ($('q-auto')) $('q-auto').classList.toggle('on', autoOn);
+    if ($('idle-auto-state')) {
+      $('idle-auto-state').textContent = autoOn ? 'AUTO 開' : 'AUTO 關';
+      $('idle-auto-state').className = autoOn ? 'idle-auto-on' : 'idle-auto-off';
+    }
+    if ($('btn-idle-stop')) $('btn-idle-stop').hidden = !autoOn;
+    if ($('idle-dot')) $('idle-dot').hidden = !autoOn;
+    renderIdleSheet(false);
+  }
+  const IDLE_DUNGEONS = ['wild', 'drill', 'frontier', 'ruins', 'crypt', 'marsh', 'gorge', 'stone_forest'];
+  function idleModeTarget() {
+    if (idleCat === 'farm') return 'farm';
+    if (idleCat === 'forge') return 'forge';
+    if (idleCat === 'mine') return 'mine';
+    if (idleCat === 'dungeon') return IDLE_DUNGEONS.includes(idleDungeon) ? idleDungeon : 'wild';
+    return 'farm';
+  }
+  function idleCatLabel() {
+    if (idleCat === 'farm') return '種田';
+    if (idleCat === 'forge') return '打鐵';
+    if (idleCat === 'mine') return '挖掘';
+    if (idleCat === 'dungeon') return '打副本·' + ((MODE_LABELS && MODE_LABELS[idleDungeon]) || idleDungeon);
+    return '閒務';
+  }
+  function setIdleCat(cat) {
+    if (!['farm', 'forge', 'mine', 'dungeon'].includes(cat)) return;
+    idleCat = cat;
+    document.querySelectorAll('.idle-cat').forEach((b) => b.classList.toggle('active', b.dataset.idle === cat));
+    if ($('idle-dungeon-pick')) $('idle-dungeon-pick').hidden = cat !== 'dungeon';
+    if ($('idle-farm-dirs')) $('idle-farm-dirs').hidden = cat !== 'farm';
+    renderIdleSheet(true);
+  }
+  function setIdleDungeon(d) {
+    if (!IDLE_DUNGEONS.includes(d)) return;
+    idleDungeon = d;
+    document.querySelectorAll('.idle-d').forEach((b) => b.classList.toggle('active', b.dataset.dungeon === d));
+    renderIdleSheet(true);
+  }
+  function renderIdleSheet(force) {
+    if (!$('sheet-idle')) return;
+    if ($('idle-cur')) $('idle-cur').textContent = '當前：' + idleCatLabel();
+    if ($('idle-auto-state')) {
+      $('idle-auto-state').textContent = autoOn ? 'AUTO 開' : 'AUTO 關';
+      $('idle-auto-state').className = autoOn ? 'idle-auto-on' : 'idle-auto-off';
+    }
+    if ($('idle-hint')) {
+      const tips = {
+        farm: 'AUTO 會自動澆水、收成、補種、偶爾擴田／賣出；方針睇下方。',
+        forge: 'AUTO 會留在鐵鋪開爐／幫錘／買礦（有礦才鍛）。',
+        mine: 'AUTO 會採掘、偶爾更深或遇敵自戰。',
+        dungeon: 'AUTO 會在所選副本自動作戰；體力過低回陋室歇息後再出發。'
+      };
+      $('idle-hint').textContent = tips[idleCat] || tips.farm;
+    }
+    if ($('idle-sub')) $('idle-sub').textContent = idleCatLabel() + (autoOn ? ' · AUTO 開' : ' · AUTO 關');
+    document.querySelectorAll('.idle-cat').forEach((b) => b.classList.toggle('active', b.dataset.idle === idleCat));
+    document.querySelectorAll('.idle-d').forEach((b) => b.classList.toggle('active', b.dataset.dungeon === idleDungeon));
+    if ($('idle-dungeon-pick')) $('idle-dungeon-pick').hidden = idleCat !== 'dungeon';
+    if ($('idle-farm-dirs')) $('idle-farm-dirs').hidden = idleCat !== 'farm';
+    if (force) {
+      document.querySelectorAll('#idle-farm-dirs .dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
+    }
+  }
+  function applyIdleMode() {
+    const target = idleModeTarget();
+    if (mode !== target) showMode(target);
+  }
+  function openIdleSheet() {
+    renderIdleSheet(true);
+    openSheet('sheet-idle');
+    toast('閒務');
+  }
+  function goIdleOperate() {
+    applyIdleMode();
+    closeSheets();
+    openActSheet();
+  }
+  function toggleIdleAuto() {
+    if (!autoOn) {
+      applyIdleMode();
+      idleAutoArmed = true;
+      autoOn = true;
+    } else {
+      autoOn = false;
+      idleAutoArmed = false;
+    }
+    renderHUD();
+    syncAutoUi();
+    renderIdleSheet(true);
+    toast(autoOn ? ('AUTO 開 · ' + idleCatLabel()) : 'AUTO 關');
   }
   function autoFightStep() {
     if (Date.now() < battleLockUntil) return;
     if (!battle) {
-      if (mode === 'drill' || mode === 'wild' || mode === 'frontier' || mode === 'ruins' || mode === 'crypt' || mode === 'marsh') startBattle(mode);
+      if (mode === 'drill' || mode === 'wild' || mode === 'frontier' || mode === 'ruins' || mode === 'crypt' || mode === 'marsh' || mode === 'gorge' || mode === 'stone_forest') startBattle(mode);
       else if (mode === 'mine') startBattle('mine');
       return;
     }
@@ -3429,7 +3521,15 @@
     if (S.hp < Math.max(10, S.maxHp * 0.28) && mode !== 'hut' && !battle) {
       showMode('hut'); hutRest(false); return;
     }
-    if (window.QianFactions && Math.random() < 0.04) {
+    /* v43：閒務 AUTO 鎖定種田／打鐵／挖掘／副本，唔俾勢力偏好亂跳 */
+    const idleTarget = idleModeTarget();
+    const inIdleGrind = (idleCat === 'farm' && mode === 'farm')
+      || (idleCat === 'forge' && mode === 'forge')
+      || (idleCat === 'mine' && mode === 'mine')
+      || (idleCat === 'dungeon' && IDLE_DUNGEONS.includes(mode));
+    if (autoOn && idleAutoArmed && !inIdleGrind && mode !== 'hut' && Math.random() < 0.55) {
+      showMode(idleTarget);
+    } else if (window.QianFactions && Math.random() < 0.04 && !(autoOn && idleAutoArmed)) {
       const pref = window.QianFactions.autoPriority(S);
       if (pref && pref !== mode) showMode(pref);
     }
@@ -3437,12 +3537,18 @@
     else if (mode === 'village') autoVillageStep();
     else if (mode === 'market') autoMarketStep();
     else if (mode === 'clinic') autoClinicStep();
-    else if (mode === 'drill' || mode === 'wild' || mode === 'frontier' || mode === 'ruins' || mode === 'crypt' || mode === 'marsh') autoFightStep();
-    else if (mode === 'hut') { if (S.hp < S.maxHp) hutRest(false); }
+    else if (mode === 'drill' || mode === 'wild' || mode === 'frontier' || mode === 'ruins' || mode === 'crypt' || mode === 'marsh' || mode === 'gorge' || mode === 'stone_forest') autoFightStep();
+    else if (mode === 'hut') {
+      if (S.hp < S.maxHp) hutRest(false);
+      else if (autoOn && idleAutoArmed && Math.random() < 0.4) showMode(idleTarget);
+    }
     else if (mode === 'mine') {
       if (Math.random() < 0.55) mineDig();
       else if (Math.random() < 0.25) mineDeeper();
       else autoFightStep();
+    }
+    else if (mode === 'forge') {
+      autoBeautyStep('forge');
     }
     else if (mode === 'post') {
       if (Math.random() < 0.5) postRest();
@@ -4531,7 +4637,9 @@
 
   function toggleAuto() {
     autoOn = !autoOn;
+    if (!autoOn) idleAutoArmed = false;
     renderHUD();
+    syncAutoUi();
     toast(autoOn ? 'AUTO 開' : 'AUTO 關');
   }
 
@@ -5534,12 +5642,29 @@
     if ($('dash-story-backdrop')) $('dash-story-backdrop').addEventListener('click', () => closeStoryModal());
 
     if ($('tab-map')) $('tab-map').addEventListener('click', openMapSheet);
+    if ($('tab-idle')) $('tab-idle').addEventListener('click', openIdleSheet);
     if ($('q-act')) $('q-act').addEventListener('click', openActSheet);
     if ($('hSeal')) $('hSeal').addEventListener('click', openActSheet);
     if ($('map-x')) $('map-x').addEventListener('click', closeSheets);
     if ($('act-x')) $('act-x').addEventListener('click', closeSheets);
+    if ($('idle-x')) $('idle-x').addEventListener('click', closeSheets);
     document.querySelectorAll('#map-pins .pin').forEach((p) => {
       p.addEventListener('click', () => travelTo(p.dataset.mode));
+    });
+    document.querySelectorAll('.idle-cat').forEach((b) => {
+      b.addEventListener('click', () => setIdleCat(b.dataset.idle));
+    });
+    document.querySelectorAll('.idle-d').forEach((b) => {
+      b.addEventListener('click', () => setIdleDungeon(b.dataset.dungeon));
+    });
+    if ($('btn-idle-auto')) $('btn-idle-auto').addEventListener('click', toggleIdleAuto);
+    if ($('btn-idle-go')) $('btn-idle-go').addEventListener('click', goIdleOperate);
+    if ($('btn-idle-stop')) $('btn-idle-stop').addEventListener('click', () => { autoOn = false; idleAutoArmed = false; renderHUD(); syncAutoUi(); renderIdleSheet(true); toast('AUTO 關'); });
+    document.querySelectorAll('#idle-farm-dirs .dir').forEach((d) => {
+      d.addEventListener('click', () => {
+        directive = d.dataset.dir;
+        document.querySelectorAll('.dir').forEach((x) => x.classList.toggle('active', x.dataset.dir === directive));
+      });
     });
     if ($('q-auto')) $('q-auto').addEventListener('click', toggleAuto);
     if ($('q-save')) $('q-save').addEventListener('click', () => save());

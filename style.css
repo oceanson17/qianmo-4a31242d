@@ -2786,7 +2786,7 @@ html,body{
   max-height:22vh!important;
   z-index:1;
 }
-/* VN：工具列（回顧／AUTO／存檔／支線）收進 #box 內，唔再浮喺羊皮紙上 */
+/* VN：工具列（回顧／存檔／支線；AUTO 改閒務）收進 #box 內，唔再浮喺羊皮紙上 */
 .vn-text-mode #box.vn-log-box{
   position:absolute!important;
   left:8px;right:8px;
@@ -2969,4 +2969,89 @@ html,body{
 @media (max-width:420px){
   .story-free{padding:8px;}
   .story-free-modes .seg{font-size:13px;min-height:42px;}
+}
+
+/* ===== v43 閒務・AUTO 分頁 ===== */
+#sheet-idle .idle-body{display:flex;flex-direction:column;gap:12px;padding:12px 14px 20px;}
+#sheet-idle .idle-lead{margin:0;line-height:1.4;}
+.idle-cats{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.idle-cat{
+  display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1.5px solid rgba(120,80,40,.28);
+  background:linear-gradient(180deg,rgba(255,250,240,.92),rgba(245,230,205,.88));
+  color:#2c1810;
+  text-align:left;
+  min-height:64px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.idle-cat.active{
+  border-color:#a67c3a;
+  box-shadow:0 0 0 2px rgba(166,124,58,.28), inset 0 1px 0 rgba(255,255,255,.55);
+  background:linear-gradient(180deg,#fff8e8,#f3e0b8);
+}
+.idle-cat-ico{
+  font-size:15px;font-weight:700;color:#8a5a28;
+  width:22px;height:22px;border-radius:8px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:rgba(166,124,58,.15);
+}
+.idle-cat-name{font-size:15px;font-weight:700;}
+.idle-cat-tip{font-size:11px;color:#7a6555;}
+.idle-dungeon-pick .label,.idle-farm-dirs .label{margin:0 0 6px;color:#6a5545;}
+.idle-d-list{display:flex;flex-wrap:wrap;gap:6px;}
+.idle-d{
+  padding:8px 12px;min-height:40px;
+  border-radius:999px;
+  border:1px solid rgba(120,80,40,.3);
+  background:rgba(255,252,245,.9);
+  color:#3a2818;font-size:13px;
+}
+.idle-d.active{
+  background:#a67c3a;color:#fff8e8;border-color:#8a6230;
+}
+.idle-status{
+  padding:10px 12px;border-radius:12px;
+  background:rgba(255,248,235,.75);
+  border:1px solid rgba(120,80,40,.18);
+}
+.parchment-lite{/* alias */}
+.idle-status-row{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  font-size:14px;font-weight:600;color:#2c1810;margin-bottom:4px;
+}
+.idle-auto-on{color:#2a7a3a;}
+.idle-auto-off{color:#8a6555;}
+.idle-controls{
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+}
+.idle-controls .idle-auto-main{
+  min-width:96px;min-height:48px;font-size:16px;font-weight:700;
+  letter-spacing:.04em;
+}
+.idle-controls .idle-auto-main.on{
+  background:#2a7a3a;color:#fff;border-color:#1e5c2a;
+}
+.idle-dirs{display:flex;flex-wrap:wrap;gap:6px;}
+#tabs.tabs-dock button[data-t="idle"] span,
+#tabs.tabs-dock #tab-idle span{color:inherit;}
+/* 七鈕略收窄 */
+#tabs.tabs-dock{
+  gap:2px!important;
+}
+#tabs.tabs-dock button{
+  min-width:0;
+  padding:4px 2px!important;
+}
+#tabs.tabs-dock button span{font-size:10px;}
+@media (max-width:380px){
+  .idle-cats{gap:6px;}
+  .idle-cat{padding:8px 10px;min-height:58px;}
+  .idle-cat-name{font-size:14px;}
 }
