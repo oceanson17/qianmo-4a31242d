@@ -194,6 +194,37 @@
     ], { maxTok: 400, model: AI.isReasoner(SET.model) && SET.preset === 'deepseek' ? 'deepseek-chat' : SET.model });
   };
 
+
+  /** v42 自由行動：想說／想做 → 在場 NPC 依性格反應（JSON） */
+  AI.freeAct = function (ctx) {
+    var sys = '你是《墨夢莊周》世界引擎。秦王政元年前後。繁體中文，略文言。' +
+      '玩家在劇情場景中自由輸入「想說」或「想做」。你必須以當前焦點人物身份反應，合乎性格、好感、記憶、扮相與地點門禁。' +
+      '禁止抄錄任何現成小說原文；禁止宣布鎖定結局（不可寫死 fate_* 最終鍵）；不可引入現代事物。' +
+      '只輸出一個 JSON 物件，無Markdown圍欄，欄位：' +
+      'narration(旁白40字內), npcId, npcName, reply(人物對白40～120字), sets(物件，可含 plotFlags.xxx 或 flags.xxx 或 access.palace 布林), ' +
+      'aff(物件，npcId→整數加減), toast(可空), advance(null|"period"), goldDelta(整數，賄絡才用負數)。' +
+      'sets 只允許輕量旗標（如 free_*、bond_*、want_palace、healer_seed），不可寫 plotFlags.fate_*。' +
+      (ctx.fateSummary ? '【既定命運】' + ctx.fateSummary + '（對白須合乎，勿推翻）' : '') +
+      (ctx.flags ? '【旗標】' + ctx.flags : '') +
+      (ctx.loc ? '【地點約束】' + ctx.loc : '') +
+      (ctx.disguise ? '【扮相】' + ctx.disguise : '') +
+      (ctx.palaceAccess ? '【門禁】已通宮城' : '【門禁】未通宮城') +
+      (ctx.factionStance ? '【勢力】' + ctx.factionStance : '') +
+      (ctx.worldMode ? '【模式】' + ctx.worldMode : '');
+    var user = '【焦點人物】' + ctx.npcName + '（' + ctx.npcRole + '，id=' + ctx.npcId + '，好感' + ctx.aff + '）\n' +
+      (ctx.bio ? '小傳：' + ctx.bio + '\n' : '') +
+      (ctx.linesHint ? '口吻參考：' + ctx.linesHint + '\n' : '') +
+      (ctx.mem ? '往來：' + ctx.mem + '\n' : '') +
+      (ctx.feel ? '情感：' + ctx.feel + '\n' : '') +
+      (ctx.heroCtx ? '玩家：' + ctx.heroCtx + '\n' : '') +
+      '玩家' + (ctx.mode === 'do' ? '想做' : '想說') + '：「' + ctx.text + '」\n' +
+      '紀年：' + ctx.dayStr + ' 職業：' + ctx.career + ' 銀兩：' + ctx.gold + '\n請輸出 JSON。';
+    return AI.call([
+      { role: 'system', content: sys },
+      { role: 'user', content: user }
+    ], { maxTok: 500, temp: 0.75 });
+  };
+
   loadSettings();
   global.QianAI = AI;
 })(window);

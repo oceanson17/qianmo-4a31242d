@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '41';
+  const GAME_VERSION = '42';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -1481,22 +1481,110 @@
     });
   }
   function freeSend() {
-    const input = $('free-input');
-    if (!input) return;
-    const text = (input.value || '').trim();
+    /* v42：有劇情自由欄時優先走自由行動；否則退回對談 */
+    const storyIn = $('story-free-input');
+    const logIn = $('free-input');
+    const text = ((storyIn && storyIn.value) || (logIn && logIn.value) || '').trim();
     if (!text) { toast('請先輸入'); return; }
-    // sync say mode from chip
+    if (storyIn && document.getElementById('story-panel') && !document.getElementById('story-panel').hidden) {
+      storyIn.value = text;
+      if (logIn) logIn.value = '';
+      storyFreeSend();
+      return;
+    }
     const chip = $('mode-chip');
     if (chip) sayMode = chip.dataset.say || 'say';
-    // ensure village context for talk
-    if (mode !== 'village') {
-      showMode('village');
-    }
-    $('talk-input').value = text;
-    input.value = '';
-    // open talk UI lightly then send
-    if ($('modal-talk').hidden) openTalk();
+    if (mode !== 'village') showMode('village');
+    if ($('talk-input')) $('talk-input').value = text;
+    if (logIn) logIn.value = '';
+    if ($('modal-talk') && $('modal-talk').hidden) openTalk();
     sendTalk();
+  }
+
+  let freeActMode = 'say';
+  function setFreeActMode(m) {
+    freeActMode = m === 'do' ? 'do' : 'say';
+    const say = $('free-mode-say');
+    const dob = $('free-mode-do');
+    if (say) say.classList.toggle('active', freeActMode === 'say');
+    if (dob) dob.classList.toggle('active', freeActMode === 'do');
+    const inp = $('story-free-input');
+    if (inp) inp.placeholder = freeActMode === 'do' ? '想做什麼？（例：賂門衛／潛入／贈藥）…' : '想說什麼？（例：請安／試探／表態）…';
+  }
+
+  async function storyFreeSend() {
+    if (!S || !window.QianFreeAct) { toast('自由行動未載入'); return; }
+    const input = $('story-free-input');
+    if (!input) return;
+    const text = (input.value || '').trim();
+    if (!text) { toast('請先輸入想說／想做'); return; }
+    input.value = '';
+    input.disabled = true;
+    const sendBtn = $('story-free-send');
+    if (sendBtn) sendBtn.disabled = true;
+    const beatEl = $('story-ai-beat');
+    if (beatEl) { beatEl.hidden = false; beatEl.textContent = freeActMode === 'do' ? '天下因你的行動微顫…' : '對方沉吟中…'; }
+    pushStory('你' + (freeActMode === 'do' ? '（做）' : '（說）') + '：' + text, 'me');
+    try {
+      const r = await window.QianFreeAct.resolve(S, text, freeActMode);
+      if (!r || !r.ok) {
+        toast((r && r.toast) || '無法行動');
+        if (beatEl) beatEl.textContent = '';
+        return;
+      }
+      if (r.aiNote) toast(r.aiNote + (r.offline ? ' → 離線反應' : ''));
+      if (r.narration) {
+        if (beatEl) beatEl.textContent = r.narration;
+        pushStory(r.narration, 'nar');
+        status(r.narration);
+      }
+      if (r.reply) {
+        const who = r.npcName || '對方';
+        pushStory(who + '：' + r.reply, 'npc');
+        const sp = $('story-speaker');
+        if (sp) sp.textContent = who;
+        const extra = document.createElement('div');
+        extra.className = 'story-free-echo';
+        extra.innerHTML = '<b>' + escapeHtml(who) + '</b>：' + escapeHtml(r.reply);
+        if (beatEl && beatEl.parentNode) {
+          let echo = $('story-free-echo');
+          if (!echo) {
+            echo = document.createElement('div');
+            echo.id = 'story-free-echo';
+            echo.className = 'story-free-echo';
+            beatEl.parentNode.insertBefore(echo, beatEl.nextSibling);
+          }
+          echo.innerHTML = '<b>' + escapeHtml(who) + '</b>：' + escapeHtml(r.reply);
+          echo.hidden = false;
+        }
+      }
+      if (r.toast) toast(r.toast);
+      if (r.advance === 'period' || r.advance === 'day') {
+        try {
+          if (r.advance === 'day') {
+            let guard = 0; const day0 = S.day;
+            while (guard++ < 6) { nextDay(); if (S.day !== day0) break; }
+          } else nextDay();
+        } catch (e) {}
+      }
+      pushDashLog('free', (r.narration || r.reply || text).slice(0, 80), { noise: false });
+      renderStoryPanel();
+      renderHUD();
+      saveQuiet();
+      /* 自由行動後若條件滿足，可叩命運弧 */
+      if (S.plotFlags && (S.plotFlags.free_actions || 0) >= 2) {
+        S.flags = S.flags || {};
+        S.flags.poll_arc = 1;
+        setTimeout(maybeTriggerVisit, 320);
+      }
+    } catch (e) {
+      toast('自由行動失敗');
+      if (beatEl) beatEl.textContent = '墨夢一滯，稍後再試。';
+    } finally {
+      input.disabled = false;
+      if (sendBtn) sendBtn.disabled = false;
+      try { input.focus(); } catch (e) {}
+    }
   }
 
   /* ---- Farm canvas ---- */
@@ -5468,6 +5556,12 @@
     });
     if ($('free-send')) $('free-send').addEventListener('click', freeSend);
     if ($('free-input')) $('free-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') freeSend(); });
+    if ($('story-free-send')) $('story-free-send').addEventListener('click', (e) => { tapFeel(e.currentTarget, e); storyFreeSend(); });
+    if ($('story-free-input')) $('story-free-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); storyFreeSend(); } });
+    document.querySelectorAll('#story-free [data-free]').forEach((b) => {
+      b.addEventListener('click', (e) => { tapFeel(b, e); setFreeActMode(b.dataset.free); });
+    });
+    setFreeActMode('say');
     if ($('tab-ppl')) $('tab-ppl').addEventListener('click', () => {
       if (mode !== 'village') showMode('village');
       renderPplModal();

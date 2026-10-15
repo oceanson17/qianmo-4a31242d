@@ -2905,3 +2905,68 @@ html,body{
     top:calc(var(--sat) + 76px)!important;
   }
 }
+
+
+/* ========== v42：劇情自由行動（想說／想做）· 保留 v41 防疊 ========== */
+.story-free{
+  margin-top:10px;
+  padding:10px 10px 8px;
+  border-radius:12px;
+  background:rgba(255,248,230,.72);
+  border:1px solid rgba(160,110,50,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+  flex:0 0 auto;
+}
+.story-free-modes{display:flex;gap:8px;margin-bottom:8px;}
+.story-free-modes .seg{
+  flex:1;
+  min-height:44px;
+  border-radius:10px;
+  border:1px solid rgba(140,90,40,.35);
+  background:rgba(255,252,240,.9);
+  color:#4a3420;
+  font-size:14px;
+  font-weight:600;
+}
+.story-free-modes .seg.active{
+  background:linear-gradient(180deg,#c9a35a,#a67c3a);
+  color:#fffaf0;
+  border-color:#8a6230;
+}
+.story-free-row{display:flex;gap:8px;align-items:center;}
+#story-free-input{
+  flex:1;
+  min-height:44px;
+  font-size:16px!important;
+  padding:10px 12px;
+  border:none;
+  border-bottom:2px solid rgba(120,80,40,.35);
+  background:transparent;
+  color:#2c1810;
+  border-radius:0;
+  -webkit-appearance:none;
+}
+#story-free-input:focus{outline:none;border-bottom-color:#a67c3a;}
+#story-free-input::placeholder{color:#a8968c;}
+#story-free-send{
+  min-width:64px;min-height:44px;
+  padding:8px 14px;
+  border-radius:12px;
+  white-space:nowrap;
+}
+.story-free-hint{margin:8px 0 0;line-height:1.35;}
+.story-free-echo{
+  margin:8px 0 4px;
+  padding:8px 10px;
+  border-left:3px solid #a67c3a;
+  background:rgba(255,255,255,.45);
+  color:#3a2818;
+  font-size:14px;
+  line-height:1.45;
+  border-radius:0 8px 8px 0;
+}
+.vn-text-mode #story-panel .story-free{margin-top:8px;}
+@media (max-width:420px){
+  .story-free{padding:8px;}
+  .story-free-modes .seg{font-size:13px;min-height:42px;}
+}

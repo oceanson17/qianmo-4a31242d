@@ -142,6 +142,7 @@
         { id: 'letter', text: '托人寫信自薦太醫署', to: 'ch1_letter', if: { 'flags.ch1_letter_done': false } },
         { id: 'mkt', text: '市井打聽咸陽缺什麼人', to: 'ch1_market', if: { 'flags.ch1_mkt_done': false } },
         { id: 'rest', text: '回陋室歇息，過一時', to: 'ch1_rest' },
+        { id: 'vil_side', text: '村中支線：幫林嫂運糧', to: 'side_vil_grain', if: { 'flags.side_vil_grain': false } },
         { id: 'next', text: '準備妥當——啟程赴咸陽', to: 'ch2_road', if: { 'flags.ch1_ready': true }, set: { 'flags.left_village': 1 } }
       ]
     },
@@ -195,6 +196,15 @@
     },
 
     /* 第二章：赴咸陽 —— 壓力關 */
+    side_vil_grain: {
+      id: 'side_vil_grain', chapter: 'side', speaker: '林嫂', bg: 'farm',
+      text: '林嫂抹汗：「糧袋要運到里倉，人手不夠。你若來幫，後日耕具我借你；若趁機扣下一袋——我也未必查得清。」',
+      choices: [
+        { id: 'a', text: '老實運完', to: 'ch1_hub', set: { 'flags.side_vil_grain': 1, 'plotFlags.side_honest': 1, 'aff:lin': 5 }, reward: { people: 3, food: 2 }, advance: 'period' },
+        { id: 'b', text: '扣下一袋（險）', to: 'ch1_hub', set: { 'flags.side_vil_grain': 1, 'plotFlags.side_theft': 1, 'aff:lin': -3 }, reward: { food: 4, people: -2 }, advance: 'period' },
+        { id: 'c', text: '改叫里中少年來幫', to: 'ch1_hub', set: { 'flags.side_vil_grain': 1, 'aff:lin': 2, 'aff:cheng': 1 }, reward: { people: 1 }, advance: 'period' }
+      ]
+    },
     ch2_road: {
       id: 'ch2_road', chapter: 'ch2', speaker: '旁白', bg: 'post',
       text: '驛道揚塵。前方咸陽城闕隱現。忽有腳步雜亂——三五流寇自坡下躥出，刀光一閃。藥囊在腰間一沉。',
@@ -352,10 +362,88 @@
       ]
     },
     xy_side: {
-      id: 'xy_side', chapter: 'xianyang', speaker: '旁白', bg: 'market',
-      text: '你在鹽鐵與竹簡之間走了一個時辰。吳越口音、關市皮貨、客館燈火——見聞入袖，薄利入囊。沒有田壟，只有人情與風聲。',
+      id: 'xy_side', chapter: 'side', speaker: '旁白', bg: 'market',
+      text: '咸陽支線如蛛網。你可揀一樁淺事：市井人情、藥廬夜診、客館密語、關市皮貨，或書塾清談——每條路都會在旗標裡留痕，他日命運弧或因此叩門。',
       choices: [
-        { id: 'a', text: '回到樞紐', to: 'xy_hub', set: { 'flags.xy_side': 1, 'flags.visited_keguan': 1 }, reward: { gold: 8, fame: 1 }, advance: 'period' }
+        { id: 'mkt', text: '市井：幫賈人辯一樁假秤', to: 'side_scale', if: { 'flags.side_scale': false } },
+        { id: 'clinic', text: '藥廬：夜診無名傷者', to: 'side_nightclinic', if: { 'flags.side_clinic': false } },
+        { id: 'inn', text: '客館：聽楚齊口音密語', to: 'side_inn', if: { 'flags.side_inn': false } },
+        { id: 'pass', text: '關市：護一車皮貨過卡', to: 'side_pass', if: { 'flags.side_pass': false } },
+        { id: 'school', text: '書塾：與成郎辯「法與情」', to: 'side_school', if: { 'flags.side_school': false } },
+        { id: 'letter', text: '驛道：代送一封無名書', to: 'side_letter', if: { 'flags.side_letter': false } },
+        { id: 'done', text: '（已遊數則）任意閒逛換薄利', to: 'side_wander', if: { 'flags.xy_side': true } },
+        { id: 'back', text: '暫回咸陽樞紐', to: 'xy_hub' }
+      ]
+    },
+    side_scale: {
+      id: 'side_scale', chapter: 'side', speaker: '賈人馮', bg: 'market',
+      text: '坊市喧嚷。賈人馮拉你袖：「鄰攤假秤坑人。你若敢當眾拆穿，我記一筆人情；你若裝聾，銀兩也能塞你——選。」',
+      choices: [
+        { id: 'a', text: '當眾拆穿（民心＋）', to: 'xy_side', set: { 'flags.side_scale': 1, 'flags.xy_side': 1, 'plotFlags.side_justice': 1, 'aff:feng': 3 }, reward: { people: 4, fame: 2 }, advance: 'period' },
+        { id: 'b', text: '收緘默銀，假作未見', to: 'xy_side', set: { 'flags.side_scale': 1, 'flags.xy_side': 1, 'plotFlags.side_greed': 1 }, reward: { gold: 18, people: -2 }, advance: 'period' },
+        { id: 'c', text: '私下勸鄰攤改正', to: 'xy_side', set: { 'flags.side_scale': 1, 'flags.xy_side': 1, 'plotFlags.side_soft': 1, 'aff:feng': 1 }, reward: { fame: 1, people: 1 }, advance: 'period' }
+      ]
+    },
+    side_nightclinic: {
+      id: 'side_nightclinic', chapter: 'side', speaker: '蘇娘', bg: 'clinic',
+      text: '青廬燈小。蘇娘低聲：「門外有人流血，不敢報官。你幫不幫？幫，便可能惹官差；不幫，今夜或死一命。」',
+      choices: [
+        { id: 'a', text: '救治並隱其姓名', to: 'xy_side', set: { 'flags.side_clinic': 1, 'flags.xy_side': 1, 'plotFlags.healer_seed': 1, 'plotFlags.side_shelter': 1, 'aff:su': 6 }, reward: { people: 3, fame: 2, bag: { herb: -1 } }, advance: 'period' },
+        { id: 'b', text: '救治但報里正備案', to: 'xy_side', set: { 'flags.side_clinic': 1, 'flags.xy_side': 1, 'plotFlags.healer_seed': 1, 'aff:su': 2, 'aff:he': 2 }, reward: { fame: 3 }, advance: 'period' },
+        { id: 'c', text: '不敢捲入，只留藥', to: 'xy_side', set: { 'flags.side_clinic': 1, 'flags.xy_side': 1, 'aff:su': -1 }, reward: { bag: { herb: -1 } }, advance: 'period' }
+      ]
+    },
+    side_inn: {
+      id: 'side_inn', chapter: 'side', speaker: '旁白', bg: 'keguan',
+      text: '客館隔牆，楚齊口音壓得很低：「……王府要耳目，呂門要貨路，邊市要刀。」你聽得三分。要不要再近一步？',
+      choices: [
+        { id: 'a', text: '買一壺酒混入旁聽', to: 'xy_side', set: { 'flags.side_inn': 1, 'flags.xy_side': 1, 'plotFlags.side_spy': 1, 'flags.visited_keguan': 1 }, reward: { gold: -6, fame: 2 }, advance: 'period', if: { gold: 6 } },
+        { id: 'b', text: '記住關鍵字，不上前', to: 'xy_side', set: { 'flags.side_inn': 1, 'flags.xy_side': 1, 'plotFlags.side_rumor': 1 }, reward: { fame: 1 }, advance: 'period' },
+        { id: 'c', text: '故意撞翻燈，打斷密談', to: 'xy_side', set: { 'flags.side_inn': 1, 'flags.xy_side': 1, 'plotFlags.side_disrupt': 1 }, reward: { fame: 2, people: 1 }, advance: 'period' }
+      ]
+    },
+    side_pass: {
+      id: 'side_pass', chapter: 'side', speaker: '關吏', bg: 'guanshi',
+      text: '關市風硬。一車皮貨卡在驗關。關吏打量你：「你作保，貨便過；出了事，連坐到你。」',
+      choices: [
+        { id: 'a', text: '作保放行（得商路）', to: 'xy_side', set: { 'flags.side_pass': 1, 'flags.xy_side': 1, 'access.guanshi': true, 'plotFlags.side_trade': 1, 'aff:zhao': 4 }, reward: { gold: 12, fame: 2 }, advance: 'period' },
+        { id: 'b', text: '幫關吏細查，防夾帶', to: 'xy_side', set: { 'flags.side_pass': 1, 'flags.xy_side': 1, 'plotFlags.side_strict': 1, 'factions.qin': 2 }, reward: { fame: 3, gold: 5 }, advance: 'period' },
+        { id: 'c', text: '不沾手', to: 'xy_side', set: { 'flags.side_pass': 1, 'flags.xy_side': 1 }, advance: 'period' }
+      ]
+    },
+    side_school: {
+      id: 'side_school', chapter: 'side', speaker: '成郎', bg: 'academy',
+      text: '書塾午後。成郎問你：「法嚴則國強，情厚則民附——你走邊野，站哪一邊？」答覆會留下口舌與志向的痕跡。',
+      choices: [
+        { id: 'a', text: '法為骨，情為膚', to: 'xy_side', set: { 'flags.side_school': 1, 'flags.xy_side': 1, 'plotFlags.side_legal': 1, 'aff:cheng': 3, 'aff:lisi': 1 }, reward: { fame: 2 }, advance: 'period' },
+        { id: 'b', text: '民心先於法條', to: 'xy_side', set: { 'flags.side_school': 1, 'flags.xy_side': 1, 'plotFlags.side_folk': 1, 'aff:cheng': 4 }, reward: { people: 3, fame: 1 }, advance: 'period' },
+        { id: 'c', text: '兩者皆可權變', to: 'xy_side', set: { 'flags.side_school': 1, 'flags.xy_side': 1, 'plotFlags.side_flex': 1, 'aff:cheng': 2 }, reward: { fame: 2 }, advance: 'period' }
+      ]
+    },
+    side_letter: {
+      id: 'side_letter', chapter: 'side', speaker: '驛卒', bg: 'post',
+      text: '驛道黃塵。驛卒塞你一封無署名的書：「送到咸陽客館西廂即可。莫拆。拆了——你自己擔。」',
+      choices: [
+        { id: 'a', text: '原封送達', to: 'xy_side', set: { 'flags.side_letter': 1, 'flags.xy_side': 1, 'plotFlags.side_courier': 1 }, reward: { gold: 10, fame: 1 }, advance: 'period' },
+        { id: 'b', text: '私下拆閱再決定', to: 'side_letter_open', set: { 'flags.side_letter': 1, 'plotFlags.side_peek': 1 } },
+        { id: 'c', text: '拒送，交回官驛', to: 'xy_side', set: { 'flags.side_letter': 1, 'flags.xy_side': 1, 'factions.qin': 1 }, reward: { fame: 2 }, advance: 'period' }
+      ]
+    },
+    side_letter_open: {
+      id: 'side_letter_open', chapter: 'side', speaker: '旁白', bg: 'post',
+      text: '蠟封下只有一句：「仲父門下缺邊野眼線。」你捏著竹簡，忽然明白——這不是家書，是網。',
+      choices: [
+        { id: 'a', text: '仍送達，並記住線索', to: 'xy_side', set: { 'flags.xy_side': 1, 'plotFlags.side_courier': 1, 'plotFlags.lu_eye': 1, 'aff:lubuwei': 1 }, reward: { gold: 10, fame: 2 }, advance: 'period' },
+        { id: 'b', text: '改投王府相關耳目', to: 'xy_side', set: { 'flags.xy_side': 1, 'plotFlags.side_leak_qin': 1, 'factions.qin': 3 }, reward: { fame: 3 }, advance: 'period' },
+        { id: 'c', text: '燒了', to: 'xy_side', set: { 'flags.xy_side': 1, 'plotFlags.side_burn': 1 }, reward: { fame: 1 }, advance: 'period' }
+      ]
+    },
+    side_wander: {
+      id: 'side_wander', chapter: 'side', speaker: '旁白', bg: 'market',
+      text: '你已走過多則支線。街市仍在運轉——薄利、見聞、與偶爾一閃的刀光。',
+      choices: [
+        { id: 'a', text: '再逛一時，換些碎銀', to: 'xy_hub', reward: { gold: 6, fame: 1 }, advance: 'period' },
+        { id: 'b', text: '回樞紐', to: 'xy_hub' }
       ]
     },
     xy_talk: {

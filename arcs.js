@@ -164,7 +164,7 @@
   }
 
   /**
-   * 五條原創弧（靈感：嬴政／呂不韋／趙姬／李斯／蒙恬 人物張力，非小說情節複製）
+   * 七條原創弧（靈感：秦際人物張力＋雙飛式多線結構參考；原創節點，非小說情節複製）
    * 每弧 ≥2 結局；選擇寫真旗標，供 AI／編年／結局冊讀取
    */
   var ARCS = [
@@ -686,7 +686,211 @@
           }
         }
       }
+    }    ,
+    {
+      id: 'arc_su',
+      title: '藥廬蘇娘·湯火緣',
+      npc: 'su',
+      face: 'doctor',
+      faction: null,
+      startIf: { day: 6, 'known:su': true, 'arcProg.arc_su.ended': null },
+      altStartIf: { day: 5, 'plotFlags.healer_seed': true, 'arcProg.arc_su.ended': null },
+      altStartIf2: { day: 8, 'plotFlags.side_shelter': true, 'arcProg.arc_su.ended': null },
+      nodes: {
+        start: {
+          line: '藥廬夜雨。蘇娘把脈罷，忽然問：「你救人也好、求進也好——靠近我時，是把我當藥櫃，還是當人？」\n爐火一跳，湯氣模糊了她的臉。',
+          choices: [
+            { id: 's_heart', text: '當人——願護這青廬', to: 'hearth' },
+            { id: 's_craft', text: '先學醫術，情誼徐圖', to: 'craft' },
+            { id: 's_court', text: '坦言志在近側／咸陽', to: 'court_pull' },
+            { id: 's_soft', text: '今夜不答，只幫她守爐', to: 'soft' }
+          ]
+        },
+        hearth: {
+          line: '她眼眶微紅，卻笑：「護廬比甜言難。里中缺藥時，你還來不來？」',
+          choices: [
+            { id: 's_h_yes', text: '約定長期供藥護廬', to: 'end_bond', set: { 'plotFlags.su_hearth': 1 } },
+            { id: 's_h_share', text: '願與她共擔醫名與風險', to: 'end_partner', set: { 'plotFlags.su_partner': 1 } },
+            { id: 's_h_pause', text: '怕連累她，先保持距離', to: 'end_distant' }
+          ]
+        },
+        craft: {
+          line: '蘇娘點頭：「醫者心要穩。」她教你辨藥三分，又道：「學會了，別只為討貴人開心。」',
+          choices: [
+            { id: 's_c_stay', text: '留村精進，情誼漸生', to: 'end_bond', set: { 'plotFlags.su_craft': 1 } },
+            { id: 's_c_go', text: '學成仍赴咸陽，書信往來', to: 'end_letter', set: { 'plotFlags.su_letter': 1 } }
+          ]
+        },
+        court_pull: {
+          line: '她沉默片刻：「近側榮耀，藥廬燈小。你若走，我祝你——但別把我教的方子，當成攀高的梯。」',
+          choices: [
+            { id: 's_ct_promise', text: '承諾不忘青廬', to: 'end_letter', set: { 'plotFlags.su_court_ok': 1 } },
+            { id: 's_ct_choose', text: '改口：願留得久些', to: 'hearth' },
+            { id: 's_ct_cut', text: '只求醫術，不談情', to: 'end_distant', set: { 'plotFlags.su_cut': 1 } }
+          ]
+        },
+        soft: {
+          line: '雨聲裡兩人無話。她把干薑推到你手邊：「明日再答。今夜，你是藥廬的看守。」',
+          choices: [
+            { id: 's_sf_morn', text: '翌朝以真心相告', to: 'hearth' },
+            { id: 's_sf_go', text: '天明便啟程，留一束藥樣', to: 'end_letter' }
+          ]
+        },
+        end_bond: {
+          end: true,
+          endingKey: 'su_bond',
+          fate: { 'plotFlags.fate_su': 'bond' },
+          line: '青廬多了一個常來的身影。蘇娘不再問「藥櫃還是人」——答案已在每一次送藥與守夜裡。',
+          toast: '蘇娘線·湯火緣',
+          rewards: {
+            fame: 3, people: 6, bag: { herb: 2 },
+            attrs: { zhi: 1 }, aff: { su: 22, he: 2 },
+            diverge: { id: 'su_fate', note: '邊野藥廬得固，民疾少一劫' }
+          }
+        },
+        end_partner: {
+          end: true,
+          endingKey: 'su_partner',
+          fate: { 'plotFlags.fate_su': 'partner' },
+          line: '醫名與風險共擔。對外或稱同門，對內已是彼此的後手——咸陽風聲再大，青廬燈火仍在。',
+          toast: '蘇娘線·同道',
+          rewards: {
+            fame: 5, people: 8, bag: { herb: 3 },
+            attrs: { zhi: 1, bian: 1 }, aff: { su: 26 },
+            diverge: { id: 'su_fate', note: '民間醫網多一雙穩手，官差亦難盡窺' }
+          }
+        },
+        end_letter: {
+          end: true,
+          endingKey: 'su_letter',
+          fate: { 'plotFlags.fate_su': 'letter' },
+          line: '一束藥樣、一紙短札。蘇娘說：「你走你的宫牆，我守我的湯火。信到，便是未斷。」',
+          toast: '蘇娘線·書信',
+          rewards: {
+            fame: 3, people: 3, bag: { herb: 1 },
+            aff: { su: 14 },
+            diverge: { id: 'su_fate', note: '藥廬與咸陽之間多一條私札細線' }
+          }
+        },
+        end_distant: {
+          end: true,
+          endingKey: 'su_distant',
+          fate: { 'plotFlags.fate_su': 'distant' },
+          line: '她把爐火撥旺：「也好。醫者本該少牽絆。」緣淺，卻未成怨。',
+          toast: '蘇娘線·緣淺',
+          rewards: { fame: 1, aff: { su: 4 } }
+        }
+      }
+    },
+    {
+      id: 'arc_cheng',
+      title: '書生成郎·志與情',
+      npc: 'cheng',
+      face: 'farmer_m',
+      faction: null,
+      startIf: { day: 7, 'known:cheng': true, 'arcProg.arc_cheng.ended': null },
+      altStartIf: { day: 9, 'plotFlags.side_legal': true, 'arcProg.arc_cheng.ended': null },
+      altStartIf2: { day: 9, 'plotFlags.side_folk': true, 'arcProg.arc_cheng.ended': null },
+      nodes: {
+        start: {
+          line: '書塾槐影。成郎合卷：「我讀半冊法，耕半畝田。你比我更近咸陽——若有一日必須在『法』與『情』間押命，你希望我站哪邊？」',
+          choices: [
+            { id: 'c_law', text: '勸他以法自持', to: 'law' },
+            { id: 'c_folk', text: '勸他先顧民心', to: 'folk' },
+            { id: 'c_both', text: '勸他權變，勿押死一邊', to: 'flex' },
+            { id: 'c_close', text: '不談大義，只約同窗情誼', to: 'close' }
+          ]
+        },
+        law: {
+          line: '成郎頷首：「法為骨。」他又笑，「那你可願在我動搖時，罵醒我？」',
+          choices: [
+            { id: 'c_l_oath', text: '約為諍友', to: 'end_oath', set: { 'plotFlags.cheng_law': 1 } },
+            { id: 'c_l_intro', text: '願引他識客卿議論', to: 'end_legal', set: { 'plotFlags.cheng_lisi': 1 }, need: { bian: 2 } },
+            { id: 'c_l_soft', text: '怕他太剛易折，改勸折中', to: 'flex' }
+          ]
+        },
+        folk: {
+          line: '成郎望向田壟：「民心先……也會被官差笑軟弱。你若走近側，還記得村裡糧斗嗎？」',
+          choices: [
+            { id: 'c_f_yes', text: '記得——約他共記民瘼', to: 'end_folk', set: { 'plotFlags.cheng_folk': 1 } },
+            { id: 'c_f_gift', text: '贈糧種，換他一篇陳情草稿', to: 'end_folk', set: { 'plotFlags.cheng_petition': 1 } },
+            { id: 'c_f_back', text: '改口：或許法更穩', to: 'law' }
+          ]
+        },
+        flex: {
+          line: '「權變。」成郎咬字，「這詞最險——也最像你這種要入咸陽的人。」',
+          choices: [
+            { id: 'c_x_friend', text: '仍願做彼此的備胎良心', to: 'end_oath', set: { 'plotFlags.cheng_flex': 1 } },
+            { id: 'c_x_part', text: '道路不同，友而淡', to: 'end_distant' }
+          ]
+        },
+        close: {
+          line: '他耳尖微紅：「同窗……也好。大義以後再辯。今晚月色，夠我們沉默。」',
+          choices: [
+            { id: 'c_cl_bond', text: '約他書信與重逢', to: 'end_oath', set: { 'plotFlags.cheng_close': 1 } },
+            { id: 'c_cl_more', text: '把情誼說得更明白', to: 'end_heart', set: { 'plotFlags.cheng_heart': 1 } },
+            { id: 'c_cl_leave', text: '點到為止', to: 'end_distant' }
+          ]
+        },
+        end_oath: {
+          end: true,
+          endingKey: 'cheng_oath',
+          fate: { 'plotFlags.fate_cheng': 'oath' },
+          line: '半冊法、半畝田之間，多了一個肯罵醒彼此的人。成郎說：「你若在宫牆迷路，想起槐影。」',
+          toast: '成郎線·諍友',
+          rewards: {
+            fame: 3, people: 3,
+            attrs: { zhi: 1 }, aff: { cheng: 18 },
+            diverge: { id: 'cheng_fate', note: '邊野書生多一樁堅定志向，輿論微偏' }
+          }
+        },
+        end_legal: {
+          end: true,
+          endingKey: 'cheng_legal',
+          fate: { 'plotFlags.fate_cheng': 'legal' },
+          line: '成郎開始抄客卿議論。他仍耕田，但眼裡多了咸陽的線——你成了引線之人。',
+          toast: '成郎線·法志',
+          rewards: {
+            fame: 4, faction: { qin: 4 },
+            aff: { cheng: 14, lisi: 4 },
+            diverge: { id: 'cheng_fate', note: '民間多一舌傳法，弱私門之議早聲' }
+          }
+        },
+        end_folk: {
+          end: true,
+          endingKey: 'cheng_folk',
+          fate: { 'plotFlags.fate_cheng': 'folk' },
+          line: '陳情草稿壓在糧斗下。成郎說：「法若傷民，我便寫到筆禿。」你與他，把民心寫進同一頁。',
+          toast: '成郎線·民心',
+          rewards: {
+            fame: 3, people: 8,
+            aff: { cheng: 20, he: 3 },
+            diverge: { id: 'cheng_fate', note: '里閭多一篇敢言草稿，官差聞之側目' }
+          }
+        },
+        end_heart: {
+          end: true,
+          endingKey: 'cheng_heart',
+          fate: { 'plotFlags.fate_cheng': 'heart' },
+          line: '槐影裡的沉默被說破。成郎握卷的手指白了又鬆：「那……你在咸陽，也別把我忘成一冊舊書。」',
+          toast: '成郎線·心跡',
+          rewards: {
+            fame: 2, people: 2,
+            aff: { cheng: 24 },
+            diverge: { id: 'cheng_fate', note: '一段書生情誼成為你遠行的私錨' }
+          }
+        },
+        end_distant: {
+          end: true,
+          endingKey: 'cheng_distant',
+          fate: { 'plotFlags.fate_cheng': 'distant' },
+          line: '成郎一揖：「道不同，亦祝安。」槐花落了一肩，緣淺無債。',
+          toast: '成郎線·緣淺',
+          rewards: { fame: 1, aff: { cheng: 3 } }
+        }
+      }
     }
+
   ];
 
   var ARC_BY_ID = {};
@@ -715,7 +919,16 @@
     { id: 'meng_comrade', tier: 'arc', name: '塞上袍澤', when: '蒙恬託你糧策與刀，北境牽線關內。', fate: 'comrade', npc: 'meng' },
     { id: 'meng_supply', tier: 'arc', name: '邊營供輸', when: '一車糧藥，換戰場上的人情債。', fate: 'supply', npc: 'meng' },
     { id: 'meng_broker', tier: 'arc', name: '關市縫人', when: '刀與貨並流，你走在王法與馬蹄間。', fate: 'broker', npc: 'meng' },
-    { id: 'meng_retreat', tier: 'arc', name: '塞上歸田', when: '蒙恬不強留，緣淺無怨。', fate: 'retreat', npc: 'meng' }
+    { id: 'meng_retreat', tier: 'arc', name: '塞上歸田', when: '蒙恬不強留，緣淺無怨。', fate: 'retreat', npc: 'meng' },
+    { id: 'su_bond', tier: 'arc', name: '藥廬湯火緣', when: '青廬常來的身影，蘇娘認你為可託之人。', fate: 'bond', npc: 'su' },
+    { id: 'su_partner', tier: 'arc', name: '醫路同道', when: '醫名與風險共擔，青廬燈火與咸陽並存。', fate: 'partner', npc: 'su' },
+    { id: 'su_letter', tier: 'arc', name: '藥樣書信', when: '一束藥樣一紙札，緣在信到。', fate: 'letter', npc: 'su' },
+    { id: 'su_distant', tier: 'arc', name: '藥廬緣淺', when: '爐火仍旺，牽絆已淡。', fate: 'distant', npc: 'su' },
+    { id: 'cheng_oath', tier: 'arc', name: '槐下諍友', when: '半法半耕之間，多一個罵醒彼此的人。', fate: 'oath', npc: 'cheng' },
+    { id: 'cheng_legal', tier: 'arc', name: '引線法志', when: '書生抄客卿議論，你成引線。', fate: 'legal', npc: 'cheng' },
+    { id: 'cheng_folk', tier: 'arc', name: '民心草稿', when: '陳情壓糧斗，民心入同一頁。', fate: 'folk', npc: 'cheng' },
+    { id: 'cheng_heart', tier: 'arc', name: '槐影心跡', when: '同窗情誼說破，遠行有私錨。', fate: 'heart', npc: 'cheng' },
+    { id: 'cheng_distant', tier: 'arc', name: '書生緣淺', when: '道不同亦祝安，槐花無債。', fate: 'distant', npc: 'cheng' },
   ];
 
   function prog(S, arcId) {
