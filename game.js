@@ -1,4 +1,4 @@
-// v32 remake · white panels · juice · navy-gold chrome
+// v33 arcs · fate plots · white panels · juice · navy-gold chrome
 (() => {
   'use strict';
 
@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '32';
+  const GAME_VERSION = '33';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -731,7 +731,8 @@
       quests: {},
       explore: { ruins: 1, crypt: 1, marsh: 1, gorge: 1, stone_forest: 1, ruinsBest: 0, cryptBest: 0, marshBest: 0, gorgeBest: 0, stone_forestBest: 0, bosses: {} },
       attrs: { wu: 0, hu: 0, shen: 0, zhi: 0, bian: 0, yun: 0 },
-      plotFlags: {}
+      plotFlags: {},
+      arcProg: {}
     };
     if (window.QianStory) {
       window.QianStory.ensure(st);
@@ -807,6 +808,8 @@
       if (!o.chronicle) o.chronicle = [];
       if (!o.histFlags) o.histFlags = {};
       if (!o.diverged) o.diverged = [];
+      if (!o.arcProg) o.arcProg = {};
+      if (!o.plotFlags) o.plotFlags = {};
       if (!o.seenChronicle) o.seenChronicle = {};
       if (!o.access) o.access = {};
       if (!o.quests) o.quests = {};
@@ -1906,6 +1909,11 @@
   function maybeTriggerVisit() {
     if (!S || !window.QianFactions) return;
     if (S.pendingEvent) { openEventModal(S.pendingEvent); return; }
+    if (window.QianArcs) {
+      window.QianArcs.ensure(S);
+      const aev = window.QianArcs.poll(S);
+      if (aev) { S.pendingEvent = aev; openEventModal(aev); renderHUD(); saveQuiet(); return; }
+    }
     if (window.QianPlots) {
       window.QianPlots.ensure(S);
       const pev = window.QianPlots.poll(S);
@@ -1950,28 +1958,48 @@
       (c.locked ? ' disabled aria-disabled="true"' : '') + '>' + c.label + '</button>'
     ).join('');
     choices.querySelectorAll('[data-cid]').forEach((b) => {
-      b.addEventListener('click', () => {
+      b.addEventListener('click', (evClick) => {
+        tapFeel(b, evClick);
         if (b.disabled) { toast('屬性不足'); return; }
         resolveEventChoice(ev, b.dataset.cid);
       });
     });
+    bindTapFeel(choices);
     $('modal-event').hidden = false;
     pushStory('【來訪】' + ev.title, 'sys');
   }
   function resolveEventChoice(ev, choiceId) {
     let r = null;
+    const isArc = !!(ev && ev.arc && window.QianArcs);
     const isPlot = !!(ev && (ev.plot || (ev.id && /^(lu_hunt|laoai_chaos|zhengguo_debate|lisi_law|border_raid|star_omen|iron_trial|chengjiao_plot|marsh_plague)$/.test(ev.id))));
-    if (isPlot && window.QianPlots) r = window.QianPlots.applyChoice(S, ev, choiceId);
+    if (isArc) r = window.QianArcs.applyChoice(S, ev, choiceId);
+    else if (isPlot && window.QianPlots) r = window.QianPlots.applyChoice(S, ev, choiceId);
     else if (window.QianFactions) r = window.QianFactions.applyChoice(S, ev, choiceId);
     else return;
-    if (r && r.toast === '屬性不足，無法如此') {
+    if (r && (r.toast === '屬性不足，無法如此' || r.toast === '條件未足' || r.toast === '民心不足')) {
       toast(r.toast);
       if (r.line) pushStory(r.line, 'sys');
+      try { juiceShake(0.15); } catch (e) {}
+      return;
+    }
+    /* 弧線多節點：不關 modal，直接開下一節 */
+    if (r && r.continueEvent) {
+      if (r.line) { status(r.line); pushStory(r.line, 'nar'); }
+      openEventModal(r.continueEvent);
+      bindTapFeel($('event-choices'));
+      try { juiceDmgFloat('……', {}); } catch (e) {}
+      renderHUD();
+      saveQuiet();
       return;
     }
     $('modal-event').hidden = true;
     if (r.line) { status(r.line); pushStory(r.line, 'nar'); }
     if (r.toast) toast(r.toast);
+    if (r && r.arcDone) {
+      try { juiceFlash(); juiceDmgFloat(r.toast || '命運', { crit: true }); } catch (e) {}
+      if (window.QianArcs) window.QianArcs.checkArcEndings(S);
+      if (window.QianFactions) window.QianFactions.checkEndings(S);
+    }
     // 加入勢力後微調 AUTO 方針
     if (S.joined === 'lu') {
       directive = 'money';
@@ -2026,10 +2054,11 @@
     const list = window.QianFactions.endingList(S);
     const box = $('endings-body');
     if (!box) return;
+    if (window.QianArcs) window.QianArcs.checkArcEndings(S);
     box.innerHTML = list.map((e) =>
       '<div class="quest-item' + (e.unlocked ? ' done' : '') + '">' +
       '<strong>' + (e.unlocked ? '✓ ' : '？ ') + e.name + '</strong>' +
-      '<span class="muted"> · ' + (e.tier === 'late' ? '遠途' : '中途') + '</span>' +
+      '<span class="muted"> · ' + (e.tier === 'late' ? '遠途' : (e.tier === 'arc' ? '人物命運' : '中途')) + '</span>' +
       '<p>' + (e.unlocked ? escapeHtml(e.when) : '條件未顯……') + '</p></div>'
     ).join('');
     $('modal-endings').hidden = false;
@@ -2226,9 +2255,18 @@
       { id: 'greet', label: '近日可好？', text: '近日可好？' },
       { id: 'bye', label: '告辭', text: '告辭' }
     ];
+    if (window.QianArcs) {
+      const hook = window.QianArcs.talkHook(S, n.id);
+      if (hook) {
+        choices.splice(Math.max(0, choices.length - 1), 0, {
+          id: hook.id, label: '📜 ' + hook.label, text: hook.label, arcId: hook.arcId
+        });
+      }
+    }
     const box = $('quick-replies');
     box.innerHTML = choices.map((c) =>
       '<button type="button" class="choice-tap' + (c.locked ? ' locked' : '') + '" data-qid="' + c.id + '" data-q="' + escapeHtml(c.text) + '"' +
+      (c.arcId ? ' data-arc="' + c.arcId + '"' : '') +
       (c.locked ? ' title="' + escapeHtml(c.reason || '未解鎖') + '"' : '') + '>' + escapeHtml(c.label) + '</button>'
     ).join('');
     box.querySelectorAll('[data-qid]').forEach((b) => {
@@ -2242,6 +2280,20 @@
           logNpcAct(n.id, '約戰', { respect: 1, fear: 1 });
           $('modal-talk').hidden = true;
           startBattle(mode === 'ying' ? 'drill' : (EXPLORE_MODES.includes(mode) ? mode : 'drill'));
+          return;
+        }
+        if (id.indexOf('arc_') === 0 && window.QianArcs) {
+          const arcId = b.dataset.arc || id.replace(/^arc_(start|continue)_/, '');
+          const ev = window.QianArcs.beginFromTalk(S, arcId);
+          if (ev) {
+            $('modal-talk').hidden = true;
+            openEventModal(ev);
+            toast('深談開啟');
+            try { juiceFlash(); } catch (e) {}
+            saveQuiet();
+            return;
+          }
+          toast('此刻難開此談');
           return;
         }
         $('talk-input').value = b.dataset.q;
@@ -2309,7 +2361,8 @@
           bio: npc.bio || '',
           heroCtx: window.QianWorld ? window.QianWorld.heroContext(S) : '',
           worldMode: S.worldMode === 'free' ? '高度自由' : '史實軌道',
-          factionStance: window.QianFactions ? window.QianFactions.stanceText(S) : ''
+          factionStance: window.QianFactions ? window.QianFactions.stanceText(S) : '',
+          fateSummary: window.QianArcs ? window.QianArcs.fateSummary(S) : ''
         });
         // remove sys
         const log = $('talk-log');
@@ -4747,6 +4800,23 @@
 
   // villager-card style inject if missing
   function ensureExtraCss() { /* guofeng styles live in style.css */ }
+
+  window.render_game_to_text = function () {
+    if (!S) return JSON.stringify({ ok: false });
+    return JSON.stringify({
+      v: GAME_VERSION,
+      day: S.day,
+      gold: S.gold,
+      fame: S.fame,
+      people: S.people,
+      joined: S.joined,
+      fate: window.QianArcs ? window.QianArcs.fateSummary(S) : '',
+      plotFlags: S.plotFlags || {},
+      arcProg: S.arcProg || {},
+      endings: S.endings || [],
+      pending: S.pendingEvent && S.pendingEvent.id
+    });
+  };
 
   ensureExtraCss();
   bind();

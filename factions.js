@@ -132,6 +132,8 @@
     if (!S.flags) S.flags = {};
     if (!S.factionQuest) S.factionQuest = null;
     if (S.pendingEvent === undefined) S.pendingEvent = null;
+    if (!S.arcProg) S.arcProg = {};
+    if (!S.plotFlags) S.plotFlags = {};
     return S;
   }
 
@@ -221,6 +223,14 @@
     else if (S.joined === 'sai') parts.push('君通邊市盟');
     else parts.push('君仍獨立');
     if (S.flags.ambition) parts.push('隱有非常之志');
+    if (window.QianArcs) {
+      var fs = window.QianArcs.fateSummary(S);
+      if (fs) parts.push(fs);
+    } else if (S.plotFlags) {
+      if (S.plotFlags.fate_ying === 'confidant') parts.push('秦王耳目');
+      if (S.plotFlags.fate_lu === 'patron') parts.push('呂氏門客');
+      if (S.plotFlags.lu_saved) parts.push('呂氏命運已改');
+    }
     return parts.join('·') + '。';
   }
 
@@ -425,17 +435,28 @@
 
   function checkEndings(S) {
     ensure(S);
-    ENDINGS.forEach(function (e) {
+    var all = ENDINGS.slice();
+    if (window.QianArcs && window.QianArcs.endingListExtra) {
+      all = all.concat(window.QianArcs.endingListExtra());
+    }
+    all.forEach(function (e) {
       if (S.endings.indexOf(e.id) >= 0) return;
       try {
         if (e.check(S)) S.endings.push(e.id);
       } catch (err) {}
     });
+    if (window.QianArcs && window.QianArcs.checkArcEndings) {
+      window.QianArcs.checkArcEndings(S);
+    }
   }
 
   function endingList(S) {
     ensure(S);
-    return ENDINGS.map(function (e) {
+    var all = ENDINGS.slice();
+    if (window.QianArcs && window.QianArcs.endingListExtra) {
+      all = all.concat(window.QianArcs.endingListExtra());
+    }
+    return all.map(function (e) {
       return {
         id: e.id,
         tier: e.tier,

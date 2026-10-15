@@ -336,6 +336,7 @@
     applyOrigin: applyOrigin,
     originById: originById,
     markDiverge: markDiverge,
+    markDiverged: markDiverge,
     tick: tick,
     heroContext: heroContext,
     castForTalk: castForTalk,

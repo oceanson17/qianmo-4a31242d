@@ -176,6 +176,51 @@
       unlockNpc: ['lubuwei']
     },
     {
+      id: 'sq_arc_ying',
+      title: '少年秦王深談',
+      desc: '與嬴政完成一條人物命運弧（心腹／外牆／疏遠）。宮城外相識後，過日或對談可觸發。',
+      type: 'main',
+      check: function (S) { return !!(S.flags && S.flags.arc_done_arc_ying) || !!(S.plotFlags && S.plotFlags.fate_ying); },
+      reward: { gold: 40, fame: 6 },
+      unlockNpc: ['yingzheng']
+    },
+    {
+      id: 'sq_arc_lu',
+      title: '相邦奇貨之外',
+      desc: '與呂不韋完成命運弧（門客／商結／雙線／賣線／緣淺）。',
+      type: 'main',
+      check: function (S) { return !!(S.flags && S.flags.arc_done_arc_lu) || !!(S.plotFlags && S.plotFlags.fate_lu); },
+      reward: { gold: 45, fame: 5 },
+      unlockNpc: ['lubuwei', 'menke']
+    },
+    {
+      id: 'sq_arc_zhaoji',
+      title: '太后宮眉目',
+      desc: '與趙姬完成宮闈弧（護宮／告王／抽身）。',
+      type: 'side',
+      check: function (S) { return !!(S.flags && S.flags.arc_done_arc_zhaoji) || !!(S.plotFlags && S.plotFlags.fate_zhaoji); },
+      reward: { gold: 35, fame: 4 },
+      unlockNpc: ['zhaoji']
+    },
+    {
+      id: 'sq_arc_lisi',
+      title: '客卿法術勢',
+      desc: '與李斯完成法術勢弧（強法／節制／對立／旁觀）。',
+      type: 'side',
+      check: function (S) { return !!(S.flags && S.flags.arc_done_arc_lisi) || !!(S.plotFlags && S.plotFlags.fate_lisi); },
+      reward: { gold: 35, fame: 5 },
+      unlockNpc: ['lisi']
+    },
+    {
+      id: 'sq_arc_meng',
+      title: '塞上蒙恬約',
+      desc: '與蒙恬完成邊關弧（袍澤／糧藥／關市縫／歸田）。',
+      type: 'side',
+      check: function (S) { return !!(S.flags && S.flags.arc_done_arc_meng) || !!(S.plotFlags && S.plotFlags.fate_meng); },
+      reward: { gold: 40, fame: 5 },
+      unlockNpc: ['mengtian']
+    },
+    {
       id: 'sq_gorge',
       title: '雲縫谷試煉',
       desc: '於雲縫谷戰勝或擊敗Boss。',
@@ -372,6 +417,8 @@
     if (!S) return S;
     if (!S.access) S.access = {};
     if (!S.flags) S.flags = {};
+    if (!S.arcProg) S.arcProg = {};
+    if (!S.plotFlags) S.plotFlags = {};
     if (!S.quests) S.quests = {};
     if (!S.skills) S.skills = {};
     if (S.skills.agi == null) {
