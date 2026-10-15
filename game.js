@@ -1,4 +1,4 @@
-// v31 white panels + black text · iso scenes · career sprites · face fix
+// v32 remake · white panels · juice · navy-gold chrome
 (() => {
   'use strict';
 
@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '31';
+  const GAME_VERSION = '32';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -314,7 +314,7 @@
     { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
     { id: 'hire', name: '僱長工', desc: '田莊人手+1', gold: 0 }
   ];
-  const FACE_V = '31';
+  const FACE_V = '32';
   function allNpcs() {
     if (window.QianWorld && window.QianWorld.CAST) return window.QianWorld.CAST;
     return [];
@@ -421,28 +421,127 @@
   const canvas = () => $('farm');
   const ctx = () => canvas() && canvas().getContext('2d');
 
-  function toast(msg) {
+  function toast(msg, kind) {
     const el = $('toast');
     if (!el) return;
     el.textContent = msg;
+    el.classList.remove('ok', 'err', 'toast-pop');
+    if (kind === 'ok' || kind === 'err') el.classList.add(kind);
     el.hidden = false;
+    // restart pop animation
+    void el.offsetWidth;
+    el.classList.add('toast-pop');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { el.hidden = true; }, 2200);
+    toastTimer = setTimeout(() => {
+      el.hidden = true;
+      el.classList.remove('toast-pop', 'ok', 'err');
+    }, 2200);
   }
+
+  /* ---- Juice: shake / flash / dmg / tap ---- */
+  let juiceTrauma = 0;
+  let juiceShakeRaf = 0;
+  let juiceHitStopUntil = 0;
+  function juiceReduceMotion() {
+    try {
+      return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (e) { return false; }
+  }
+  function juiceBaseTransform() {
+    try {
+      if (window.matchMedia && window.matchMedia('(min-width:421px)').matches) return 'translateY(-50%)';
+    } catch (e) {}
+    return '';
+  }
+  function juiceShake(amount) {
+    if (juiceReduceMotion()) return;
+    juiceTrauma = Math.min(1, juiceTrauma + (amount || 0.35));
+    if (juiceShakeRaf) return;
+    const app = $('app') || document.getElementById('app');
+    if (!app) return;
+    const tick = () => {
+      juiceTrauma = Math.max(0, juiceTrauma * 0.86 - 0.004);
+      if (juiceTrauma <= 0.01) {
+        juiceTrauma = 0;
+        app.style.transform = juiceBaseTransform();
+        juiceShakeRaf = 0;
+        return;
+      }
+      const t = juiceTrauma * juiceTrauma;
+      const ang = Date.now() / 18;
+      const x = Math.sin(ang * 1.7) * t * 7;
+      const y = Math.cos(ang * 2.1) * t * 5;
+      const base = juiceBaseTransform();
+      app.style.transform = (base ? base + ' ' : '') + 'translate(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px)';
+      juiceShakeRaf = requestAnimationFrame(tick);
+    };
+    juiceShakeRaf = requestAnimationFrame(tick);
+  }
+  function juiceFlash() {
+    if (juiceReduceMotion()) return;
+    let el = document.getElementById('battle-flash');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'battle-flash';
+      el.className = 'battle-flash';
+      el.setAttribute('aria-hidden', 'true');
+      (document.body || document.documentElement).appendChild(el);
+    }
+    el.classList.remove('on');
+    void el.offsetWidth;
+    el.classList.add('on');
+    setTimeout(() => { el.classList.remove('on'); }, 140);
+  }
+  function juiceDmgFloat(text, opts) {
+    if (juiceReduceMotion()) return;
+    opts = opts || {};
+    const n = document.createElement('div');
+    n.className = 'dmg-float' + (opts.crit ? ' crit' : '') + (opts.hurt ? ' hurt' : '') + (opts.heal ? ' heal' : '');
+    n.textContent = text;
+    const app = $('app');
+    const r = (app && app.getBoundingClientRect()) || { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+    const cx = opts.x != null ? opts.x : (r.left + r.width * (opts.hurt ? 0.28 : 0.72));
+    const cy = opts.y != null ? opts.y : (r.top + r.height * 0.38);
+    n.style.left = cx + 'px';
+    n.style.top = cy + 'px';
+    document.body.appendChild(n);
+    setTimeout(() => { try { n.remove(); } catch (e) {} }, 750);
+  }
+  function juiceHitStop(ms) {
+    if (juiceReduceMotion()) return;
+    const dur = Math.max(0, ms || 0);
+    if (dur < 30) return;
+    // wall-clock timer — never depend on timeScale
+    juiceHitStopUntil = Date.now() + dur;
+  }
+  function juiceHit(dmg, opts) {
+    opts = opts || {};
+    const big = !!opts.crit || dmg >= 12 || !!opts.boss;
+    const label = (opts.crit ? '會心 ' : '') + (opts.hurt ? '-' : '') + dmg;
+    juiceFlash();
+    juiceDmgFloat(label, { crit: !!opts.crit, hurt: !!opts.hurt });
+    juiceShake(big ? 0.55 : (opts.hurt ? 0.4 : 0.28));
+    if (big) juiceHitStop(opts.crit ? 70 : 45);
+    try {
+      if (navigator.vibrate) navigator.vibrate(big ? [12, 30, 12] : 8);
+    } catch (e) {}
+  }
+
   function tapFeel(el, ev) {
-    try { if (navigator.vibrate) navigator.vibrate(10); } catch (e) {}
+    try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
     if (!el) return;
     if (ev && ev.clientX != null) {
       const r = el.getBoundingClientRect();
       el.style.setProperty('--rx', ((ev.clientX - r.left) / Math.max(1, r.width) * 100) + '%');
       el.style.setProperty('--ry', ((ev.clientY - r.top) / Math.max(1, r.height) * 100) + '%');
     }
-    el.classList.add('pressed', 'ripple', 'choice-tap');
+    el.classList.add('pressed', 'ripple');
     setTimeout(() => { el.classList.remove('pressed', 'ripple'); }, 180);
   }
   function bindTapFeel(root) {
     const scope = root || document;
-    scope.querySelectorAll('.quick-replies button, .event-choice, .event-choices .btn, .choice-tap, #gate-choices .btn').forEach((b) => {
+    const sel = '.quick-replies button, .event-choice, .event-choices .btn, .choice-tap, #gate-choices .btn, .chip-card, .career-card, .btn, .tbtn, #tabs button';
+    scope.querySelectorAll(sel).forEach((b) => {
       if (b.dataset.tapBound) return;
       b.dataset.tapBound = '1';
       b.addEventListener('click', (ev) => tapFeel(b, ev), { passive: true });
@@ -2795,18 +2894,27 @@
   }
   function playerAttack() {
     if (!battle) return;
+    if (Date.now() < juiceHitStopUntil) return;
     const st = stats();
     const a = st.attrs || {};
     let dmg = Math.max(1, st.atk - Math.floor(battle.enemy.atk * 0.05) + Math.floor(Math.random() * 4));
     let note = '你造成 ' + dmg + ' 傷';
+    let crit = false;
     if ((a.wu || 0) + (a.yun || 0) >= 6 && Math.random() < Math.min(0.3, 0.05 + (a.wu + a.yun) * 0.015)) {
       dmg = Math.floor(dmg * 1.5) + 1;
       note = '會心！' + dmg + ' 傷';
+      crit = true;
     }
     battle.enemy.hp = Math.max(0, battle.enemy.hp - dmg);
+    juiceHit(dmg, { crit: crit, boss: !!battle.isBoss });
     updateBattleHUD(note);
     if (battle.enemy.hp <= 0) { onEnemyDown(); return; }
-    enemyAttack();
+    const delay = Math.max(0, juiceHitStopUntil - Date.now());
+    if (delay > 0) {
+      setTimeout(() => { if (battle) enemyAttack(); }, delay);
+    } else {
+      enemyAttack();
+    }
   }
   function enemyAttack() {
     if (!battle) return;
@@ -2819,9 +2927,10 @@
     }
     const dmg = Math.max(1, battle.enemy.atk - st.def + Math.floor(Math.random() * 3) - Math.floor((a.hu || 0) / 5));
     S.hp = Math.max(0, S.hp - dmg);
+    juiceHit(dmg, { hurt: true });
     updateBattleHUD(battle.enemy.name + '擊你 ' + dmg);
     if (S.hp <= 0) {
-      toast('戰敗…快回陋室休養');
+      toast('戰敗…快回陋室休養', 'err');
       S.hp = Math.max(1, Math.floor(st.maxHp * 0.3));
       autoOn = false;
       syncAutoUi();
@@ -2949,6 +3058,12 @@
     if (battle && battle.autoTimer) {
       try { clearTimeout(battle.autoTimer); } catch (e) {}
     }
+    juiceTrauma = 0;
+    juiceHitStopUntil = 0;
+    try {
+      const app = $('app');
+      if (app) app.style.transform = juiceBaseTransform();
+    } catch (e) {}
     battle = null;
     const hud = $('battle-hud');
     if (hud) hud.hidden = true;
@@ -4216,11 +4331,13 @@
       ).join('');
       og.dataset.ready = '1';
       og.querySelectorAll('[data-origin]').forEach((b) => {
-        b.addEventListener('click', () => {
+        b.addEventListener('click', (ev) => {
+          tapFeel(b, ev);
           window.__createDraft.origin = b.dataset.origin;
           og.querySelectorAll('[data-origin]').forEach((x) => x.classList.toggle('active', x === b));
         });
       });
+      bindTapFeel(og);
     }
   }
   function readCreateDraft() {
@@ -4264,8 +4381,9 @@
           '<div class="stats">銀' + c.gold + ' · 糧' + c.food + ' · HP' + c.hp + ' · ATK' + c.atk + '</div></div></button>';
       }).join('');
     grid.querySelectorAll('[data-career]').forEach((b) => {
-      b.addEventListener('click', () => startGame(b.dataset.career));
+      b.addEventListener('click', (ev) => { tapFeel(b, ev); startGame(b.dataset.career); });
     });
+    bindTapFeel(grid);
   }
   function startGame(careerId) {
     readCreateDraft();
@@ -4614,6 +4732,7 @@
         if (b) tapFeel(b, e);
       }, true);
     });
+    bindTapFeel(document);
     // gender disguise field
     document.querySelectorAll('#gender-row [data-gender]').forEach((b) => {
       b.addEventListener('click', () => {

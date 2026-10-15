@@ -1,9 +1,9 @@
-/* v31 white panels + black text · navy-gold HUD · cute pixel · circular dock · face-safe */
+/* v32 remake · white content + navy-gold chrome · juice · face-safe */
 /* ===== 墨夢莊周：國風文字 RPG 殼（宣紙・金線・朱砂） ===== */
 :root{
-  --paper:#fbf4ee;--paper2:#f4e7dd;--paper3:#ead8c8;
-  --ver:#b8323a;--ver2:#d2545c;--ink:#2b2321;--ink2:#5a4a44;
-  --gold:#c9a35a;--gold2:#e6cf98;--dai:#4a6b6a;--pink:#f6d6d8;--rose:#e2838f;
+  --paper:#fffdf8;--paper2:#fffaf4;--paper3:#f5e8d8;
+  --ver:#c44a52;--ver2:#e07078;--ink:#111111;--ink2:#222222;
+  --gold:#d4af5f;--gold2:#f0d28c;--dai:#378c91;--pink:#f6d6d8;--rose:#e2838f;
   --fs:16px;
   --vh:1vh;
   --sab:max(env(safe-area-inset-bottom),8px);
@@ -871,10 +871,10 @@ input,textarea,select{font-family:inherit;}
   box-shadow: inset 0 0 0 1px #0002, 0 2px 6px #0002;
 }
 .pin.pin-art[data-art="farm"] .ps{
-  background-image: url('assets/bg_busy_farm.webp?v=29');
+  background-image: url('assets/bg_busy_farm.webp?v=32');
 }
 .pin.pin-art[data-art="hut"] .ps{
-  background-image: url('assets/bg_homestead.webp?v=29');
+  background-image: url('assets/bg_homestead.webp?v=32');
 }
 
 
@@ -1498,11 +1498,11 @@ input,textarea,select{font-family:inherit;}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
 }
 .pin.pin-art[data-art="farm"] .ps{
-  background-image:url('assets/ui/pin_farm.webp?v=29'),url('assets/bg_busy_farm.webp?v=29');
+  background-image:url('assets/ui/pin_farm.webp?v=32'),url('assets/bg_busy_farm.webp?v=32');
   background-size:cover,cover;background-position:center;color:transparent;text-shadow:none;
 }
 .pin.pin-art[data-art="hut"] .ps{
-  background-image:url('assets/ui/pin_hut.webp?v=29'),url('assets/bg_homestead.webp?v=29');
+  background-image:url('assets/ui/pin_hut.webp?v=32'),url('assets/bg_homestead.webp?v=32');
   background-size:cover,cover;background-position:center;color:transparent;text-shadow:none;
 }
 
@@ -1589,12 +1589,12 @@ input,textarea,select{font-family:inherit;}
 }
 
 /* v25 map pin icon covers (original ui/pin_*.webp) */
-.pin.pin-art[data-art="village"] .ps{background-image:url('assets/ui/pin_village.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="market"] .ps{background-image:url('assets/ui/pin_market.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="clinic"] .ps{background-image:url('assets/ui/pin_clinic.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="drill"] .ps{background-image:url('assets/ui/pin_drill.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="wild"] .ps{background-image:url('assets/ui/pin_wild.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="garden"] .ps{background-image:url('assets/ui/pin_garden.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="village"] .ps{background-image:url('assets/ui/pin_village.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="market"] .ps{background-image:url('assets/ui/pin_market.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="clinic"] .ps{background-image:url('assets/ui/pin_clinic.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="drill"] .ps{background-image:url('assets/ui/pin_drill.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="wild"] .ps{background-image:url('assets/ui/pin_wild.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="garden"] .ps{background-image:url('assets/ui/pin_garden.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
 
 
 /* ===== v26 parchment HUD · circular dock · face-safe · career strip ===== */
@@ -1859,14 +1859,14 @@ input,textarea,select{font-family:inherit;}
 }
 
 /* Map pin cache bust v26 */
-.pin.pin-art[data-art="farm"] .ps{background-image:url('assets/ui/pin_farm.webp?v=29'),url('assets/bg_busy_farm.webp?v=29');}
-.pin.pin-art[data-art="hut"] .ps{background-image:url('assets/ui/pin_hut.webp?v=29'),url('assets/bg_homestead.webp?v=29');}
-.pin.pin-art[data-art="village"] .ps{background-image:url('assets/ui/pin_village.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="market"] .ps{background-image:url('assets/ui/pin_market.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="clinic"] .ps{background-image:url('assets/ui/pin_clinic.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="drill"] .ps{background-image:url('assets/ui/pin_drill.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="wild"] .ps{background-image:url('assets/ui/pin_wild.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
-.pin.pin-art[data-art="garden"] .ps{background-image:url('assets/ui/pin_garden.webp?v=29');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="farm"] .ps{background-image:url('assets/ui/pin_farm.webp?v=32'),url('assets/bg_busy_farm.webp?v=32');}
+.pin.pin-art[data-art="hut"] .ps{background-image:url('assets/ui/pin_hut.webp?v=32'),url('assets/bg_homestead.webp?v=32');}
+.pin.pin-art[data-art="village"] .ps{background-image:url('assets/ui/pin_village.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="market"] .ps{background-image:url('assets/ui/pin_market.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="clinic"] .ps{background-image:url('assets/ui/pin_clinic.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="drill"] .ps{background-image:url('assets/ui/pin_drill.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="wild"] .ps{background-image:url('assets/ui/pin_wild.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
+.pin.pin-art[data-art="garden"] .ps{background-image:url('assets/ui/pin_garden.webp?v=32');background-size:cover;color:transparent;text-shadow:none}
 
 /* v26 polish pass */
 .hud-ver{
@@ -1890,7 +1890,7 @@ input,textarea,select{font-family:inherit;}
 .career-strip-embed{justify-content:space-between;}
 #place-chip{z-index:4;}
 
-/* ===== V27 UI KIT OVERRIDES ===== */
+/* ===== V32 THEME: white content · navy-gold chrome · juice ===== */
 :root{
   --kit-navy:#162038;
   --kit-navy2:#203050;
@@ -1901,24 +1901,32 @@ input,textarea,select{font-family:inherit;}
   --kit-ok:#37966e;
   --kit-err:#b23a45;
   --kit-warn:#c88a32;
-  --paper:#1a2438;
-  --paper2:#223050;
-  --paper3:#2a3a58;
+  --paper:#fffdf8;
+  --paper2:#fffaf4;
+  --paper3:#f5e8d8;
   --ink:#111111;
-  --ink2:#2a2a2a;
+  --ink2:#222222;
+  --ink-mute:#555555;
   --gold:var(--kit-gold);
   --gold2:var(--kit-gold2);
   --ver:#c44a52;
   --ver2:#e07078;
   --dai:var(--kit-teal);
+  --content-bg:#fffdf8;
+  --content-bg2:#ffffff;
+  --chrome:#121a2c;
 }
-html,body{background:#0e1424;color:var(--ink);}
+html,body{
+  background:#0e1424;
+  color:var(--ink);
+}
 #app{
   background:linear-gradient(180deg,#1a2438,#121a2c);
   box-shadow:0 0 40px rgba(0,0,0,.45);
+  will-change:transform;
 }
 
-/* Title */
+/* ---- Title (chrome accents OK) ---- */
 #screen-title{background:#121a2c;}
 #screen-title h1{color:#f6e7c8;text-shadow:0 2px 0 rgba(0,0,0,.35),0 0 24px rgba(212,175,95,.25);}
 .subtitle{color:#cbb89a;}
@@ -1926,222 +1934,18 @@ html,body{background:#0e1424;color:var(--ink);}
   background:linear-gradient(180deg,#3a2e18,#8a6a2e 18%,#d4af5f 52%,#8a6a2e 86%,#3a2e18);
   border:2px solid #f0d28c;border-radius:14px;color:#1a1208;
   box-shadow:0 6px 16px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,240,200,.45);
+  transition:transform .12s ease, filter .12s ease;
 }
 .tbtn b{color:#1a1208;text-shadow:0 1px 0 rgba(255,230,180,.35);}
 .tbtn small{color:#3a2a10;}
 .tbtn:before,.tbtn:after{display:none;}
+.tbtn:active,.tbtn.pressed{transform:scale(.96);}
 
-/* Career */
-#screen-career{background:#121a2c;background-image:none;}
-.career-wrap{
-  background:url("assets/ui/panel_md.webp") center/100% 100% no-repeat, linear-gradient(180deg,#203050,#162038);
-  border:2px solid rgba(212,175,95,.75);border-radius:18px;
-  box-shadow:0 12px 32px rgba(0,0,0,.4);
-}
-.career-wrap h2,.career-blurb{color:#f3e6d2;}
-.career-card{
-  background:rgba(22,32,56,.72);border:1.5px solid rgba(212,175,95,.65);
-  border-left:5px solid var(--kit-gold);color:#f3e6d2;
-}
-.career-card h3{color:#f0d28c;}
-.career-card p,.career-card .stats{color:#cbb89a;}
-
-/* HUD top bar — kit style */
-#hud{z-index:6;}
-.hud-daypill,#hud.hud-scroll .hud-daypill, .hud-scroll{
-  background:linear-gradient(180deg,rgba(32,48,80,.94),rgba(18,28,48,.94))!important;
-  border:1.5px solid rgba(212,175,95,.8)!important;
-  box-shadow:0 6px 18px rgba(0,0,0,.35)!important;
-  color:#f3e6d2!important;
-}
-#hCh{color:#f6e7c8!important;}
-#hCh .hud-career-wrap{color:#cbb89a!important;}
-#hStat span{
-  background:rgba(10,14,28,.75)!important;border-color:rgba(212,175,95,.55)!important;color:#f6ebe0!important;
-}
-#hStat b{color:#f0d28c!important;}
-.hud-avatar-btn,#hud-avatar{
-  border-radius:50%!important;
-  border:2.5px solid var(--kit-gold)!important;
-  box-shadow:0 0 0 2px rgba(55,140,145,.55),0 4px 12px rgba(0,0,0,.35)!important;
-  background:rgba(22,32,56,.9)!important;
-}
-.hud-avatar-btn{
-  position:relative;
-  background:
-    url("assets/ui/frame_avatar.webp") center/100% 100% no-repeat,
-    rgba(22,32,56,.9)!important;
-  padding:0!important;
-  overflow:hidden;
-}
-.hud-ver{
-  background:rgba(22,32,56,.85)!important;border-color:rgba(212,175,95,.65)!important;color:#f0d28c!important;
-}
-#meters .mt-hp{
-  background:rgba(16,22,40,.8)!important;border-color:rgba(212,175,95,.7)!important;
-}
-
-/* Bottom tabs — circular gold icon dock */
-#tabs{
-  background:linear-gradient(180deg,rgba(28,40,68,.95),rgba(14,20,36,.96))!important;
-  border:2px solid rgba(212,175,95,.7)!important;
-  border-radius:28px!important;
-  box-shadow:0 12px 28px rgba(0,0,0,.45)!important;
-}
-#tabs button{color:#e8d9c4!important;}
-#tabs button i{
-  width:44px!important;height:44px!important;border-radius:50%!important;
-  background:radial-gradient(circle at 35% 30%,#2a3c60,#162038)!important;
-  border:2px solid rgba(212,175,95,.85)!important;
-  box-shadow:inset 0 1px 0 rgba(255,230,160,.25),0 4px 10px rgba(0,0,0,.35)!important;
-}
-#tabs button i img{
-  width:28px!important;height:28px!important;object-fit:contain;
-  filter:drop-shadow(0 0 2px rgba(240,210,140,.35));
-}
-#tabs button.on i,#tabs button:active i{
-  background:radial-gradient(circle at 35% 30%,#4a3a18,#d4af5f)!important;
-  border-color:#f0d28c!important;
-  color:#1a1208!important;
-}
-#tabs button.on{color:#f0d28c!important;}
-
-/* Sheets / panels */
-.sheet{
-  background:
-    linear-gradient(180deg,rgba(22,32,56,.97),rgba(14,20,36,.98))!important;
-  color:#f3e6d2!important;
-}
-.sheet .shead{
-  background:linear-gradient(180deg,#2a4060,#1a2838)!important;
-  border-bottom:1px solid rgba(212,175,95,.45)!important;
-  color:#f6e7c8!important;
-}
-.sheet .shead h2{color:#f0d28c!important;}
-.sheet .shead h2:before,.sheet .shead h2:after{color:var(--kit-gold)!important;}
-.sheet .shead-sub{color:#cbb89a!important;}
-.sx{
-  background:url("assets/ui/ico_close.webp") center/72% no-repeat, radial-gradient(circle at 35% 30%,#3a2030,#8a3040)!important;
-  border:2px solid rgba(212,175,95,.85)!important;color:transparent!important;
-  border-radius:50%!important;
-  font-size:0!important;
-}
-.sbody{color:#e8d9c4;}
-
-/* Buttons */
-.btn{
-  min-height:46px;border-radius:12px;
-  background:linear-gradient(180deg,#3a4a6a,#243050);
-  border:2px solid rgba(212,175,95,.75)!important;
-  color:#f3e6d2!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 4px 10px rgba(0,0,0,.28);
-  font-weight:700;
-}
-.btn.primary,.btn.pri{
-  background:linear-gradient(180deg,#e0c070,#b89040 55%,#8a6828)!important;
-  color:#1a1208!important;border-color:#f0d28c!important;
-}
-.btn.ghost{
-  background:transparent!important;border-color:rgba(212,175,95,.55)!important;color:#e8d9c4!important;
-}
-.btn.ok,.btn.success{background:linear-gradient(180deg,#4cb888,#2a7a58)!important;border-color:#7fd4a8!important;color:#f4fff8!important;}
-.btn.danger,.btn.err{background:linear-gradient(180deg,#d06068,#8a3038)!important;border-color:#f0a0a8!important;color:#fff6f6!important;}
-
-/* Modal */
-.modal-card,.modal{
-  background:linear-gradient(180deg,#243458,#162038)!important;
-  border:2px solid rgba(212,175,95,.8)!important;
-  color:#f3e6d2!important;
-  box-shadow:0 18px 40px rgba(0,0,0,.5)!important;
-}
-
-/* Toast kit bars */
-.toast,#toast{
-  background:url("assets/ui/toast_warn.webp") center/cover no-repeat, rgba(28,36,55,.94)!important;
-  border:2px solid rgba(212,175,95,.7)!important;
-  border-radius:14px!important;
-  color:#f6e7c8!important;
-  box-shadow:0 8px 22px rgba(0,0,0,.4)!important;
-  font-weight:600;
-}
-.toast.ok,#toast.ok{
-  background:url("assets/ui/toast_ok.webp") center/cover no-repeat, rgba(30,60,48,.95)!important;
-  border-color:rgba(90,200,140,.8)!important;
-}
-.toast.err,#toast.err{
-  background:url("assets/ui/toast_err.webp") center/cover no-repeat, rgba(70,30,35,.95)!important;
-  border-color:rgba(200,80,90,.8)!important;
-}
-
-/* Battle banners */
-.battle-hud{
-  background:linear-gradient(180deg,rgba(36,52,80,.96),rgba(18,28,48,.96))!important;
-  border:2px solid rgba(212,175,95,.8)!important;
-  color:#f3e6d2!important;
-}
-.wave-label{background:rgba(22,32,56,.9)!important;border-color:rgba(212,175,95,.7)!important;color:#f0d28c!important;}
-
-/* Face / avatar framing */
-.vn-char.face-mode img,
-.talk-face,.event-face,.face-thumb,.face-cell img,.face-grid img,.guest-face,.battle-hero{
-  border:2.5px solid var(--kit-gold)!important;
-  box-shadow:0 0 0 2px rgba(55,140,145,.45),0 4px 14px rgba(0,0,0,.35)!important;
-  background:rgba(22,32,56,.92)!important;
-  object-position:50% 18%!important;
-  image-rendering:auto;
-}
-.face-thumb,.talk-face,.event-face{
-  border-radius:50%!important;
-}
-
-/* Item / equip slots */
-.equip-slot .eq-ico,.gear-card .eq-ico{
-  background:url("assets/ui/slot_item.webp") center/100% 100% no-repeat, rgba(22,32,56,.85)!important;
-  border:2px solid rgba(212,175,95,.65)!important;
-  border-radius:12px!important;
-}
-
-/* Dialogue box */
-#box,.vn-box,.say-box{
-  background:linear-gradient(180deg,rgba(28,40,68,.94),rgba(16,22,40,.96))!important;
-  border:2px solid rgba(212,175,95,.7)!important;
-  color:#f3e6d2!important;
-}
-#free-input{color:#f3e6d2!important;border-bottom-color:rgba(212,175,95,.55)!important;}
-#free-input::placeholder{color:#8a7a60!important;}
-#free-send{
-  background:linear-gradient(180deg,#e0c070,#b89040)!important;color:#1a1208!important;
-  box-shadow:inset 0 0 0 2px rgba(255,230,180,.45)!important;
-}
-
-/* Map pins */
-.pin .ps{
-  background:radial-gradient(circle at 35% 30%,#3a4a6a,#162038)!important;
-  border:2px solid rgba(212,175,95,.85)!important;
-  box-shadow:0 4px 12px rgba(0,0,0,.35)!important;
-}
-.pin .pn{
-  background:rgba(22,32,56,.92)!important;border:1px solid rgba(212,175,95,.7)!important;color:#f0d28c!important;
-}
-
-/* Career dock figures */
-#career-dock, .career-row, .job-row{
-  background:rgba(16,22,40,.75);
-  border-top:1px solid rgba(212,175,95,.35);
-}
-
-/* ===== V29 CONTRAST + CREATE LAYOUT ===== */
-:root{
-  --ink-dark:#1a1520;
-  --ink-body:#2c2636;
-  --ink-mute:#5a5348;
-}
-
-/* Create screen: scrollable form + pinned footer (never washed out) */
+/* ---- Content panels: white / off-white + black text ---- */
 #screen-create{
   display:flex!important;
   flex-direction:column;
-  background:#121a2c;
+  background:var(--chrome);
   overflow:hidden;
   -webkit-overflow-scrolling:touch;
   min-height:100%;
@@ -2149,6 +1953,20 @@ html,body{background:#0e1424;color:var(--ink);}
   min-height:100svh;
 }
 #screen-create[hidden]{display:none!important;}
+#screen-create .create-wrap,
+.career-wrap,
+.career-wrap.parchment,
+#screen-career .career-wrap,
+.parchment,
+.modal-card.parchment,
+.modal-card{
+  background:var(--content-bg)!important;
+  background-image:none!important;
+  color:var(--ink)!important;
+  border:2px solid rgba(212,175,95,.75)!important;
+  border-radius:18px;
+  box-shadow:0 12px 28px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.6)!important;
+}
 #screen-create .create-wrap{
   flex:1 1 auto;
   min-height:0;
@@ -2157,465 +1975,12 @@ html,body{background:#0e1424;color:var(--ink);}
   margin:calc(var(--sat) + 12px) 12px 8px!important;
   padding:16px 14px 20px!important;
   max-height:none!important;
+  border-radius:16px;
 }
-#screen-create .create-actions{
-  position:relative!important;
-  flex:0 0 auto;
-  z-index:40;
-  margin:0!important;
-  padding:10px 14px calc(12px + env(safe-area-inset-bottom, 0px))!important;
-  display:flex;
-  gap:10px;
-  justify-content:space-between;
-  background:#121a2c!important;
-  border-top:1.5px solid rgba(212,175,95,.55)!important;
-  box-shadow:0 -8px 20px rgba(0,0,0,.35)!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
-}
-#screen-create.create-kb .create-actions{padding-bottom:12px!important;}
-#screen-create .create-actions .btn{
-  flex:1;
-  min-height:48px;
-  height:48px;
-}
-#screen-create .create-actions .btn.ghost{
-  background:rgba(36,48,80,.92)!important;
-  color:#f3e6d2!important;
-  border-color:rgba(212,175,95,.75)!important;
-}
-#screen-create .create-actions .btn.primary{
-  background:linear-gradient(180deg,#e0c070,#b89040 55%,#8a6828)!important;
-  color:#1a1208!important;
-  border-color:#f0d28c!important;
-}
+#screen-career{background:var(--chrome);background-image:none;}
+.career-wrap{margin:calc(var(--sat)+16px) 14px calc(var(--sab)+16px);padding:18px 14px;}
 
-/* Light chip / origin cards → dark ink (readable) */
-.chip-card{
-  background:linear-gradient(180deg,#fffdf9,#f3e6d4)!important;
-  border:1.5px solid rgba(212,175,95,.88)!important;
-  color:#1a1520!important;
-  font-weight:700;
-  text-shadow:none!important;
-}
-.chip-card strong{
-  display:block;
-  color:#1a1520!important;
-  font-weight:700;
-  letter-spacing:.06em;
-}
-.chip-card span{
-  display:block;
-  color:#2c2636!important;
-  opacity:1!important;
-  font-weight:600;
-  margin-top:4px;
-  line-height:1.45;
-  font-size:12px;
-}
-.chip-card.active{
-  background:linear-gradient(180deg,#fff4e6,#edd4b8)!important;
-  box-shadow:inset 0 0 0 2.5px #c44a52, 0 0 0 1px rgba(212,175,95,.4)!important;
-  color:#1a1520!important;
-}
-#gender-row .chip-card{
-  text-align:center;
-  font-size:16px;
-  letter-spacing:.18em;
-  padding:12px 6px;
-  min-height:48px;
-}
-
-/* Create / form inputs: white field + dark text */
-.create-wrap input[type=text],
-#create-name,#create-goal,
-.field input:not([type=checkbox]):not([type=radio]),
-.field select,
-.talk-input-row input,
-#talk-input{
-  background:#fffaf6!important;
-  color:#1a1520!important;
-  border:1.5px solid rgba(212,175,95,.8)!important;
-  caret-color:#1a1520;
-  border-radius:10px;
-}
-.create-wrap input[type=text]::placeholder,
-#create-name::placeholder,
-#create-goal::placeholder,
-.field input::placeholder,
-#talk-input::placeholder{
-  color:#5a5348!important;
-  opacity:.75!important;
-}
-
-/* Labels on navy panels stay light */
-.create-wrap .field,
-.create-wrap .flabel{color:#e8d9c4!important;}
-.create-wrap .field.check,
-#disguise-field .field.check{
-  color:#e8d9c4!important;
-  display:flex;
-  align-items:flex-start;
-  gap:8px;
-  flex-wrap:wrap;
-  white-space:normal;
-  word-break:break-word;
-  line-height:1.5;
-  font-size:13px;
-}
-#disguise-field .field.check input{margin-top:3px;flex:0 0 auto;}
-
-/* Career screen readable */
-#screen-career{
-  overflow:auto;
-  -webkit-overflow-scrolling:touch;
-}
-#screen-career .career-wrap{
-  margin-bottom:calc(var(--sab) + 24px);
-}
-.career-card{
-  background:rgba(22,32,56,.88)!important;
-  color:#f3e6d2!important;
-}
-.career-card h3{color:#f0d28c!important;}
-.career-card p,.career-card .stats{color:#d4c4a8!important;}
-
-/* Sheet / modal list cards on navy */
-.quest-item,
-.bag-cell,
-.bag-item,
-.gear-card,
-.villager-card,
-.shop-item,
-.craft-item,
-.aff-mini,
-.enemy-preview,
-.parchment-mini,
-.chron-item,
-.hands-chip,
-.dungeon-stats span{
-  background:linear-gradient(180deg,rgba(40,56,88,.94),rgba(22,32,56,.96))!important;
-  border:1.5px solid rgba(212,175,95,.62)!important;
-  color:#f3e6d2!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 8px rgba(0,0,0,.2)!important;
-}
-.chip{
-  background:rgba(36,52,80,.9)!important;
-  border:1px solid rgba(212,175,95,.65)!important;
-  color:#f3e6d2!important;
-}
-.quest-item.quest-section{
-  background:transparent!important;
-  border:0!important;
-  border-bottom:1px dashed rgba(212,175,95,.4)!important;
-  box-shadow:none!important;
-  color:#f0d28c!important;
-}
-.quest-item .quest-progress,
-.quest-item .quest-reward,
-.villager-card .muted,
-.craft-item .need,
-.note,.tiny,.muted,.mode-blurb,
-.crop-pick .label,
-.pin .pcost,
-.aff-num,
-.hp-num,
-.shead-sub,
-.ver-line,
-.talk-line.sys{
-  color:#cbb89a!important;
-}
-.quest-item strong,
-.shop-item b,
-.bag-section-title,
-.panel-h,
-.sheet .shead h2,
-.modal-card.parchment h2,
-.parchment h2{
-  color:#f0d28c!important;
-}
-.quest-item .ok,.ok{color:#6fd4a0!important;}
-
-/* 行事 plot-card：頭欄深藍高對比；畫布保持泥土色（唔用全局 navy 蓋） */
-.plot-card{
-  background:linear-gradient(180deg,rgba(40,56,88,.96),rgba(22,32,56,.98))!important;
-  border:1.5px solid rgba(212,175,95,.7)!important;
-  color:#f3e6d2!important;
-  box-shadow:0 3px 12px rgba(0,0,0,.28)!important;
-}
-.plot-card-head{
-  background:linear-gradient(180deg,#2a4060,#1a2838)!important;
-  color:#f6e7c8!important;
-  border-bottom:1px solid rgba(212,175,95,.45)!important;
-  font-weight:700;
-}
-.plot-card-hint{color:#d4c4a8!important;font-weight:600;}
-.plot-canvas-wrap{
-  background:
-    radial-gradient(ellipse at 30% 40%, rgba(139,110,80,.22), transparent 55%),
-    linear-gradient(180deg,#5d4636 0%,#3e2e24 100%)!important;
-}
-
-/* Segment / crop / fish / directives */
-.dir,.crop-btn,.seg,.fish-spot{
-  background:rgba(36,52,80,.92)!important;
-  color:#f3e6d2!important;
-  border-color:rgba(212,175,95,.75)!important;
-  font-weight:700;
-}
-.dir.active,.crop-btn.active,.fish-spot.active,.seg.active{
-  background:#c44a52!important;
-  color:#fff6ef!important;
-  border-color:#e07078!important;
-}
-.crop-pick select,
-.field select{
-  background:#fffaf6!important;
-  color:#1a1520!important;
-}
-
-/* Place chip + dialogue */
-#place-chip{
-  background:linear-gradient(180deg,#2a4060,#1a2838)!important;
-  border:1.5px solid rgba(212,175,95,.8)!important;
-  color:#f0d28c!important;
-}
-#txt,.event-body{color:#e8d9c4!important;}
-#txt .nar{color:#d4c4a8!important;}
-#txt .sys{color:#cbb89a!important;}
-#txt .npc{color:#f0a8b0!important;}
-#txt .me{color:#7ec8c4!important;}
-.event-choices .btn,.event-choice{
-  background:linear-gradient(180deg,#3a4a6a,#243050)!important;
-  color:#f3e6d2!important;
-  border:2px solid rgba(212,175,95,.7)!important;
-}
-#free-input::placeholder{color:#a89880!important;opacity:.8!important;}
-
-/* Sheet act / map notes readable */
-#sheet-act .sbody,
-#sheet-map .sbody,
-#sheet-bag .sbody,
-#sheet-quest .sbody,
-#sheet-ppl .sbody,
-#sheet-menu .sbody{color:#e8d9c4;}
-#sheet-act .note,#sheet-map .note{color:#d4c4a8!important;}
-
-/* Equip empty / secondary */
-.equip-slot small,.eq-meta small{color:#cbb89a!important;}
-
-/* Tabs stay visible above overlays */
-#tabs{z-index:50;}
-
-/* Narrow phone */
-@media (max-width:390px){
-  #screen-create .create-actions{padding-bottom:calc(14px + env(safe-area-inset-bottom, 0px))!important;}
-  #screen-create .create-wrap{margin-left:10px!important;margin-right:10px!important;}
-  #gender-row .chip-card{font-size:15px;letter-spacing:.12em;padding:10px 4px;}
-  .origin-grid{grid-template-columns:1fr 1fr;gap:8px;}
-}
-
-
-/* ===== v30: 正文改黑色（可讀優先） ===== */
-:root{
-  --ink:#111111;
-  --ink2:#222222;
-}
-html,body,#app{color:#111!important;}
-
-/* 身世／擇業／羊皮紙內容：淺底黑字 */
-#screen-create .create-wrap,
-#screen-career .career-wrap,
-.career-wrap.parchment,
-.parchment,
-.modal-card.parchment,
-.sheet .sbody,
-#box,
-#txt,
-.event-body{
-  color:#111!important;
-}
-.create-wrap h2,
-.career-wrap h2,
-.parchment h2,
-.sheet .shead h2,
-.modal-card.parchment h2,
-.panel-h,
-.bag-section-title,
-.quest-item strong,
-.shop-item b{
-  color:#111!important;
-}
-.create-wrap .field,
-.create-wrap .flabel,
-.create-wrap .field.check,
-#disguise-field .field.check,
-.career-blurb,
-.career-card h3,
-.career-card p,
-.career-card .stats,
-.chip-card,
-.chip-card strong,
-.chip-card span,
-.quest-item,
-.quest-item .quest-progress,
-.quest-item .quest-reward,
-.bag-cell,
-.bag-item,
-.gear-card,
-.villager-card,
-.villager-card .muted,
-.shop-item,
-.craft-item,
-.craft-item .need,
-.aff-mini,
-.aff-num,
-.note,.tiny,.muted,.mode-blurb,
-.crop-pick .label,
-.pin .pcost,
-.hp-num,
-.shead-sub,
-.ver-line,
-.talk-line.sys,
-.equip-slot small,
-.eq-meta small,
-#txt .nar,#txt .sys,
-#sheet-act .note,#sheet-map .note,
-#sheet-act .sbody,#sheet-map .sbody,
-#sheet-bag .sbody,#sheet-quest .sbody,
-#sheet-ppl .sbody,#sheet-menu .sbody{
-  color:#111!important;
-}
-.chip-card span,
-.career-card p,
-.career-card .stats,
-.quest-item .quest-progress,
-.quest-item .quest-reward,
-.villager-card .muted,
-.craft-item .need,
-.note,.tiny,.muted,.mode-blurb,
-.shead-sub,#txt .nar,#txt .sys{
-  color:#222!important;
-}
-
-/* 內容卡改回淺底，配合黑字 */
-.chip-card,
-#wmode-row .chip-card,
-.origin-grid .chip-card,
-#gender-row .chip-card{
-  background:linear-gradient(180deg,#fffdf8,#f5e8d8)!important;
-  color:#111!important;
-}
-.chip-card.active,
-#wmode-row .chip-card.active,
-.origin-grid .chip-card.active{
-  color:#111!important;
-}
-.career-card{
-  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
-  color:#111!important;
-  border:1.5px solid rgba(184,50,58,.35)!important;
-}
-.quest-item,
-.bag-cell,
-.bag-item,
-.gear-card,
-.villager-card,
-.shop-item,
-.craft-item,
-.aff-mini,
-.enemy-preview,
-.parchment-mini,
-.chron-item,
-.hands-chip,
-.chip{
-  background:linear-gradient(180deg,#fffdf8,#f3e8da)!important;
-  border:1.5px solid rgba(184,50,58,.28)!important;
-  color:#111!important;
-  box-shadow:0 2px 8px rgba(0,0,0,.08)!important;
-}
-.quest-item.quest-section{
-  background:transparent!important;
-  border:0!important;
-  border-bottom:1px dashed rgba(80,60,40,.35)!important;
-  box-shadow:none!important;
-  color:#111!important;
-}
-.dir,.crop-btn,.seg,.fish-spot{
-  background:#fffaf4!important;
-  color:#111!important;
-  border-color:rgba(184,50,58,.35)!important;
-}
-.dir.active,.crop-btn.active,.fish-spot.active,.seg.active{
-  background:#c44a52!important;
-  color:#fff!important;
-}
-.plot-card{
-  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
-  color:#111!important;
-}
-.plot-card-head{
-  background:linear-gradient(180deg,#fff6ec,#ead9c4)!important;
-  color:#111!important;
-  border-bottom:1px solid rgba(184,50,58,.3)!important;
-}
-.plot-card-hint{color:#222!important;}
-.event-choices .btn,.event-choice{
-  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
-  color:#111!important;
-  border:2px solid rgba(184,50,58,.4)!important;
-}
-.create-wrap input[type=text],
-#create-name,#create-goal,
-.field input:not([type=checkbox]):not([type=radio]),
-.field select,
-#talk-input,#free-input,
-.crop-pick select{
-  color:#111!important;
-  background:#fff!important;
-}
-.create-wrap input[type=text]::placeholder,
-#create-name::placeholder,
-#create-goal::placeholder,
-.field input::placeholder,
-#talk-input::placeholder,
-#free-input::placeholder{
-  color:#555!important;
-  opacity:.85!important;
-}
-
-/* HUD／底欄深蓝底維持淺字，正文已改黑 */
-
-
-/* ===== v31: 內容區白底黑字（可讀優先；HUD／底欄維持深藍淺字） ===== */
-:root{
-  --ink:#111111;
-  --ink2:#222222;
-  --paper:#fffdf8;
-  --paper2:#fffaf4;
-  --paper3:#f5e8d8;
-}
-
-/* 身世／擇業／羊皮紙／模態：強制白底，去掉 panel_md 海軍藍圖 */
-#screen-create .create-wrap,
-.career-wrap,
-.career-wrap.parchment,
-#screen-career .career-wrap,
-.parchment,
-.modal-card.parchment,
-.modal-card{
-  background:#fffdf8!important;
-  background-image:none!important;
-  color:#111!important;
-  border:2px solid rgba(212,175,95,.75)!important;
-  box-shadow:0 12px 28px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.6)!important;
-}
-.modal{
-  /* 遮罩維持暗；卡片本身由 .modal-card 管 */
-  color:#111!important;
-}
-
-/* 標題列：青綠橫幅 + 金字（對應舊 panel 頂欄） */
+/* Teal banner titles on white panels */
 #screen-create .create-wrap h2,
 .career-wrap h2,
 .parchment h2,
@@ -2636,196 +2001,42 @@ html,body,#app{color:#111!important;}
 .parchment h2:before,
 .parchment h2:after,
 .modal-card h2:before,
-.modal-card h2:after{
-  color:#f0d28c!important;
-}
+.modal-card h2:after{color:#f0d28c!important;}
 
-/* 身世／擇業說明與標籤：白底上必須黑字（覆蓋 v29 奶油字） */
-#screen-create .create-wrap,
-#screen-create .create-wrap .career-blurb,
-.career-wrap .career-blurb,
-.career-blurb,
+/* Labels / body on white */
 .create-wrap .field,
 .create-wrap .flabel,
 .create-wrap .field.check,
+.create-wrap label.field,
 #disguise-field .field.check,
-.create-wrap label.field{
-  color:#111!important;
+.career-blurb,
+.career-card h3,
+.career-card p,
+.career-card .stats,
+.ver-line{
+  color:var(--ink)!important;
 }
-.create-wrap .field.check,
-#disguise-field .field.check{
-  color:#222!important;
-}
+.career-blurb,.career-card p,.career-card .stats,.create-wrap .field.check{color:var(--ink2)!important;}
 
-/* 擇業卡：淺クリーム + 黑字 */
-.career-card{
-  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
-  color:#111!important;
-  border:1.5px solid rgba(184,50,58,.35)!important;
-  border-left:5px solid rgba(184,50,58,.65)!important;
-}
-.career-card h3{color:#111!important;}
-.career-card p,.career-card .stats{color:#222!important;}
-
-/* 薄片（地圖／行囊／人脈／差事／選單）：內容白底黑字 */
-.sheet{
-  background:#fffdf8!important;
-  background-image:none!important;
-  color:#111!important;
-}
-.sheet .sbody,
-#sheet-act .sbody,
-#sheet-map .sbody,
-#sheet-bag .sbody,
-#sheet-quest .sbody,
-#sheet-ppl .sbody,
-#sheet-menu .sbody{
-  background:#ffffff!important;
-  color:#111!important;
-}
-.sheet .shead{
-  background:linear-gradient(180deg,#3aa0a6,#2a7c82)!important;
-  border-bottom:1px solid rgba(212,175,95,.55)!important;
-  color:#f6e7c8!important;
-}
-.sheet .shead h2{
-  color:#f0d28c!important;
-  background:transparent!important;
-  padding:0!important;
-  margin:0!important;
-}
-.sheet .shead h2:before,
-.sheet .shead h2:after{color:#f0d28c!important;}
-.sheet .shead-sub{color:rgba(255,245,220,.88)!important;}
-
-/* 對話／事件：淺宣紙 + 黑字 */
-#box,
-.vn-box,
-.say-box{
-  background:linear-gradient(180deg,#fffdf8,#f6ebe0)!important;
-  background-image:none!important;
-  border:2px solid rgba(212,175,95,.7)!important;
-  color:#111!important;
-}
-#txt,
-.event-body{
-  color:#111!important;
-}
-#txt .nar{color:#222!important;}
-#txt .sys{color:#444!important;}
-#txt .npc{color:#8a3038!important;}
-#txt .me{color:#1a6a66!important;}
-#free-input,
-#talk-input{
-  color:#111!important;
-  border-bottom-color:rgba(120,80,40,.35)!important;
-}
-#free-input::placeholder,
-#talk-input::placeholder{
-  color:#666!important;
-  opacity:.85!important;
-}
-
-/* 內容卡維持淺底黑字（強化 v30） */
-.chip-card,
-#wmode-row .chip-card,
-.origin-grid .chip-card,
-#gender-row .chip-card{
-  background:linear-gradient(180deg,#fffdf8,#f5e8d8)!important;
-  color:#111!important;
-}
-.chip-card strong{color:#111!important;}
-.chip-card span{color:#222!important;}
-.quest-item,
-.bag-cell,
-.bag-item,
-.gear-card,
-.villager-card,
-.shop-item,
-.craft-item,
-.aff-mini,
-.enemy-preview,
-.parchment-mini,
-.chron-item,
-.hands-chip,
-.chip,
-.dungeon-stats span{
-  background:linear-gradient(180deg,#fffdf8,#f3e8da)!important;
-  border:1.5px solid rgba(184,50,58,.28)!important;
-  color:#111!important;
-  box-shadow:0 2px 8px rgba(0,0,0,.08)!important;
-}
-.quest-item.quest-section{
-  background:transparent!important;
-  border:0!important;
-  border-bottom:1px dashed rgba(80,60,40,.35)!important;
-  box-shadow:none!important;
-  color:#111!important;
-}
-.quest-item strong,
-.shop-item b,
-.bag-section-title,
-.panel-h{
-  color:#111!important;
-  background:transparent!important;
-}
-.quest-item .quest-progress,
-.quest-item .quest-reward,
-.villager-card .muted,
-.craft-item .need,
-.note,.tiny,.muted,.mode-blurb,
-.crop-pick .label,
-.aff-num,
-.hp-num,
-.ver-line,
-.talk-line.sys,
-.equip-slot small,
-.eq-meta small,
-#sheet-act .note,
-#sheet-map .note{
-  color:#222!important;
-}
-.dir,.crop-btn,.seg,.fish-spot{
-  background:#fffaf4!important;
-  color:#111!important;
-  border-color:rgba(184,50,58,.35)!important;
-}
-.dir.active,.crop-btn.active,.fish-spot.active,.seg.active{
-  background:#c44a52!important;
-  color:#fff!important;
-}
-.plot-card{
-  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
-  color:#111!important;
-}
-.plot-card-head{
-  background:linear-gradient(180deg,#fff6ec,#ead9c4)!important;
-  color:#111!important;
-  border-bottom:1px solid rgba(184,50,58,.3)!important;
-}
-.plot-card-hint{color:#222!important;}
-.event-choices .btn,
-.event-choice{
-  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
-  color:#111!important;
-  border:2px solid rgba(184,50,58,.4)!important;
-}
-
-/* 白底面板內 ghost 按鈕改深字（唔同 create footer） */
-.career-wrap .btn.ghost,
-.parchment .btn.ghost,
-.sheet .btn.ghost,
-.modal-card .btn.ghost,
-#screen-career .btn.ghost{
-  background:#fffaf4!important;
-  color:#111!important;
-  border:2px solid rgba(212,175,95,.75)!important;
-}
-
-/* create footer 維持深藍 + 淺字／金主按鈕 */
+/* Create footer chrome */
 #screen-create .create-actions{
-  background:#121a2c!important;
+  position:relative!important;
+  flex:0 0 auto;
+  z-index:40;
+  margin:0!important;
+  padding:10px 14px calc(12px + env(safe-area-inset-bottom, 0px))!important;
+  display:flex;
+  gap:10px;
+  justify-content:space-between;
+  background:var(--chrome)!important;
   border-top:1.5px solid rgba(212,175,95,.55)!important;
+  box-shadow:0 -8px 20px rgba(0,0,0,.35)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+#screen-create.create-kb .create-actions{padding-bottom:12px!important;}
+#screen-create .create-actions .btn{
+  flex:1;min-height:48px;height:48px;
 }
 #screen-create .create-actions .btn.ghost{
   background:rgba(36,48,80,.92)!important;
@@ -2838,22 +2049,379 @@ html,body,#app{color:#111!important;}
   border-color:#f0d28c!important;
 }
 
-/* HUD／底欄／戰報／toast：維持深藍淺字（顯式保護，防誤傷） */
+/* Inputs white */
+.create-wrap input[type=text],
+#create-name,#create-goal,
+.field input:not([type=checkbox]):not([type=radio]),
+.field select,
+#talk-input,#free-input,
+.crop-pick select{
+  color:var(--ink)!important;
+  background:#fff!important;
+  border:1.5px solid rgba(120,80,40,.28)!important;
+  border-radius:10px;
+  min-height:44px;
+  padding:10px 12px;
+}
+.create-wrap input[type=text]::placeholder,
+#create-name::placeholder,
+#create-goal::placeholder,
+.field input::placeholder,
+#talk-input::placeholder,
+#free-input::placeholder{
+  color:#666!important;opacity:.85!important;
+}
+
+/* Choice chips */
+.chip-card,
+#wmode-row .chip-card,
+.origin-grid .chip-card,
+#gender-row .chip-card{
+  background:linear-gradient(180deg,#fffdf8,#f5e8d8)!important;
+  border:1.5px solid rgba(212,175,95,.88)!important;
+  color:var(--ink)!important;
+  font-weight:700;
+  text-shadow:none!important;
+  min-height:44px;
+  transition:transform .12s ease, box-shadow .15s ease, background .15s ease;
+}
+.chip-card strong{display:block;color:var(--ink)!important;font-weight:700;letter-spacing:.06em;}
+.chip-card span{
+  display:block;color:var(--ink2)!important;opacity:1!important;
+  font-weight:600;margin-top:4px;line-height:1.45;font-size:12px;
+}
+.chip-card.active,
+#wmode-row .chip-card.active,
+.origin-grid .chip-card.active{
+  background:linear-gradient(180deg,#fff4e6,#edd4b8)!important;
+  box-shadow:inset 0 0 0 2.5px #c44a52, 0 0 0 1px rgba(212,175,95,.4)!important;
+  color:var(--ink)!important;
+}
+.chip-card:active,.chip-card.pressed{transform:scale(.97);}
+#gender-row .chip-card{
+  text-align:center;font-size:16px;letter-spacing:.18em;padding:12px 6px;min-height:48px;
+}
+
+/* Career cards */
+.career-card{
+  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
+  color:var(--ink)!important;
+  border:1.5px solid rgba(184,50,58,.35)!important;
+  border-left:5px solid rgba(184,50,58,.65)!important;
+  transition:transform .12s ease, box-shadow .15s ease;
+}
+.career-card:active,.career-card.pressed{transform:scale(.98);}
+.career-card h3{color:var(--ink)!important;}
+.career-card p,.career-card .stats{color:var(--ink2)!important;}
+
+/* Sheets */
+.sheet{
+  background:var(--content-bg)!important;
+  background-image:none!important;
+  color:var(--ink)!important;
+}
+.sheet .sbody,
+#sheet-act .sbody,#sheet-map .sbody,#sheet-bag .sbody,
+#sheet-quest .sbody,#sheet-ppl .sbody,#sheet-menu .sbody{
+  background:var(--content-bg2)!important;
+  color:var(--ink)!important;
+}
+.sheet .shead{
+  background:linear-gradient(180deg,#3aa0a6,#2a7c82)!important;
+  border-bottom:1px solid rgba(212,175,95,.55)!important;
+  color:#f6e7c8!important;
+}
+.sheet .shead h2{
+  color:#f0d28c!important;
+  background:transparent!important;
+  padding:0!important;margin:0!important;
+}
+.sheet .shead h2:before,.sheet .shead h2:after{color:#f0d28c!important;}
+.sheet .shead-sub{color:rgba(255,245,220,.88)!important;}
+.sx{
+  background:url("assets/ui/ico_close.webp") center/72% no-repeat, radial-gradient(circle at 35% 30%,#3a2030,#8a3040)!important;
+  border:2px solid rgba(212,175,95,.85)!important;color:transparent!important;
+  border-radius:50%!important;font-size:0!important;
+  min-width:44px;min-height:44px;
+}
+
+/* Content list cards */
+.quest-item,.bag-cell,.bag-item,.gear-card,.villager-card,
+.shop-item,.craft-item,.aff-mini,.enemy-preview,.parchment-mini,
+.chron-item,.hands-chip,.chip,.dungeon-stats span{
+  background:linear-gradient(180deg,#fffdf8,#f3e8da)!important;
+  border:1.5px solid rgba(184,50,58,.28)!important;
+  color:var(--ink)!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.08)!important;
+}
+.quest-item.quest-section{
+  background:transparent!important;border:0!important;
+  border-bottom:1px dashed rgba(80,60,40,.35)!important;
+  box-shadow:none!important;color:var(--ink)!important;
+}
+.quest-item strong,.shop-item b,.bag-section-title,.panel-h{
+  color:var(--ink)!important;background:transparent!important;
+}
+.quest-item .quest-progress,.quest-item .quest-reward,
+.villager-card .muted,.craft-item .need,
+.note,.tiny,.muted,.mode-blurb,.crop-pick .label,
+.aff-num,.hp-num,.talk-line.sys,.equip-slot small,.eq-meta small,
+#sheet-act .note,#sheet-map .note,#txt .nar,#txt .sys{
+  color:var(--ink2)!important;
+}
+.dir,.crop-btn,.seg,.fish-spot{
+  background:#fffaf4!important;color:var(--ink)!important;
+  border-color:rgba(184,50,58,.35)!important;
+  min-height:44px;transition:transform .1s ease, background .15s ease;
+}
+.dir.active,.crop-btn.active,.fish-spot.active,.seg.active{
+  background:#c44a52!important;color:#fff!important;
+}
+.dir:active,.crop-btn:active,.seg:active,.fish-spot:active{transform:scale(.96);}
+.plot-card{
+  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
+  color:var(--ink)!important;
+}
+.plot-card-head{
+  background:linear-gradient(180deg,#fff6ec,#ead9c4)!important;
+  color:var(--ink)!important;
+  border-bottom:1px solid rgba(184,50,58,.3)!important;
+}
+.plot-card-hint{color:var(--ink2)!important;}
+.event-choices .btn,.event-choice{
+  background:linear-gradient(180deg,#fffdf8,#f0e4d4)!important;
+  color:var(--ink)!important;
+  border:2px solid rgba(184,50,58,.4)!important;
+  min-height:44px;
+}
+
+/* Dialogue / event parchment */
+#box,.vn-box,.say-box{
+  background:linear-gradient(180deg,#fffdf8,#f6ebe0)!important;
+  background-image:none!important;
+  border:2px solid rgba(212,175,95,.7)!important;
+  color:var(--ink)!important;
+}
+#txt,.event-body,.status-text,#status-text,.nar,#world-line,.world-line{color:var(--ink)!important;}
+#txt .nar{color:var(--ink2)!important;}
+#txt .sys{color:#444!important;}
+#txt .npc{color:#8a3038!important;}
+#txt .me{color:#1a6a66!important;}
+#free-input,#talk-input{border-bottom-color:rgba(120,80,40,.35)!important;}
+#free-send{
+  background:linear-gradient(180deg,#e0c070,#b89040)!important;color:#1a1208!important;
+  box-shadow:inset 0 0 0 2px rgba(255,230,180,.45)!important;
+  min-height:44px;
+}
+
+/* Ghost buttons inside white panels */
+.career-wrap .btn.ghost,.parchment .btn.ghost,.sheet .btn.ghost,
+.modal-card .btn.ghost,#screen-career .btn.ghost{
+  background:#fffaf4!important;color:var(--ink)!important;
+  border:2px solid rgba(212,175,95,.75)!important;
+}
+
+/* ---- Chrome: HUD / tabs / battle / toast ---- */
+#hud{z-index:6;}
+.hud-daypill,#hud.hud-scroll .hud-daypill,.hud-scroll{
+  background:linear-gradient(180deg,rgba(32,48,80,.94),rgba(18,28,48,.94))!important;
+  border:1.5px solid rgba(212,175,95,.8)!important;
+  box-shadow:0 6px 18px rgba(0,0,0,.35)!important;
+  color:#f3e6d2!important;
+}
 #hCh{color:#f6e7c8!important;}
 #hCh .hud-career-wrap{color:#cbb89a!important;}
-#hStat span{color:#f6ebe0!important;}
+#hStat span{
+  background:rgba(10,14,28,.75)!important;border-color:rgba(212,175,95,.55)!important;color:#f6ebe0!important;
+}
 #hStat b{color:#f0d28c!important;}
-.hud-ver{color:#f0d28c!important;}
-#tabs button{color:#e8d9c4!important;}
-#tabs button.on{color:#f0d28c!important;}
-.battle-hud{color:#f3e6d2!important;}
-.wave-label{color:#f0d28c!important;}
-.toast,#toast{color:#f6e7c8!important;}
-#place-chip{color:#f0d28c!important;}
-.pin .pn{color:#f0d28c!important;}
-.hud-daypill,.hud-scroll{color:#f3e6d2!important;}
+.hud-avatar-btn,#hud-avatar{
+  border-radius:50%!important;
+  border:2.5px solid var(--kit-gold)!important;
+  box-shadow:0 0 0 2px rgba(55,140,145,.55),0 4px 12px rgba(0,0,0,.35)!important;
+  background:rgba(22,32,56,.9)!important;
+}
+.hud-avatar-btn{
+  position:relative;
+  background:url("assets/ui/frame_avatar.webp") center/100% 100% no-repeat, rgba(22,32,56,.9)!important;
+  padding:0!important;overflow:hidden;
+}
+.hud-ver{
+  background:rgba(22,32,56,.85)!important;border-color:rgba(212,175,95,.65)!important;color:#f0d28c!important;
+}
+#meters .mt-hp{
+  background:rgba(16,22,40,.8)!important;border-color:rgba(212,175,95,.7)!important;
+}
 
-/* 狀態列（對話盒內） */
-#status-text,.nar,#world-line,.world-line{
-  color:#111!important;
+#tabs{
+  background:linear-gradient(180deg,rgba(28,40,68,.95),rgba(14,20,36,.96))!important;
+  border:2px solid rgba(212,175,95,.7)!important;
+  border-radius:28px!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.45)!important;
+}
+#tabs button{color:#e8d9c4!important;transition:transform .12s ease;}
+#tabs button i{
+  width:44px!important;height:44px!important;border-radius:50%!important;
+  background:radial-gradient(circle at 35% 30%,#2a3c60,#162038)!important;
+  border:2px solid rgba(212,175,95,.85)!important;
+  box-shadow:inset 0 1px 0 rgba(255,230,160,.25),0 4px 10px rgba(0,0,0,.35)!important;
+}
+#tabs button i img{
+  width:28px!important;height:28px!important;object-fit:contain;
+  filter:drop-shadow(0 0 2px rgba(240,210,140,.35));
+}
+#tabs button.on i,#tabs button:active i{
+  background:radial-gradient(circle at 35% 30%,#4a3a18,#d4af5f)!important;
+  border-color:#f0d28c!important;color:#1a1208!important;
+}
+#tabs button.on{color:#f0d28c!important;}
+#tabs button:active,#tabs button.pressed{transform:scale(.96);}
+
+/* Buttons */
+.btn{
+  min-height:46px;border-radius:12px;
+  background:linear-gradient(180deg,#3a4a6a,#243050);
+  border:2px solid rgba(212,175,95,.75)!important;
+  color:#f3e6d2!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 4px 10px rgba(0,0,0,.28);
+  font-weight:700;
+  transition:transform .12s ease, filter .12s ease;
+}
+.btn.primary,.btn.pri{
+  background:linear-gradient(180deg,#e0c070,#b89040 55%,#8a6828)!important;
+  color:#1a1208!important;border-color:#f0d28c!important;
+}
+.btn.ghost{
+  background:transparent!important;border-color:rgba(212,175,95,.55)!important;color:#e8d9c4!important;
+}
+.btn.ok,.btn.success{background:linear-gradient(180deg,#4cb888,#2a7a58)!important;border-color:#7fd4a8!important;color:#f4fff8!important;}
+.btn.danger,.btn.err{background:linear-gradient(180deg,#d06068,#8a3038)!important;border-color:#f0a0a8!important;color:#fff6f6!important;}
+.btn:active,.btn.pressed{transform:scale(.96);}
+.btn:disabled,.btn.locked{opacity:.45;pointer-events:none;}
+
+/* Modal overlay stays dark; card is white above */
+.modal{color:var(--ink)!important;}
+
+/* Toast chrome + pop */
+.toast,#toast{
+  background:url("assets/ui/toast_warn.webp") center/cover no-repeat, rgba(28,36,55,.94)!important;
+  border:2px solid rgba(212,175,95,.7)!important;
+  border-radius:14px!important;
+  color:#f6e7c8!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.4)!important;
+  font-weight:600;
+  transform-origin:center top;
+}
+.toast.ok,#toast.ok{
+  background:url("assets/ui/toast_ok.webp") center/cover no-repeat, rgba(30,60,48,.95)!important;
+  border-color:rgba(90,200,140,.8)!important;
+}
+.toast.err,#toast.err{
+  background:url("assets/ui/toast_err.webp") center/cover no-repeat, rgba(70,30,35,.95)!important;
+  border-color:rgba(200,80,90,.8)!important;
+}
+#toast.toast-pop,#toast.toast-pop.ok,#toast.toast-pop.err{
+  animation:toastPop .38s cubic-bezier(.2,1.4,.4,1) both;
+}
+@keyframes toastPop{
+  0%{opacity:0;transform:translateY(-10px) scale(.92)}
+  60%{opacity:1;transform:translateY(2px) scale(1.03)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* Battle HUD chrome */
+.battle-hud{
+  background:linear-gradient(180deg,rgba(36,52,80,.96),rgba(18,28,48,.96))!important;
+  border:2px solid rgba(212,175,95,.8)!important;
+  color:#f3e6d2!important;
+}
+.wave-label{background:rgba(22,32,56,.9)!important;border-color:rgba(212,175,95,.7)!important;color:#f0d28c!important;}
+
+/* Face-safe avatars */
+.vn-char.face-mode img,
+.talk-face,.event-face,.face-thumb,.face-cell img,.face-grid img,.guest-face,.battle-hero{
+  border:2.5px solid var(--kit-gold)!important;
+  box-shadow:0 0 0 2px rgba(55,140,145,.45),0 4px 14px rgba(0,0,0,.35)!important;
+  background:rgba(22,32,56,.92)!important;
+  object-position:50% 18%!important;
+  image-rendering:auto;
+}
+.face-thumb,.talk-face,.event-face{border-radius:50%!important;}
+
+/* Item slots */
+.equip-slot .eq-ico,.gear-card .eq-ico{
+  background:url("assets/ui/slot_item.webp") center/100% 100% no-repeat, rgba(22,32,56,.85)!important;
+  border:2px solid rgba(212,175,95,.65)!important;
+  border-radius:12px!important;
+}
+
+/* Map pins chrome */
+.pin .ps{
+  background:radial-gradient(circle at 35% 30%,#3a4a6a,#162038)!important;
+  border:2px solid rgba(212,175,95,.85)!important;
+  box-shadow:0 4px 12px rgba(0,0,0,.35)!important;
+}
+.pin .pn{
+  background:rgba(22,32,56,.92)!important;border:1px solid rgba(212,175,95,.7)!important;color:#f0d28c!important;
+}
+#place-chip{color:#f0d28c!important;z-index:4;}
+#career-dock,.career-row,.job-row{
+  background:rgba(16,22,40,.75);
+  border-top:1px solid rgba(212,175,95,.35);
+}
+
+/* ---- Juice: shake / flash / damage float / choice ---- */
+#app.juice-shake{animation:none;}
+.battle-flash{
+  pointer-events:none;position:fixed;inset:0;z-index:9998;
+  background:rgba(255,255,255,.55);opacity:0;
+}
+.battle-flash.on{animation:hitFlash .12s ease-out both;}
+@keyframes hitFlash{0%{opacity:.7}100%{opacity:0}}
+.dmg-float{
+  position:fixed;z-index:9999;pointer-events:none;
+  font-weight:800;font-size:22px;letter-spacing:.04em;
+  color:#c44a52;text-shadow:0 1px 0 #fff,0 2px 6px rgba(0,0,0,.35);
+  animation:dmgPop .7s cubic-bezier(.2,.8,.2,1) forwards;
+}
+.dmg-float.heal{color:#2a7a58;}
+.dmg-float.crit{color:#b89040;font-size:26px;}
+.dmg-float.hurt{color:#f0d28c;}
+@keyframes dmgPop{
+  0%{opacity:0;transform:translate(-50%,-40%) scale(.6)}
+  20%{opacity:1;transform:translate(-50%,-70%) scale(1.15)}
+  100%{opacity:0;transform:translate(-50%,-140%) scale(1)}
+}
+.quick-replies button,.choice-tap,.event-choice{
+  transition:transform .12s ease, box-shadow .15s ease, background .15s ease;
+}
+.quick-replies button:active,.choice-tap:active,.event-choice:active,
+.quick-replies button.pressed,.choice-tap.pressed,.event-choice.pressed{
+  transform:scale(.96);
+  box-shadow:inset 0 0 0 2px rgba(196,74,82,.55);
+}
+.quick-replies button.ripple::after,.choice-tap.ripple::after{
+  content:"";position:absolute;left:var(--rx,50%);top:var(--ry,50%);
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(212,175,95,.45);
+  transform:translate(-50%,-50%) scale(1);
+  animation:tapRipple .35s ease-out forwards;pointer-events:none;
+}
+@keyframes tapRipple{from{opacity:.9;transform:translate(-50%,-50%) scale(1)}to{opacity:0;transform:translate(-50%,-50%) scale(18)}}
+
+/* Chrome text protect */
+#tabs button,#tabs button.on,
+.battle-hud,.wave-label,.toast,#toast,
+.pin .pn,#place-chip,.hud-daypill,.hud-scroll{/* already set */}
+
+@media (max-width:390px){
+  #screen-create .create-actions{padding-bottom:calc(14px + env(safe-area-inset-bottom, 0px))!important;}
+  #screen-create .create-wrap{margin-left:10px!important;margin-right:10px!important;}
+  #gender-row .chip-card{font-size:15px;letter-spacing:.12em;padding:10px 4px;}
+  .origin-grid{grid-template-columns:1fr 1fr;gap:8px;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  #toast.toast-pop,#toast.toast-pop.ok,#toast.toast-pop.err,
+  .dmg-float,.battle-flash.on,.tbtn,.btn,.chip-card{animation:none!important;transition:none!important;}
 }
