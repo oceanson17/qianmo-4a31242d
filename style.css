@@ -2610,3 +2610,149 @@ html,body{
 .vn-text-mode .pin[data-mode="farm"]{display:none!important}
 /* keep v38 screen stack safety even without dash */
 #screen-game.vn-text-mode[hidden]{display:none!important;pointer-events:none!important;visibility:hidden!important}
+
+/* ========== v40：各頁可捲 · 劇情區安全帶 · 女主角臉 ========== */
+/* 標題：矮屏可捲，唔被裁 */
+#screen-title{
+  overflow:auto!important;
+  -webkit-overflow-scrolling:touch;
+}
+#screen-title .title-content{
+  min-height:100%;
+  min-height:100dvh;
+  min-height:100svh;
+  justify-content:flex-end;
+  box-sizing:border-box;
+}
+
+/* 擇業：同身世頁——外殼固定、內紙捲動 */
+#screen-career{
+  display:flex!important;
+  flex-direction:column;
+  overflow:hidden!important;
+  -webkit-overflow-scrolling:touch;
+  background:var(--chrome, #15202a);
+  background-image:none;
+  min-height:100%;
+  min-height:100dvh;
+  min-height:100svh;
+}
+#screen-career[hidden]{display:none!important;}
+#screen-career .career-wrap{
+  flex:1 1 auto;
+  min-height:0;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  margin:calc(var(--sat) + 12px) 12px calc(var(--sab) + 12px)!important;
+  padding:16px 14px 20px!important;
+  max-height:none!important;
+}
+
+/* 身世：確保內層真係唯一捲動容器 */
+#screen-create{
+  height:100%;
+  max-height:100%;
+}
+#screen-create .create-wrap{
+  overscroll-behavior:contain;
+  padding-bottom:28px!important;
+}
+
+/* 主遊戲文字模式：場景縮頂、劇情面板佔中段、可獨立捲 */
+#screen-game.vn-text-mode{
+  display:flex!important;
+  flex-direction:column;
+  overflow:hidden!important;
+}
+#screen-game.vn-text-mode[hidden]{display:none!important;}
+.vn-text-mode #adventure-scene.vn-stage,
+.vn-text-mode #adventure-scene{
+  position:absolute!important;
+  left:0;right:0;top:0;
+  inset:auto!important;
+  height:min(30vh, 220px);
+  max-height:32vh;
+  min-height:22vh;
+  overflow:hidden;
+  z-index:1;
+}
+.vn-text-mode #story-panel.story-panel,
+.vn-text-mode #story-panel{
+  position:absolute!important;
+  left:10px;right:10px;
+  top:calc(var(--sat) + min(30vh, 220px) - 8px);
+  bottom:calc(var(--tabh) + 12px);
+  max-height:none!important;
+  margin:0!important;
+  z-index:5;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding-bottom:16px;
+}
+/* 文字模式：縮小日誌區，保留 FAB；劇情面板停在其上方 */
+.vn-text-mode #box.vn-log-box{
+  max-height:12vh!important;
+  min-height:0!important;
+  opacity:.94;
+  padding-top:10px;
+  padding-bottom:8px;
+  z-index:6;
+}
+.vn-text-mode #box.vn-log-box #txt{
+  max-height:calc(12px * 1.5 * 2.2);
+  min-height:0;
+}
+.vn-text-mode #story-panel.story-panel,
+.vn-text-mode #story-panel{
+  bottom:calc(var(--tabh) + 12vh + 18px)!important;
+}
+@media (max-width:420px){
+  .vn-text-mode #adventure-scene.vn-stage,
+  .vn-text-mode #adventure-scene{
+    height:min(24vh, 168px);
+    min-height:18vh;
+    max-height:26vh;
+  }
+  .vn-text-mode #story-panel.story-panel,
+  .vn-text-mode #story-panel{
+    top:calc(var(--sat) + min(24vh, 168px) - 6px)!important;
+    bottom:calc(var(--tabh) + 12vh + 14px)!important;
+  }
+  .vn-text-mode #box.vn-log-box{max-height:11vh!important;}
+}
+
+/* Sheet／Modal：矮屏可捲、唔被底欄／安全區切 */
+.sheet{
+  max-height:100%;
+  overscroll-behavior:contain;
+}
+.sheet .sbody{
+  overscroll-behavior:contain;
+  padding-bottom:calc(24px + var(--sab))!important;
+}
+.modal{
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  align-items:flex-start;
+  padding-top:max(12px, var(--sat));
+  padding-bottom:max(16px, var(--sab));
+}
+.modal-card,
+.modal-card.wide,
+.modal-card.parchment{
+  max-height:min(88vh, calc(100% - 24px));
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+.codex-list,.read-body{
+  overscroll-behavior:contain;
+}
+
+/* HUD 頭像：女主角圖偏上對焦 */
+#hud-avatar,
+.hud-avatar-btn img{
+  object-position:50% 18%!important;
+}

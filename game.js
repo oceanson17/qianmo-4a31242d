@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '39';
+  const GAME_VERSION = '40';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -123,7 +123,7 @@
     { id: 'potion', name: '回春散', desc: '藥劑×1', gold: 28 },
     { id: 'hire', name: '僱長工', desc: '田莊人手+1', gold: 0 }
   ];
-  const FACE_V = '32';
+  const FACE_V = '40';
   function allNpcs() {
     if (window.QianWorld && window.QianWorld.CAST) return window.QianWorld.CAST;
     return [];
@@ -141,10 +141,12 @@
   function faceUrl(key) {
     return 'assets/face_' + key + '.webp?v=' + FACE_V;
   }
+  /** 女／不顯：主角頭像用 face_hero（女主角圖）；男：按職業 */
   function careerFaceKey(careerId, gender) {
-    const g = gender || (S && S.hero && S.hero.gender) || 'm';
+    const g = gender || (S && S.hero && S.hero.gender) || 'x';
+    if (g === 'f' || g === 'x') return 'hero';
     const map = {
-      farmer: g === 'f' ? 'farmer_f' : 'farmer_m',
+      farmer: 'farmer_m',
       healer: 'doctor',
       merchant: 'merchant',
       soldier: 'soldier',
@@ -155,9 +157,20 @@
     };
     return map[careerId] || 'hero';
   }
+  /** 擇業立繪仍按職業／性別變體（與 HUD 頭像分開） */
   function careerCharKey(careerId, gender) {
-    const face = careerFaceKey(careerId, gender);
-    return face; // char_* shares face keys for careers
+    const g = gender || (S && S.hero && S.hero.gender) || 'x';
+    const map = {
+      farmer: g === 'f' ? 'farmer_f' : (g === 'x' ? 'hero' : 'farmer_m'),
+      healer: 'doctor',
+      merchant: 'merchant',
+      soldier: 'soldier',
+      scholar: 'scholar',
+      craftsman: 'craftsman',
+      hunter: 'hunter',
+      ranger: 'ranger'
+    };
+    return map[careerId] || 'hero';
   }
   function careerTitle(careerId) {
     const titles = {
@@ -4627,7 +4640,8 @@
     if (panel) {
       panel.hidden = false;
       panel.classList.remove('dash-story-open');
-      try { panel.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { try { panel.scrollIntoView(true); } catch (e2) {} }
+      try { panel.scrollTop = 0; } catch (e) {}
+      try { panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) { try { panel.scrollIntoView(true); } catch (e2) {} }
     }
     renderStoryPanel();
     toast('劇情');
