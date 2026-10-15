@@ -1,4 +1,4 @@
-// v35 text VN · story_flow · arcs · day rhythm · juice
+// v36 dash shell · story_flow · arcs · chronicle · juice
 (() => {
   'use strict';
 
@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '35';
+  const GAME_VERSION = '36';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -477,7 +477,7 @@
     const quest = Object.assign({ done: false, progress: 0 }, C.quest);
     const cast = (window.QianWorld && window.QianWorld.CAST) || [];
     const st = {
-      v: 6,
+      v: 8,
       career: careerId,
       name: (window.__createDraft && window.__createDraft.name) || '旅人',
       day: 1,
@@ -544,7 +544,9 @@
       attrs: { wu: 0, hu: 0, shen: 0, zhi: 0, bian: 0, yun: 0 },
       plotFlags: {},
       arcProg: {},
-      storyFlow: { nodeId: null, seen: {}, started: false }
+      storyFlow: { nodeId: null, seen: {}, started: false },
+      dash: { filterNoise: false, x2: false, realm: 'home', col: 'world' },
+      dashLog: []
     };
     if (window.QianStoryFlow) window.QianStoryFlow.ensure(st);
     if (window.QianStory) {
@@ -666,7 +668,8 @@
       if (!o.npcAI.intent) o.npcAI.intent = {};
       if (!o.storyFlow) o.storyFlow = { nodeId: null, seen: {}, started: false };
       if (!o.storyFlow.seen) o.storyFlow.seen = {};
-      o.v = 7;
+      if (!o.dash) o.dash = { filterNoise: false, x2: false, realm: 'home', col: 'world' };
+      o.v = 8;
       if (window.QianWorld) window.QianWorld.ensure(o);
       if (window.QianStory) window.QianStory.ensure(o);
       if (window.QianStoryFlow) window.QianStoryFlow.ensure(o);
@@ -679,10 +682,12 @@
       }
       return o;
     }
-    if (o.v === 7) {
+    if (o.v === 7 || o.v === 8) {
       if (!o.storyFlow) o.storyFlow = { nodeId: null, seen: {}, started: false };
       if (!o.storyFlow.seen) o.storyFlow.seen = {};
+      if (!o.dash) o.dash = { filterNoise: false, x2: false, realm: 'home', col: 'world' };
       if (window.QianStoryFlow) window.QianStoryFlow.ensure(o);
+      o.v = 8;
       return o;
     }
     return null;
@@ -691,7 +696,7 @@
     if (!S) return;
     S.auto = autoOn;
     S.directive = directive;
-    S.v = 7;
+    S.v = 8;
     if (window.QianStoryFlow) window.QianStoryFlow.ensure(S);
     if (window.QianFactions) window.QianFactions.ensure(S);
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); toast('已存檔'); } catch (e) { toast('存檔失敗'); }
@@ -867,6 +872,7 @@
     }
   
     try { updateDayGuide(); } catch (e) {}
+    try { renderDash(); } catch (e) {}
   }
 
   function setSceneArt(m) {
@@ -1923,7 +1929,7 @@
   }
   function saveQuiet() {
     if (!S) return;
-    S.auto = autoOn; S.directive = directive; S.v = 6;
+    S.auto = autoOn; S.directive = directive; S.v = 8;
     if (window.QianFactions) window.QianFactions.ensure(S);
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {}
   }
@@ -4214,7 +4220,9 @@
     if ($('screen-create')) $('screen-create').hidden = true;
     $('screen-career').hidden = true;
     $('screen-game').hidden = true;
+    if ($('app')) $('app').classList.remove('dash-live');
     closeSheets();
+    try { closeStoryModal(); } catch (e) {}
     $('btn-continue').hidden = !hasSave();
   }
   function showCreate() {
@@ -4308,14 +4316,16 @@
     $('screen-title').hidden = true;
     $('screen-game').hidden = false;
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
-    if ($('screen-game')) $('screen-game').classList.add('vn-text-mode');
+    if ($('screen-game')) $('screen-game').classList.add('dash-mode');
+    if ($('app')) $('app').classList.add('dash-live');
     updateDisguiseMenu();
     const h = S.hero || {};
     const o = window.QianWorld ? window.QianWorld.originById(h.origin) : { name: '' };
     const modeTxt = S.worldMode === 'free' ? '高度自由世界' : '史實軌道';
     status('秦王政元年。你是' + (h.name || '旅人') + '，出身' + (o.name || '') + '，以' + CAREERS[careerId].name + '立足墨夢。（' + modeTxt + '）' +
       (h.disguise === 'male' ? '女扮男裝潛行江湖。' : '') + '且看文字選項，如何改寫天下。');
-    toast('開局 · 文字劇情 · ' + CAREERS[careerId].name + (h.disguise === 'male' ? ' · 男裝' : ''));
+    toast('開局 · 儀表板 · ' + CAREERS[careerId].name + (h.disguise === 'male' ? ' · 男裝' : ''));
+    try { setDashCol('world'); openStoryModal(); } catch (e) {}
     if (window.QianStoryFlow) {
       window.QianStoryFlow.begin(S);
       applyStoryScene();
@@ -4330,7 +4340,8 @@
     $('screen-game').hidden = false;
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
     refreshNpcs();
-    if ($('screen-game')) $('screen-game').classList.add('vn-text-mode');
+    if ($('screen-game')) $('screen-game').classList.add('dash-mode');
+    if ($('app')) $('app').classList.add('dash-live');
     updateDisguiseMenu();
     toast('繼續 · ' + dayStr());
     pushStory('續寫 · ' + dayStr(), 'sys');
@@ -4346,6 +4357,7 @@
       renderStoryPanel();
     }
     setTimeout(maybeTriggerVisit, 600);
+    try { setDashCol('world'); openStoryModal(); } catch (e) {}
     renderHUD();
   }
 
@@ -4451,8 +4463,10 @@
         }
       } catch (e) {}
     }
+    pushDashLog('story', (r.line || '選擇推進').split('\n')[0], { noise: false });
     renderStoryPanel();
     renderHUD();
+    openStoryModal();
     saveQuiet();
     /* 弧線：在咸陽靜候或旗標要求時 poll */
     if (r.pollArc || (S.flags && (S.flags.poll_arc || S.flags.want_arc))) {
@@ -4461,15 +4475,249 @@
       setTimeout(maybeTriggerVisit, 280);
     }
   }
-  function focusStoryPanel() {
+
+  /* ---- v36 儀表板 ---- */
+  function gameMonth(day) {
+    return Math.max(1, Math.ceil((day || 1) / 10));
+  }
+  function ensureDash(S0) {
+    if (!S0.dash) S0.dash = { filterNoise: false, x2: false, realm: 'home', col: 'world' };
+    if (!S0.dashLog) S0.dashLog = [];
+    return S0.dash;
+  }
+  function pushDashLog(kind, text, opts) {
+    if (!S) return;
+    ensureDash(S);
+    const noise = !!(opts && opts.noise);
+    S.dashLog.unshift({
+      kind: kind || 'sys',
+      text: String(text || '').slice(0, 120),
+      day: S.day,
+      month: gameMonth(S.day),
+      period: S.period || '',
+      noise: noise,
+      at: Date.now()
+    });
+    if (S.dashLog.length > 80) S.dashLog = S.dashLog.slice(0, 80);
+  }
+  function openStoryModal() {
     const panel = $('story-panel');
+    const bd = $('dash-story-backdrop');
     if (panel) {
-      try { panel.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { panel.scrollIntoView(true); }
+      panel.classList.add('dash-story-open');
+      panel.hidden = false;
     }
+    if (bd) { bd.hidden = false; bd.classList.add('on'); }
     renderStoryPanel();
-    /* 若僅一項且文字含「繼續／醒來／回去」可提示 */
+  }
+  function closeStoryModal() {
+    const panel = $('story-panel');
+    const bd = $('dash-story-backdrop');
+    if (panel) panel.classList.remove('dash-story-open');
+    if (bd) { bd.classList.remove('on'); bd.hidden = true; }
+  }
+  function focusStoryPanel() {
+    openStoryModal();
     toast('劇情');
   }
+  function setDashCol(col) {
+    if (!S) return;
+    const d = ensureDash(S);
+    d.col = col || 'world';
+    document.querySelectorAll('.dash-mobile-tabs button').forEach((b) => {
+      b.classList.toggle('on', b.dataset.col === d.col || (d.col === 'story' && b.dataset.col === 'story'));
+    });
+    document.querySelectorAll('.dash-col').forEach((c) => {
+      const id = c.getAttribute('data-col');
+      const show = (d.col === 'story') ? (id === 'world') : (id === d.col);
+      c.classList.toggle('on', show);
+    });
+    if (d.col === 'story') openStoryModal();
+  }
+  function dashRealmNpcs() {
+    refreshNpcs();
+    const realm = (S && S.dash && S.dash.realm) || 'home';
+    const homeMeet = new Set([undefined, null, 'hut', 'farm', 'village', 'market', 'clinic', 'drill', 'wild', 'garden', 'swim', 'moon', 'mine', 'post', 'tavern', 'academy', 'wish', 'yard', 'study', 'forge', 'wood', 'incense', 'weave', 'persimmon', 'canal', 'bridge', 'terraces', 'tea', 'brewery', 'pharmacy', 'paper', 'dye', 'rain_hut', 'ink_pool', 'rainy_tea']);
+    const courtMeet = new Set(['xianyang', 'palace', 'xiangbang', 'taihou', 'guowei', 'keguan', 'guanshi', 'hejin', 'cimiao', 'ying', 'frontier']);
+    const cast = (window.QianWorld && window.QianWorld.castForTalk)
+      ? window.QianWorld.castForTalk(S)
+      : (window.QianWorld && window.QianWorld.CAST) || [];
+    return cast.filter((n) => {
+      if (!npcKnown(n.id) && !(S.npcs && S.npcs[n.id] && (S.npcs[n.id].aff || 0) > 0)) {
+        /* still show village cores lightly known after day 1 */
+        if ((S.day || 1) < 2 && !n.meet) return true;
+        if (!n.meet && (S.day || 1) >= 1) return true;
+        return false;
+      }
+      if (realm === 'court') return courtMeet.has(n.meet);
+      return !n.meet || homeMeet.has(n.meet);
+    }).slice(0, 16);
+  }
+  function renderDash() {
+    if (!S || !$('dash')) return;
+    const d = ensureDash(S);
+    const st = stats();
+    const h = S.hero || {};
+    const o = window.QianWorld ? window.QianWorld.originById(h.origin || 'farm') : { name: '出身' };
+    const career = (CAREERS[S.career] || CAREERS.farmer);
+    const place = (MODE_LABELS && MODE_LABELS[mode]) || '鄉野';
+    const era = window.QianWorld ? window.QianWorld.eraLabel(S.day) : dayStr();
+    if ($('dash-loc')) $('dash-loc').textContent = '墨夢 · ' + place + ' · ' + era;
+    if ($('dash-hp')) $('dash-hp').textContent = String(Math.floor(st.hp));
+    if ($('dash-hpmax')) $('dash-hpmax').textContent = String(Math.floor(st.maxHp));
+    if ($('dash-name')) $('dash-name').textContent = h.name || S.name || '旅人';
+    if ($('dash-avatar')) {
+      const src = faceUrl(careerFaceKey(S.career, h.gender));
+      if ($('dash-avatar').getAttribute('src') !== src) $('dash-avatar').src = src;
+      if ($('dash-top-avatar') && $('dash-top-avatar').getAttribute('src') !== src) $('dash-top-avatar').src = src;
+    }
+    if ($('dash-gold')) $('dash-gold').textContent = String(S.gold);
+    if ($('dash-food')) $('dash-food').textContent = String(S.food);
+    if ($('dash-lv')) $('dash-lv').textContent = heroLevel() + '級';
+    if ($('dash-hero-name')) $('dash-hero-name').textContent = h.name || S.name || '旅人';
+    if ($('dash-tags')) {
+      const g = h.gender === 'm' ? '男' : (h.gender === 'f' ? '女' : '不顯');
+      const tags = [g, o.name || '出身', career.name, S.joined ? ((window.QianFactions && window.QianFactions.FACTIONS[S.joined] && window.QianFactions.FACTIONS[S.joined].short) || S.joined) : '遊士'];
+      if (h.disguise === 'male') tags.push('男裝');
+      $('dash-tags').innerHTML = tags.map((t) => '<span class="dash-tag">' + escapeHtml(t) + '</span>').join('');
+    }
+    if ($('dash-attrs')) {
+      const a = st.attrs || {};
+      const rows = [
+        ['體力', st.hp + ' / ' + st.maxHp, st.hp / Math.max(1, st.maxHp)],
+        ['銀兩', String(S.gold), Math.min(1, S.gold / 200)],
+        ['存糧', String(S.food), Math.min(1, S.food / 40)],
+        ['戰力', String(combatPower()), Math.min(1, combatPower() / 5000)],
+        ['武力', String(a.wu || 0), Math.min(1, (a.wu || 0) / 20)],
+        ['智略', String(a.zhi || 0), Math.min(1, (a.zhi || 0) / 20)],
+        ['辯才', String(a.bian || 0), Math.min(1, (a.bian || 0) / 20)],
+        ['身法', String(a.shen || 0), Math.min(1, (a.shen || 0) / 20)],
+        ['護體', String(a.hu || 0), Math.min(1, (a.hu || 0) / 20)],
+        ['氣運', String(a.yun || 0), Math.min(1, (a.yun || 0) / 20)],
+        ['名望', String(Math.floor(S.fame || 0)), Math.min(1, (S.fame || 0) / 100)],
+        ['民心', String(Math.floor(S.people || 0)), Math.min(1, (S.people || 0) / 100)],
+        ['境界', careerTitle(S.career) + ' · ' + heroLevel() + '級', Math.min(1, heroLevel() / 20)],
+        ['壽元（日）', String(S.day || 1) + ' · 第' + gameMonth(S.day) + '旬', Math.min(1, ((S.day || 1) % 112) / 112)]
+      ];
+      $('dash-attrs').innerHTML = rows.map((r) =>
+        '<div class="dash-attr-row" data-k="' + escapeHtml(r[0]) + '"><div class="lab"><span>' + escapeHtml(r[0]) + '</span><b>' + escapeHtml(r[1]) + '</b></div>' +
+        '<div class="dash-bar"><i style="width:' + Math.max(4, Math.floor((r[2] || 0) * 100)) + '%"></i></div></div>'
+      ).join('');
+    }
+    if ($('dash-fame')) $('dash-fame').textContent = String(Math.floor(S.fame || 0));
+    if ($('dash-people')) $('dash-people').textContent = String(Math.floor(S.people || 0));
+    if ($('dash-rumor-text')) {
+      const rum = S.worldLine || '暫無重要消息…';
+      $('dash-rumor-text').textContent = rum;
+    }
+    // realm tabs
+    document.querySelectorAll('.dash-tabs button').forEach((b) => {
+      b.classList.toggle('on', b.dataset.realm === d.realm);
+    });
+    const x2 = $('dash-x2');
+    if (x2) x2.classList.toggle('on', !!d.x2);
+    const fn = $('dash-filter-noise');
+    if (fn) fn.classList.toggle('on', !!d.filterNoise);
+
+    // NPCs
+    const list = $('dash-npc-list');
+    if (list) {
+      const npcs = dashRealmNpcs();
+      if ($('dash-npc-count')) $('dash-npc-count').textContent = String(npcs.length);
+      if (!npcs.length) {
+        list.innerHTML = '<p class="dash-empty">此處暫無可互動之人。可遊歷或推進劇情。</p>';
+      } else {
+        list.innerHTML = npcs.map((n) => {
+          const stn = (S.npcs && S.npcs[n.id]) || { aff: 0 };
+          const pin = n.meet ? ((MODE_LABELS && MODE_LABELS[n.meet]) || n.meet) : '鄉里';
+          const line = (n.lines && n.lines[0]) || n.bio || '';
+          const aff = Math.floor(stn.aff || 0);
+          return '<button type="button" class="dash-npc" data-dash-npc="' + n.id + '">' +
+            '<img src="' + faceUrl(npcFaceKey(n)) + '" alt="" width="48" height="48" decoding="async">' +
+            '<div class="meta"><div class="nm">' + escapeHtml(n.name) +
+            ' <span class="aff">♥ ' + aff + '</span></div>' +
+            '<div class="role">' + escapeHtml(n.role || '') + ' · 📍' + escapeHtml(pin) + '</div>' +
+            '<div class="blurb">' + escapeHtml(line) + '</div></div></button>';
+        }).join('');
+        // fix broken toFixed ternary — rewrite simpler below if needed
+        list.querySelectorAll('[data-dash-npc]').forEach((b) => {
+          b.addEventListener('click', () => {
+            selectedNpc = b.dataset.dashNpc;
+            openTalk();
+          });
+        });
+      }
+    }
+
+    // chronicle merge world + dashLog
+    const chron = $('dash-chron-list');
+    if (chron) {
+      const items = [];
+      (S.chronicle || []).forEach((c) => {
+        items.push({
+          when: '【第' + gameMonth(c.day || S.day) + '旬】',
+          title: (c.changed ? '【史已改】' : '') + (c.title || '動向'),
+          text: c.text || '',
+          noise: false,
+          changed: !!c.changed,
+          day: c.day || 0
+        });
+      });
+      (S.dashLog || []).forEach((e) => {
+        items.push({
+          when: '【第' + (e.month || gameMonth(e.day)) + '旬】',
+          title: e.kind === 'stat' ? '數值' : (e.kind === 'story' ? '劇情' : '行事'),
+          text: e.text,
+          noise: !!e.noise,
+          changed: false,
+          day: e.day || 0
+        });
+      });
+      items.sort((a, b) => (b.day || 0) - (a.day || 0));
+      const view = items.slice(0, 40);
+      if (!view.length) {
+        chron.innerHTML = '<p class="dash-empty">過日或靜養後，動向將記入此處。</p>';
+      } else {
+        chron.innerHTML = view.map((it) =>
+          '<div class="dash-chron-item' + (it.noise ? ' noise' : '') + (it.changed ? ' changed' : '') +
+          (d.filterNoise && it.noise ? ' filtered' : '') + '">' +
+          '<div class="when">' + escapeHtml(it.when) + '</div>' +
+          '<div class="ttl">' + escapeHtml(it.title) + '</div>' +
+          '<div>' + escapeHtml(it.text) + '</div></div>'
+        ).join('');
+      }
+    }
+
+    // mobile col
+    if (window.matchMedia && window.matchMedia('(min-width:820px)').matches) {
+      document.querySelectorAll('.dash-col').forEach((c) => c.classList.add('on'));
+    } else {
+      setDashCol(d.col === 'story' ? 'world' : (d.col || 'profile'));
+    }
+  }
+  function dashCultivate() {
+    if (!S) return;
+    ensureDash(S);
+    const steps = S.dash.x2 ? 2 : 1; /* 日數：一按過一日；二倍速過兩日 */
+    const hp0 = S.hp, gold0 = S.gold, food0 = S.food;
+    for (let i = 0; i < steps; i++) {
+      let guard = 0;
+      const day0 = S.day;
+      while (guard++ < 8) {
+        nextDay();
+        if (S.day !== day0) break;
+      }
+    }
+    const dHp = S.hp - hp0, dG = S.gold - gold0, dF = S.food - food0;
+    pushDashLog('stat', '靜養修業 · 體力' + (dHp >= 0 ? '+' : '') + dHp + ' · 銀' + (dG >= 0 ? '+' : '') + dG + ' · 糧' + (dF >= 0 ? '+' : '') + dF, { noise: true });
+    if (S.worldLine) pushDashLog('sys', S.worldLine, { noise: false });
+    try { juiceFlash(); juiceShake(0.2); } catch (e) {}
+    toast('靜養 · ' + dayStr());
+    renderDash();
+    renderStoryPanel();
+    saveQuiet();
+  }
+
 
   /* ---- Bind ---- */
   function bind() {
@@ -4712,6 +4960,67 @@
 
     // Guofeng chrome
     if ($('tab-story')) $('tab-story').addEventListener('click', () => { focusStoryPanel(); });
+    /* v36 dash binds */
+    if ($('dash-cultivate')) $('dash-cultivate').addEventListener('click', (ev) => { tapFeel($('dash-cultivate'), ev); dashCultivate(); });
+    if ($('dash-save')) $('dash-save').addEventListener('click', () => { save(); });
+    if ($('dash-load')) $('dash-load').addEventListener('click', () => {
+      if (!load()) { toast('無存檔'); return; }
+      refreshNpcs();
+      if (window.QianStoryFlow) {
+        window.QianStoryFlow.ensure(S);
+        if (!S.storyFlow.started || !S.storyFlow.nodeId) window.QianStoryFlow.begin(S, { fromSave: true });
+        else window.QianStoryFlow.begin(S, { resume: true });
+        applyStoryScene();
+        renderStoryPanel();
+      }
+      renderHUD();
+      toast('已讀檔 · ' + dayStr());
+      pushDashLog('sys', '讀取存檔', { noise: true });
+    });
+    if ($('dash-x2')) $('dash-x2').addEventListener('click', () => {
+      if (!S) return; ensureDash(S); S.dash.x2 = !S.dash.x2;
+      $('dash-x2').classList.toggle('on', S.dash.x2);
+      $('dash-x2').setAttribute('aria-pressed', S.dash.x2 ? 'true' : 'false');
+      toast(S.dash.x2 ? '二倍速 · 靜養過兩日' : '常速 · 靜養過一日');
+    });
+    if ($('dash-filter-noise')) $('dash-filter-noise').addEventListener('click', () => {
+      if (!S) return; ensureDash(S); S.dash.filterNoise = !S.dash.filterNoise;
+      renderDash();
+    });
+    document.querySelectorAll('.dash-mobile-tabs button').forEach((b) => {
+      b.addEventListener('click', () => {
+        if (!S) return;
+        ensureDash(S);
+        if (b.dataset.col === 'story') { openStoryModal(); return; }
+        S.dash.col = b.dataset.col;
+        setDashCol(S.dash.col);
+      });
+    });
+    document.querySelectorAll('.dash-tabs button').forEach((b) => {
+      b.addEventListener('click', () => {
+        if (!S) return; ensureDash(S); S.dash.realm = b.dataset.realm || 'home';
+        renderDash();
+      });
+    });
+    if ($('dash-travel')) $('dash-travel').addEventListener('click', () => {
+      const sm = $('sheet-map'); if (sm) sm.hidden = false;
+    });
+    if ($('dash-story-btn')) $('dash-story-btn').addEventListener('click', () => openStoryModal());
+    if ($('dash-talk-open')) $('dash-talk-open').addEventListener('click', () => {
+      refreshNpcs();
+      const first = dashRealmNpcs()[0];
+      if (first) { selectedNpc = first.id; openTalk(); }
+      else toast('暫無可談之人');
+    });
+    if ($('dash-ppl')) $('dash-ppl').addEventListener('click', () => { try { renderPplModal(); } catch (e) {} if ($('modal-ppl')) $('modal-ppl').hidden = false; });
+    if ($('dash-bag')) $('dash-bag').addEventListener('click', () => { if ($('btn-bag')) $('btn-bag').click(); });
+    if ($('dash-quest')) $('dash-quest').addEventListener('click', () => { if ($('btn-quest')) $('btn-quest').click(); });
+    if ($('dash-shop')) $('dash-shop').addEventListener('click', () => { if ($('btn-bag')) $('btn-bag').click(); });
+    if ($('dash-set')) $('dash-set').addEventListener('click', () => { if ($('btn-menu')) $('btn-menu').click(); });
+    if ($('dash-ach')) $('dash-ach').addEventListener('click', () => { if ($('btn-quest')) $('btn-quest').click(); else toast('差事／成就'); });
+    if ($('dash-story-close')) $('dash-story-close').addEventListener('click', () => closeStoryModal());
+    if ($('dash-story-backdrop')) $('dash-story-backdrop').addEventListener('click', () => closeStoryModal());
+
     if ($('tab-map')) $('tab-map').addEventListener('click', openMapSheet);
     if ($('q-act')) $('q-act').addEventListener('click', openActSheet);
     if ($('hSeal')) $('hSeal').addEventListener('click', openActSheet);
@@ -4818,7 +5127,11 @@
       pending: S.pendingEvent && S.pendingEvent.id,
       npcStates: npcStates,
       guide: ($('day-guide') && $('day-guide').textContent) || '',
-      story: window.QianStoryFlow ? window.QianStoryFlow.summary(S) : null
+      story: window.QianStoryFlow ? window.QianStoryFlow.summary(S) : null,
+      dash: !!$('dash'),
+      month: gameMonth(S.day),
+      chronLen: (S.chronicle || []).length,
+      dashLogLen: (S.dashLog || []).length
     });
   };
 
