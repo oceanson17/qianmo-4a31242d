@@ -33,9 +33,16 @@ input,textarea,select{font-family:inherit;}
   background:var(--paper);
   box-shadow:0 0 40px rgba(80,40,30,.18);
 }
-.screen{position:absolute;inset:0;display:none;}
-.screen.on,.screen:not([hidden]){display:block;}
-.screen[hidden]{display:none!important;}
+.screen{position:absolute;inset:0;display:none;z-index:1;}
+.screen.on:not([hidden]){display:block;z-index:2;}
+.screen:not([hidden]):not(.on){display:block;z-index:1;}
+/* [hidden] must beat ID rules like #screen-game.dash-mode{display:flex!important} */
+.screen[hidden],
+#screen-title[hidden],
+#screen-create[hidden],
+#screen-career[hidden],
+#screen-game[hidden],
+#screen-game.dash-mode[hidden]{display:none!important;pointer-events:none!important;visibility:hidden!important;}
 
 /* ---------- 標題 ---------- */
 #screen-title{background:var(--paper);overflow:hidden;}

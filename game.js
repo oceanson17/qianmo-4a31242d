@@ -1,4 +1,4 @@
-// v37 romance VN · codex · AI storyteller · no-farm · juice
+// v38 romance VN · codex · AI storyteller · no-farm · juice
 (() => {
   'use strict';
 
@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '37';
+  const GAME_VERSION = '38';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -4214,22 +4214,32 @@
     renderCombatPanel(); saveQuiet();
   }
 
-  /* ---- Screens ---- */
+  /* ---- Screens (exclusive stack; never overlay title on dash) ---- */
+  const SCREEN_IDS = ['screen-title', 'screen-create', 'screen-career', 'screen-game'];
+  function showScreen(id) {
+    SCREEN_IDS.forEach((sid) => {
+      const el = $(sid);
+      if (!el) return;
+      const on = sid === id;
+      el.hidden = !on;
+      if (on) {
+        el.removeAttribute('hidden');
+        el.classList.add('on');
+      } else {
+        el.setAttribute('hidden', '');
+        el.classList.remove('on');
+      }
+    });
+    if ($('app')) $('app').classList.toggle('dash-live', id === 'screen-game');
+  }
   function showTitle() {
-    $('screen-title').hidden = false;
-    if ($('screen-create')) $('screen-create').hidden = true;
-    $('screen-career').hidden = true;
-    $('screen-game').hidden = true;
-    if ($('app')) $('app').classList.remove('dash-live');
+    showScreen('screen-title');
     closeSheets();
     try { closeStoryModal(); } catch (e) {}
-    $('btn-continue').hidden = !hasSave();
+    if ($('btn-continue')) $('btn-continue').hidden = !hasSave();
   }
   function showCreate() {
-    $('screen-title').hidden = true;
-    if ($('screen-create')) $('screen-create').hidden = false;
-    $('screen-career').hidden = true;
-    $('screen-game').hidden = true;
+    showScreen('screen-create');
     fillCreateForm();
   }
   function fillCreateForm() {
@@ -4272,10 +4282,7 @@
   }
   function showCareer() {
     readCreateDraft();
-    if ($('screen-create')) $('screen-create').hidden = true;
-    $('screen-title').hidden = true;
-    $('screen-career').hidden = false;
-    $('screen-game').hidden = true;
+    showScreen('screen-career');
     const grid = $('career-grid');
     const blurb = $('career-blurb');
     if (blurb && window.__createDraft) {
@@ -4311,10 +4318,7 @@
     directive = 'grain';
     mode = 'hut';
     refreshNpcs();
-    $('screen-career').hidden = true;
-    if ($('screen-create')) $('screen-create').hidden = true;
-    $('screen-title').hidden = true;
-    $('screen-game').hidden = false;
+    showScreen('screen-game');
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
     if ($('screen-game')) $('screen-game').classList.add('dash-mode');
     if ($('app')) $('app').classList.add('dash-live');
@@ -4325,7 +4329,7 @@
     status('秦王政元年。你是' + (h.name || '旅人') + '，出身' + (o.name || '') + '，以' + CAREERS[careerId].name + '立足墨夢。（' + modeTxt + '）' +
       (h.disguise === 'male' ? '女扮男裝潛行江湖。' : '') + '且看文字選項，如何改寫天下。');
     toast('開局 · 儀表板 · ' + CAREERS[careerId].name + (h.disguise === 'male' ? ' · 男裝' : ''));
-    try { setDashCol('world'); openStoryModal(); } catch (e) {}
+    try { setDashCol('story'); } catch (e) {}
     if (window.QianStoryFlow) {
       window.QianStoryFlow.begin(S);
       applyStoryScene();
@@ -4336,8 +4340,7 @@
   }
   function continueGame() {
     if (!load()) { toast('無存檔'); return; }
-    $('screen-title').hidden = true;
-    $('screen-game').hidden = false;
+    showScreen('screen-game');
     document.querySelectorAll('.dir').forEach((d) => d.classList.toggle('active', d.dataset.dir === directive));
     refreshNpcs();
     if ($('screen-game')) $('screen-game').classList.add('dash-mode');
@@ -4357,7 +4360,7 @@
       renderStoryPanel();
     }
     setTimeout(maybeTriggerVisit, 600);
-    try { setDashCol('world'); openStoryModal(); } catch (e) {}
+    try { setDashCol('story'); } catch (e) {}
     renderHUD();
   }
 
@@ -4435,6 +4438,38 @@
     const np = $('np-name');
     if (np) np.textContent = node.speaker || '旁白';
     applyStoryScene();
+    syncDashStoryInline();
+  }
+  function syncDashStoryInline() {
+    if (!S || !window.QianStoryFlow) return;
+    window.QianStoryFlow.ensure(S);
+    const node = window.QianStoryFlow.getNode(S);
+    const ch = $('dash-story-chapter');
+    const sp = $('dash-story-speaker');
+    const textEl = $('dash-story-text');
+    const box = $('dash-story-choices');
+    if (!textEl || !box) return;
+    if (!node) {
+      textEl.textContent = '（劇情未載入）';
+      box.innerHTML = '';
+      return;
+    }
+    if (ch) ch.textContent = CHAPTER_LABEL[node.chapter] || node.chapter || '劇情';
+    if (sp) sp.textContent = node.speaker || '旁白';
+    textEl.textContent = node.text || '';
+    const choices = window.QianStoryFlow.visibleChoices(S);
+    box.innerHTML = choices.map((c) =>
+      '<button type="button" class="story-choice' + (c.locked ? ' locked' : '') + '" data-sid="' + c.id + '"' +
+      (c.locked ? ' disabled aria-disabled="true"' : '') + '>' + escapeHtml(c.text) + '</button>'
+    ).join('');
+    box.querySelectorAll('[data-sid]').forEach((b) => {
+      b.addEventListener('click', (ev) => {
+        tapFeel(b, ev);
+        if (b.disabled) { toast('條件不足'); return; }
+        pickStoryChoice(b.dataset.sid);
+      });
+    });
+    bindTapFeel(box);
   }
   function flagLine(S0) {
     const pf = (S0 && S0.plotFlags) || {};
@@ -4531,7 +4566,11 @@
     pushDashLog('story', (r.line || '選擇推進').split('\n')[0], { noise: false });
     renderStoryPanel();
     renderHUD();
-    openStoryModal();
+    try {
+      const d = ensureDash(S);
+      if (d.col === 'story') setDashCol('story');
+      else openStoryModal();
+    } catch (e) { openStoryModal(); }
     applyStoryAiBeat(r);
     saveQuiet();
     if (r.pollArc || (S.flags && (S.flags.poll_arc || S.flags.want_arc))) {
@@ -4546,7 +4585,7 @@
     return Math.max(1, Math.ceil((day || 1) / 10));
   }
   function ensureDash(S0) {
-    if (!S0.dash) S0.dash = { filterNoise: false, x2: false, realm: 'home', col: 'world', tips: false, parallel: false };
+    if (!S0.dash) S0.dash = { filterNoise: false, x2: false, realm: 'home', col: 'story', tips: false, parallel: false };
     if (S0.dash.tips == null) S0.dash.tips = false;
     if (S0.dash.parallel == null) S0.dash.parallel = false;
     if (!S0.dashLog) S0.dashLog = [];
@@ -4591,16 +4630,19 @@
   function setDashCol(col) {
     if (!S) return;
     const d = ensureDash(S);
-    d.col = col || 'world';
+    d.col = col || 'story';
     document.querySelectorAll('.dash-mobile-tabs button').forEach((b) => {
-      b.classList.toggle('on', b.dataset.col === d.col || (d.col === 'story' && b.dataset.col === 'story'));
+      b.classList.toggle('on', b.dataset.col === d.col);
     });
     document.querySelectorAll('.dash-col').forEach((c) => {
       const id = c.getAttribute('data-col');
-      const show = (d.col === 'story') ? (id === 'world') : (id === d.col);
-      c.classList.toggle('on', show);
+      c.classList.toggle('on', id === d.col);
     });
-    if (d.col === 'story') openStoryModal();
+    if (d.col === 'story') {
+      syncDashStoryInline();
+    } else {
+      try { closeStoryModal(); } catch (e) {}
+    }
   }
   function dashRealmNpcs() {
     refreshNpcs();
@@ -4628,7 +4670,9 @@
     const h = S.hero || {};
     const o = window.QianWorld ? window.QianWorld.originById(h.origin || 'farm') : { name: '出身' };
     const career = (CAREERS[S.career] || CAREERS.farmer);
-    const place = (MODE_LABELS && MODE_LABELS[mode]) || '鄉野';
+    const placeRaw = (MODE_LABELS && MODE_LABELS[mode]) || '';
+    const placeMap = { '鄉野': '近側', '陋室': '近側客館', '田莊': '驛館', '村落': '鄉亭' };
+    const place = placeMap[placeRaw] || placeRaw || '近側';
     const era = window.QianWorld ? window.QianWorld.eraLabel(S.day) : dayStr();
     if ($('dash-loc')) $('dash-loc').textContent = '墨夢 · ' + place + ' · ' + era;
     if ($('dash-hp')) $('dash-hp').textContent = String(Math.floor(st.hp));
@@ -4654,7 +4698,6 @@
       const rows = [
         ['體力', st.hp + ' / ' + st.maxHp, st.hp / Math.max(1, st.maxHp)],
         ['銀兩', String(S.gold), Math.min(1, S.gold / 200)],
-        ['存糧', String(S.food), Math.min(1, S.food / 40)],
         ['戰力', String(combatPower()), Math.min(1, combatPower() / 5000)],
         ['武力', String(a.wu || 0), Math.min(1, (a.wu || 0) / 20)],
         ['智略', String(a.zhi || 0), Math.min(1, (a.zhi || 0) / 20)],
@@ -4760,7 +4803,7 @@
     if (window.matchMedia && window.matchMedia('(min-width:820px)').matches) {
       document.querySelectorAll('.dash-col').forEach((c) => c.classList.add('on'));
     } else {
-      setDashCol(d.col === 'story' ? 'world' : (d.col || 'profile'));
+      setDashCol(d.col || 'story');
     }
   }
   function dashCultivate() {
@@ -5250,7 +5293,6 @@
       b.addEventListener('click', () => {
         if (!S) return;
         ensureDash(S);
-        if (b.dataset.col === 'story') { openStoryModal(); return; }
         S.dash.col = b.dataset.col;
         setDashCol(S.dash.col);
       });
@@ -5267,6 +5309,9 @@
     if ($('dash-story-btn')) $('dash-story-btn').addEventListener('click', () => openStoryModal());
     if ($('dash-rel')) $('dash-rel').addEventListener('click', () => openRel());
     if ($('dash-codex')) $('dash-codex').addEventListener('click', () => openCodex());
+    if ($('dash-rel-profile')) $('dash-rel-profile').addEventListener('click', () => openRel());
+    if ($('dash-codex-profile')) $('dash-codex-profile').addEventListener('click', () => openCodex());
+    if ($('dash-story-expand')) $('dash-story-expand').addEventListener('click', () => openStoryModal());
     if ($('dash-read')) $('dash-read').addEventListener('click', () => openRead());
     if ($('dash-share')) $('dash-share').addEventListener('click', () => openShare());
     document.querySelectorAll('[data-close]').forEach((b) => {

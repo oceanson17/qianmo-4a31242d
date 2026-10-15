@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v37 romance VN · codex · AI storyteller · dash -->
+<!-- v38 UI fix · romance VN · screen stack · mobile dash -->
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
@@ -7,13 +7,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="墨夢莊周">
+<meta name="apple-mobile-web-app-title" content="墨夢·近側">
 <meta name="format-detection" content="telephone=no,email=no,address=no">
 <meta name="theme-color" content="#1a1d1c">
-<title>墨夢莊周</title>
+<title>墨夢 · 近側</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='10' fill='%23b8323a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fbf3ee' font-family='serif'%3E墨%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=37">
-<link rel="stylesheet" href="dash.css?v=37">
+<link rel="stylesheet" href="style.css?v=38">
+<link rel="stylesheet" href="dash.css?v=38">
 </head>
 <body x-apple-data-detectors="false">
 <div id="app">
@@ -21,27 +21,27 @@
   <section id="screen-title" class="screen on">
     <div class="title-bg" aria-hidden="true">
       <picture>
-        <source srcset="assets/bg_title.webp?v=37" type="image/webp">
-        <img src="assets/bg_title.jpg?v=37" alt="" decoding="async">
+        <source srcset="assets/bg_title.webp?v=38" type="image/webp">
+        <img src="assets/bg_title.jpg?v=38" alt="" decoding="async">
       </picture>
       <div class="title-bg-shade"></div>
     </div>
     <div class="title-content title-poster">
       <div class="title-hero-block">
         <div class="title-brand-row">
-          <img class="tseal-img" src="assets/seal_mo.webp?v=37" alt="墨" width="64" height="64" decoding="async">
-          <p class="title-ver-inline" id="game-version">版本 v37</p>
+          <img class="tseal-img" src="assets/seal_mo.webp?v=38" alt="墨" width="64" height="64" decoding="async">
+          <p class="title-ver-inline" id="game-version">版本 v38</p>
         </div>
-        <h1>墨夢莊周</h1>
-        <p class="subtitle">秦王政元年　墨夢可改史</p>
-        <p class="title-tagline">一念入秦　山河可書</p>
+        <h1>墨夢 · 近側</h1>
+        <p class="subtitle">秦王政元年　一念可改命運</p>
+        <p class="title-tagline">文字劇情 · 人物關係 · 多線結局</p>
       </div>
       <div class="tmenu">
-        <button type="button" class="tbtn tbtn-primary" id="btn-new"><b>開始新局</b><small>身世 · 擇業</small></button>
+        <button type="button" class="tbtn tbtn-primary" id="btn-new"><b>開始新局</b><small>身世 · 入廷</small></button>
         <button type="button" class="tbtn" id="btn-continue" hidden><b>續寫</b><small>讀取存檔</small></button>
         <button type="button" class="tbtn tbtn-ghost" id="btn-settings-title"><b>設定</b><small>AI · 文字</small></button>
       </div>
-      <p class="tfoot">儀表板 · 文字劇情 · 命運弧 · 紀事</p>
+      <p class="tfoot">關係圖 · AI 說書 · 命運弧 · 結局冊</p>
     </div>
   </section>
 
@@ -102,51 +102,52 @@
     <div id="dash" class="dash" aria-label="主儀表板">
       <header class="dash-top">
         <div class="dash-top-profile">
-          <img class="dash-top-avatar" id="dash-top-avatar" src="assets/face_hero.webp?v=37" alt="" width="44" height="44" decoding="async">
+          <img class="dash-top-avatar" id="dash-top-avatar" src="assets/face_hero.webp?v=38" alt="" width="44" height="44" decoding="async">
           <div class="dash-top-meta">
-            <div class="dash-loc" id="dash-loc">墨夢 · 鄉野</div>
+            <div class="dash-loc" id="dash-loc">墨夢 · 近側</div>
             <div class="dash-lv-row"><span id="dash-hero-name">豆豆</span> · <span id="dash-lv">1級</span></div>
           </div>
         </div>
         <div class="dash-res-row">
           <span class="dash-pill dash-pill-hp" title="體力">⚡ <b id="dash-hp">80</b>/<span id="dash-hpmax">80</span></span>
           <span class="dash-pill dash-pill-gold" title="銀兩">🪙 <b id="dash-gold">0</b></span>
-          <span class="dash-pill dash-pill-food" title="藥材／存糧（支線）" id="dash-food-pill">🌿 <b id="dash-food">0</b></span>
+          <span class="dash-pill dash-pill-food" title="藥材" id="dash-food-pill" hidden>🌿 <b id="dash-food">0</b></span>
+          <button type="button" class="dash-ico-set" id="dash-set" title="設定" aria-label="設定">⚙️</button>
         </div>
-        <div class="dash-util">
+        <div class="dash-top-row2">
+          <button type="button" class="dash-main-act" id="dash-cultivate">推進／過日</button>
+          <button type="button" class="dash-x2-mini dash-toggle" id="dash-x2" aria-pressed="false" title="二倍速"><span class="sw"><i></i></span>×2</button>
+          <div class="dash-sl">
+            <button type="button" class="dash-btn-sec" id="dash-save">存</button>
+            <button type="button" class="dash-btn-sec" id="dash-load">讀</button>
+          </div>
+        </div>
+        <!-- legacy hooks kept hidden for JS listeners -->
+        <div class="dash-util dash-util-legacy" hidden>
           <button type="button" class="dash-ico" id="dash-ach" title="差事" aria-label="差事">📜</button>
           <button type="button" class="dash-ico" id="dash-shop" title="行囊" aria-label="行囊">🎒</button>
-          <button type="button" class="dash-ico" id="dash-set" title="選單" aria-label="選單">⚙️</button>
-        </div>
-        <button type="button" class="dash-main-act" id="dash-cultivate">過日／靜養</button>
-        <button type="button" class="dash-toggle" id="dash-x2" aria-pressed="false"><span class="sw"><i></i></span>二倍速</button>
-        <div class="dash-sl">
-          <button type="button" class="dash-btn-sec" id="dash-save">存檔</button>
-          <button type="button" class="dash-btn-sec" id="dash-load">讀檔</button>
         </div>
       </header>
-      <nav class="dash-mobile-tabs" aria-label="欄位切換">
-        <button type="button" class="on" data-col="profile">人物</button>
-        <button type="button" data-col="world">所居</button>
-        <button type="button" data-col="chron">紀事</button>
-        <button type="button" data-col="story">劇情</button>
-      </nav>
       <div class="dash-body">
-        <aside class="dash-col dash-profile on" id="dash-col-profile" data-col="profile">
+        <aside class="dash-col dash-profile" id="dash-col-profile" data-col="profile">
           <div class="dash-panel-title">人物志</div>
-          <img class="dash-avatar" id="dash-avatar" src="assets/face_hero.webp?v=37" alt="主角" width="88" height="88" decoding="async">
+          <img class="dash-avatar" id="dash-avatar" src="assets/face_hero.webp?v=38" alt="主角" width="88" height="88" decoding="async">
           <div class="dash-name" id="dash-name">豆豆</div>
           <div class="dash-tags" id="dash-tags"></div>
           <div class="dash-attrs" id="dash-attrs"></div>
-          <div class="dash-side-acts">
+          <div class="dash-profile-acts">
+            <button type="button" id="dash-rel-profile">關係圖</button>
+            <button type="button" id="dash-codex-profile">百科</button>
+          </div>
+          <div class="dash-side-acts" hidden>
             <button type="button" id="dash-bag">行囊</button>
             <button type="button" id="dash-quest">差事</button>
           </div>
         </aside>
         <section class="dash-col" id="dash-col-world" data-col="world">
-          <div class="dash-panel-title">所居 · 天下</div>
+          <div class="dash-panel-title">天下 · 人脈</div>
           <div class="dash-tabs" role="tablist">
-            <button type="button" class="on" data-realm="home" id="dash-tab-home">鄉里</button>
+            <button type="button" class="on" data-realm="home" id="dash-tab-home">民間</button>
             <button type="button" data-realm="court" id="dash-tab-court">咸陽</button>
           </div>
           <div class="dash-stats-mini">
@@ -175,15 +176,31 @@
           </div>
           <div class="dash-chron-list" id="dash-chron-list"><p class="dash-empty">過日後將記入動向。</p></div>
         </aside>
+        <section class="dash-col dash-col-story on" id="dash-col-story" data-col="story">
+          <div class="dash-panel-title">劇情</div>
+          <div class="story-inline" id="dash-story-inline" aria-live="polite">
+            <div class="story-meta-inline"><span class="story-chapter" id="dash-story-chapter">序</span><span class="story-speaker" id="dash-story-speaker">旁白</span></div>
+            <div class="story-text" id="dash-story-text">墨夢初開。選擇將改寫秦際關係與結局。</div>
+            <div class="story-choices" id="dash-story-choices" role="group" aria-label="劇情選項"></div>
+            <p class="story-hint tiny muted" id="dash-story-hint">點選項推進 · 亦可開完整劇情卡</p>
+            <button type="button" class="dash-main-act" id="dash-story-expand" style="width:100%;margin-top:8px;letter-spacing:.16em">展開劇情卡</button>
+          </div>
+        </section>
       </div>
+      <nav class="dash-mobile-tabs" aria-label="欄位切換">
+        <button type="button" data-col="profile">人物</button>
+        <button type="button" data-col="world">所居</button>
+        <button type="button" data-col="chron">紀事</button>
+        <button type="button" class="on" data-col="story">劇情</button>
+      </nav>
     </div>
     <div class="dash-story-backdrop" id="dash-story-backdrop" hidden></div>
 
     <!-- 全屏場景 -->
     <div class="vn-stage" id="adventure-scene">
       <picture id="scene-pic">
-        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=37" type="image/webp">
-        <img id="scene-img" src="assets/bg_busy_farm.webp?v=37" alt="場景" class="scene-img" decoding="async">
+        <source id="scene-webp" srcset="assets/bg_busy_farm.webp?v=38" type="image/webp">
+        <img id="scene-img" src="assets/bg_busy_farm.webp?v=38" alt="場景" class="scene-img" decoding="async">
       </picture>
       <div class="season-tint" id="season-tint" data-season="0"></div>
       <canvas id="worker-layer" class="worker-layer" aria-hidden="true" hidden></canvas>
@@ -197,7 +214,7 @@
     <header id="hud" class="hud-scroll">
       <div class="hud-left">
         <button type="button" id="hSeal" class="hud-avatar-btn" aria-label="狀態" title="開啟行事">
-          <img id="hud-avatar" src="assets/face_hero.webp?v=37" alt="主角" width="56" height="56" decoding="async">
+          <img id="hud-avatar" src="assets/face_hero.webp?v=38" alt="主角" width="56" height="56" decoding="async">
           <span id="hDaySeal" class="hud-seal-badge">春</span>
           <small id="hPer" hidden>晨</small>
         </button>
@@ -266,22 +283,22 @@
 
     <!-- 底欄 · v26 圓形圖標 Dock -->
     <nav id="tabs" class="tabs-dock" aria-label="主選單">
-      <button type="button" id="tab-story" data-t="story"><i class="tab-ico"><img src="assets/ui/pin_map.webp?v=37" alt="" width="40" height="40" decoding="async"></i><span>繼續</span><em class="tab-dot" id="story-dot" hidden></em></button>
-      <button type="button" id="tab-map" data-t="map" hidden><i class="tab-ico"><img src="assets/ui/pin_map.webp?v=37" alt="" width="40" height="40" decoding="async"></i><span>場景</span><em class="tab-dot" id="map-dot" hidden></em></button>
-      <button type="button" id="btn-bag" data-t="bag"><i class="tab-ico"><img src="assets/ui/pin_bag.webp?v=37" alt="" width="40" height="40" decoding="async"></i><span>行囊</span></button>
-      <button type="button" id="tab-ppl" data-t="ppl"><i class="tab-ico"><img src="assets/ui/pin_ppl.webp?v=37" alt="" width="40" height="40" decoding="async"></i><span>人脈</span><em class="tab-dot" id="ppl-dot" hidden></em></button>
-      <button type="button" id="btn-quest" data-t="quest"><i class="tab-ico"><img src="assets/ui/pin_quest.webp?v=37" alt="" width="40" height="40" decoding="async"></i><span>差事</span><em id="quest-dot" hidden></em></button>
-      <button type="button" id="btn-menu" data-t="menu"><i class="tab-ico"><img src="assets/ui/pin_menu.webp?v=37" alt="" width="40" height="40" decoding="async"></i><span>選單</span><em class="tab-dot" id="menu-dot" hidden></em></button>
+      <button type="button" id="tab-story" data-t="story"><i class="tab-ico"><img src="assets/ui/pin_map.webp?v=38" alt="" width="40" height="40" decoding="async"></i><span>繼續</span><em class="tab-dot" id="story-dot" hidden></em></button>
+      <button type="button" id="tab-map" data-t="map" hidden><i class="tab-ico"><img src="assets/ui/pin_map.webp?v=38" alt="" width="40" height="40" decoding="async"></i><span>場景</span><em class="tab-dot" id="map-dot" hidden></em></button>
+      <button type="button" id="btn-bag" data-t="bag"><i class="tab-ico"><img src="assets/ui/pin_bag.webp?v=38" alt="" width="40" height="40" decoding="async"></i><span>行囊</span></button>
+      <button type="button" id="tab-ppl" data-t="ppl"><i class="tab-ico"><img src="assets/ui/pin_ppl.webp?v=38" alt="" width="40" height="40" decoding="async"></i><span>人脈</span><em class="tab-dot" id="ppl-dot" hidden></em></button>
+      <button type="button" id="btn-quest" data-t="quest"><i class="tab-ico"><img src="assets/ui/pin_quest.webp?v=38" alt="" width="40" height="40" decoding="async"></i><span>差事</span><em id="quest-dot" hidden></em></button>
+      <button type="button" id="btn-menu" data-t="menu"><i class="tab-ico"><img src="assets/ui/pin_menu.webp?v=38" alt="" width="40" height="40" decoding="async"></i><span>選單</span><em class="tab-dot" id="menu-dot" hidden></em></button>
     </nav>
     <!-- 職業裝飾列（主畫面底部點綴，窄屏可捲） -->
     <div id="career-strip" class="career-strip" aria-hidden="true" hidden>
-      <figure><img src="assets/char_farmer_m.webp?v=37" alt=""><figcaption>農夫</figcaption></figure>
-      <figure><img src="assets/char_doctor.webp?v=37" alt=""><figcaption>醫者</figcaption></figure>
-      <figure><img src="assets/char_merchant.webp?v=37" alt=""><figcaption>商賈</figcaption></figure>
-      <figure><img src="assets/char_soldier.webp?v=37" alt=""><figcaption>武卒</figcaption></figure>
-      <figure><img src="assets/char_craftsman.webp?v=37" alt=""><figcaption>工匠</figcaption></figure>
-      <figure><img src="assets/char_hunter.webp?v=37" alt=""><figcaption>獵戶</figcaption></figure>
-      <figure><img src="assets/char_ranger.webp?v=37" alt=""><figcaption>遊俠</figcaption></figure>
+      <figure><img src="assets/char_farmer_m.webp?v=38" alt=""><figcaption>農夫</figcaption></figure>
+      <figure><img src="assets/char_doctor.webp?v=38" alt=""><figcaption>醫者</figcaption></figure>
+      <figure><img src="assets/char_merchant.webp?v=38" alt=""><figcaption>商賈</figcaption></figure>
+      <figure><img src="assets/char_soldier.webp?v=38" alt=""><figcaption>武卒</figcaption></figure>
+      <figure><img src="assets/char_craftsman.webp?v=38" alt=""><figcaption>工匠</figcaption></figure>
+      <figure><img src="assets/char_hunter.webp?v=38" alt=""><figcaption>獵戶</figcaption></figure>
+      <figure><img src="assets/char_ranger.webp?v=38" alt=""><figcaption>遊俠</figcaption></figure>
     </div>
 
     <!-- 隱藏舊 mode-tab 供腳本切換狀態（地圖內按鈕會同步） -->
@@ -431,7 +448,7 @@
       </div>
       <div class="sbody act-body">
         <div class="act-scene" id="act-scene">
-          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=37" alt="場景" class="act-scene-img" decoding="async">
+          <img id="act-scene-img" src="assets/bg_busy_farm.webp?v=38" alt="場景" class="act-scene-img" decoding="async">
           <canvas id="act-worker-layer" class="act-worker-layer" aria-hidden="true"></canvas>
           <div class="act-scene-cap" id="act-scene-cap">場景人物走動</div>
         </div>
@@ -808,7 +825,7 @@
   <div id="modal-talk" class="modal" hidden>
     <div class="modal-card wide parchment talk-card">
       <div class="talk-head">
-        <img id="talk-face" class="talk-face" src="assets/face_scholar.webp?v=37" alt="" width="72" height="72" decoding="async">
+        <img id="talk-face" class="talk-face" src="assets/face_scholar.webp?v=38" alt="" width="72" height="72" decoding="async">
         <h2 id="talk-npc-name">鄉鄰</h2>
       </div>
       <div class="talk-present" id="talk-present" aria-label="在場之人"></div>
@@ -879,7 +896,7 @@
   <div id="modal-menu" class="modal" hidden>
     <div class="modal-card parchment">
       <h2>選單</h2>
-      <p class="ver-line" id="menu-version">版本 v37</p>
+      <p class="ver-line" id="menu-version">版本 v38</p>
       <button type="button" class="btn" id="btn-save">立即存檔</button>
       <button type="button" class="btn" id="btn-toggle-disguise" hidden>女扮男裝</button>
         <button type="button" class="btn" id="btn-world">天下大勢</button>
@@ -895,7 +912,7 @@
   <div id="modal-event" class="modal" hidden>
     <div class="modal-card wide parchment">
       <div class="event-head">
-        <img id="event-face" class="event-face" src="assets/face_merchant.webp?v=37" alt="來訪" width="72" height="72" decoding="async">
+        <img id="event-face" class="event-face" src="assets/face_merchant.webp?v=38" alt="來訪" width="72" height="72" decoding="async">
         <h2 id="event-title">來訪</h2>
       </div>
       <p id="event-body" class="event-body"></p>
@@ -955,7 +972,7 @@
       <button type="button" class="btn" id="btn-test-ai">試連線</button>
       <p class="tiny" id="ai-test-result"></p>
       <p class="tiny">Key 只存本機 localStorage，不上傳。無 Key 時對白走離線劇本。</p>
-      <p class="ver-line" id="set-version">版本 v37</p>
+      <p class="ver-line" id="set-version">版本 v38</p>
       <button type="button" class="btn primary" id="btn-save-settings">儲存</button>
       <button type="button" class="btn ghost" id="btn-close-settings">關閉</button>
     </div>
@@ -981,7 +998,7 @@
       </div>
       <div class="wave-label" id="wave-label">第 1／3 波</div>
       <div class="hp-block player">
-        <img class="battle-hero" src="assets/char_hero.webp?v=37" alt="" decoding="async">
+        <img class="battle-hero" src="assets/char_hero.webp?v=38" alt="" decoding="async">
         <div class="hp-name">你</div>
         <div class="hp-bar"><div class="hp-fill player" id="player-hp-fill"></div></div>
         <div class="hp-num" id="player-hp-num">0/0</div>
@@ -997,7 +1014,7 @@
 
 </div>
 
-  <!-- v37 關係圖／百科／閱讀／分享 -->
+  <!-- v38 關係圖／百科／閱讀／分享 -->
   <div id="modal-rel" class="modal dash-modal" hidden>
     <div class="modal-card codex-card">
       <header class="modal-head"><h2>人物關係圖</h2>
@@ -1060,20 +1077,20 @@
     </div>
   </div>
 
-<script src="modes.js?v=37"></script>
-<script src="combat_data.js?v=37"></script>
-<script src="equip.js?v=37"></script>
-<script src="arcs.js?v=37"></script>
-<script src="plots.js?v=37"></script>
-<script src="ai.js?v=37"></script>
-<script src="factions.js?v=37"></script>
-<script src="world.js?v=37"></script>
-<script src="story.js?v=37"></script>
-<script src="workers.js?v=37"></script>
-<script src="npc_ai.js?v=37"></script>
-<script src="codex.js?v=37"></script>
-<script src="story_flow.js?v=37"></script>
-<script src="game.js?v=37"></script>
+<script src="modes.js?v=38"></script>
+<script src="combat_data.js?v=38"></script>
+<script src="equip.js?v=38"></script>
+<script src="arcs.js?v=38"></script>
+<script src="plots.js?v=38"></script>
+<script src="ai.js?v=38"></script>
+<script src="factions.js?v=38"></script>
+<script src="world.js?v=38"></script>
+<script src="story.js?v=38"></script>
+<script src="workers.js?v=38"></script>
+<script src="npc_ai.js?v=38"></script>
+<script src="codex.js?v=38"></script>
+<script src="story_flow.js?v=38"></script>
+<script src="game.js?v=38"></script>
 </body>
 </html>
 

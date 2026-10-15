@@ -1,4 +1,4 @@
-/* v37 dashboard · dark forest/gold cultivation shell · Qin content */
+/* v38 dashboard · dark forest/gold cultivation shell · Qin content */
 :root{
   --dash-bg:#1a1d1c;
   --dash-card:#2d3e34;
@@ -22,11 +22,16 @@
 @media (min-width:900px){
   #app{max-width:1100px}
 }
-#screen-game.dash-mode{
+#screen-game.dash-mode:not([hidden]){
   background:var(--dash-bg)!important;
   overflow:hidden;
   display:flex!important;
   flex-direction:column;
+}
+#screen-game.dash-mode[hidden]{
+  display:none!important;
+  pointer-events:none!important;
+  visibility:hidden!important;
 }
 /* hide legacy VN chrome */
 #screen-game.dash-mode > #adventure-scene,
@@ -497,3 +502,134 @@ body:has(#app.dash-live) #toast.err{
   background: rgba(0,0,0,.55);
 }
 .modal.dash-modal[hidden] { display: none !important; }
+
+
+/* ===== v38 screen stack + mobile dash polish ===== */
+#app.dash-live{background:var(--dash-bg)!important;box-shadow:none;}
+#app.dash-live #screen-title,
+#app.dash-live #screen-create,
+#app.dash-live #screen-career{display:none!important;visibility:hidden!important;}
+
+#dash{
+  padding:calc(var(--sat, env(safe-area-inset-top, 0px)) + 6px) 10px 0;
+  gap:6px;
+}
+.dash-top{
+  display:grid;
+  grid-template-columns:1fr auto;
+  grid-template-areas:
+    "profile res"
+    "act act";
+  gap:8px 10px;
+  padding:10px 12px;
+  align-items:center;
+}
+.dash-top-profile{grid-area:profile;flex:unset;min-width:0;}
+.dash-res-row{grid-area:res;justify-content:flex-end;}
+.dash-top-row2{
+  grid-area:act;
+  display:flex;align-items:center;gap:8px;width:100%;
+}
+.dash-main-act{flex:1 1 auto;min-width:0;min-height:46px;}
+.dash-sl{width:auto;flex:0 0 auto;gap:6px;}
+.dash-sl button{
+  flex:0 0 auto;min-width:56px;padding:0 12px;min-height:40px;
+  letter-spacing:.08em;font-size:13px;border-radius:999px!important;
+}
+.dash-ico-set{
+  width:40px;height:40px;min-width:40px;border-radius:50%;
+  border:1px solid rgba(166,137,82,.55);background:rgba(0,0,0,.25);
+  color:var(--dash-gold2);font-size:16px;display:grid;place-items:center;
+}
+.dash-ico-set:active{transform:scale(.94)}
+.dash-x2-mini{
+  display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--dash-muted);
+  min-height:40px;padding:0 2px;background:transparent;border:0;white-space:nowrap;
+}
+.dash-x2-mini .sw{width:34px;height:18px}
+.dash-x2-mini .sw i{width:14px;height:14px;top:1px}
+.dash-x2-mini.on .sw i{left:16px}
+.dash-pill-food{display:none!important} /* romance: hide farm food from top */
+
+/* bottom mobile tabs */
+.dash-mobile-tabs{
+  order:3;
+  display:flex;gap:6px;
+  padding:8px 0 calc(var(--sab, env(safe-area-inset-bottom, 0px)) + 10px);
+  margin-top:auto;
+  background:linear-gradient(180deg,transparent,rgba(10,14,12,.55) 30%);
+  position:sticky;bottom:0;z-index:5;
+}
+.dash-body{
+  order:2;
+  padding-bottom:4px;
+  /* leave room so content isn't under sticky tabs on short phones */
+  margin-bottom:0;
+}
+.dash-top{order:1}
+#dash{display:flex;flex-direction:column}
+
+.dash-profile-acts{display:flex;gap:8px;width:100%;margin-top:4px}
+.dash-profile-acts button{
+  flex:1;min-height:44px;border-radius:999px;
+  border:1.5px solid rgba(166,137,82,.55)!important;
+  background:rgba(36,53,44,.95)!important;
+  color:var(--dash-text)!important;
+  font-size:13px;letter-spacing:.08em;
+}
+
+/* story tab: emphasize in-body story card when open via col */
+.dash-col-story .story-inline{
+  flex:1;min-height:0;overflow:auto;
+  background:rgba(0,0,0,.22);border:1px solid rgba(166,137,82,.35);
+  border-radius:var(--dash-radius-sm);padding:14px;
+}
+.dash-col-story .story-inline .story-chapter{color:var(--dash-gold2);font-size:12px;letter-spacing:.2em}
+.dash-col-story .story-inline .story-speaker{color:var(--dash-accent2);margin-left:8px;font-size:12px}
+.dash-col-story .story-inline .story-text{color:var(--dash-text);line-height:1.7;font-size:15px;margin:10px 0 14px;white-space:pre-wrap}
+.dash-col-story .story-inline .story-choice{
+  display:block;width:100%;text-align:left;margin:0 0 8px;
+  min-height:48px;padding:12px 14px;border-radius:12px;
+  background:rgba(74,124,89,.4)!important;border:1px solid rgba(166,137,82,.5)!important;
+  color:var(--dash-text)!important;font-size:14px;line-height:1.4;
+}
+.dash-col-story .story-inline .story-choice:active{transform:scale(.985)}
+
+@media (max-width:819px){
+  .dash-util-legacy{display:none!important}
+  .dash-loc{font-size:14px;letter-spacing:.1em}
+  .dash-lv-row{font-size:11px}
+  .dash-body{min-height:0}
+  .dash-col{padding:12px 12px 10px}
+  /* hide parchment leftovers bleeding into dash */
+  #screen-game.dash-mode .parchment,
+  #screen-game.dash-mode .title-content,
+  #screen-game.dash-mode .tmenu{display:none!important}
+}
+@media (min-width:820px){
+  .dash-mobile-tabs{display:none!important}
+  .dash-top{
+    grid-template-columns:1fr auto auto;
+    grid-template-areas:"profile res act";
+  }
+  .dash-top-row2{width:auto}
+}
+
+/* title screen: dark romance, no dash leak */
+#screen-title{
+  background:#121a18!important;
+  z-index:3;
+}
+#screen-title .title-content{z-index:2}
+#screen-title .tfoot{
+  color:rgba(212,184,122,.7)!important;
+  font-size:11px;letter-spacing:.14em;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px);
+}
+#screen-title h1{
+  color:#f6e7c8!important;
+  font-size:clamp(28px,8vw,40px);
+  letter-spacing:.28em;
+}
+#screen-title .subtitle{color:rgba(232,217,168,.9)!important}
+#screen-title .title-tagline{color:rgba(154,171,156,.95)!important;letter-spacing:.18em}
