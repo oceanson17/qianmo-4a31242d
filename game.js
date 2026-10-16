@@ -1,4 +1,4 @@
-// v38 romance VN · codex · AI storyteller · no-farm · juice
+// v46 stone-gold UI · chibi careers · romance VN · codex · AI storyteller · no-farm · juice
 (() => {
   'use strict';
 
@@ -6,7 +6,7 @@
   const SAVE_KEY_OLD = 'qianmo_v3';
   const SAVE_KEY_OLDER = 'qianmo_v2';
   const SAVE_KEY_OLDEST = 'qianmo_v1';
-  const GAME_VERSION = '45';
+  const GAME_VERSION = '46';
   const ASSET_V = '?v=' + GAME_VERSION;
   const SEASONS = ['春', '夏', '秋', '冬'];
   const COLS = 6, ROWS = 4;
@@ -205,11 +205,18 @@
       scholar: 'scholar',
       craftsman: 'craftsman',
       hunter: 'hunter',
-      ranger: 'ranger'
+      ranger: 'ranger',
+      scribe: 'scribe',
+      courier: 'courier',
+      smith: 'smith',
+      agent: 'agent',
+      boatman: 'boatman',
+      herbalist: 'herbalist',
+      diviner: 'diviner'
     };
     if (h && h.gender === 'm' && h.disguise === 'female') return 'hero_f';
     if (h && h.gender === 'f' && h.disguise === 'male') return map[careerId] || 'farmer_m';
-    if (g === 'f' || g === 'x') return 'hero';
+    if (g === 'f' || g === 'x') return (careerId === 'farmer' ? 'farmer_f' : (map[careerId] || 'hero'));
     return map[careerId] || 'hero';
   }
   /** 擇業立繪仍按職業／性別變體（與 HUD 頭像分開） */
@@ -224,13 +231,13 @@
       craftsman: 'craftsman',
       hunter: 'hunter',
       ranger: 'ranger',
-      scribe: 'scholar',
-      courier: 'ranger',
-      smith: 'craftsman',
-      agent: 'ranger',
-      boatman: 'soldier',
-      herbalist: 'hunter',
-      diviner: 'scholar'
+      scribe: 'scribe',
+      courier: 'courier',
+      smith: 'smith',
+      agent: 'agent',
+      boatman: 'boatman',
+      herbalist: 'herbalist',
+      diviner: 'diviner'
     };
     return map[careerId] || 'hero';
   }
@@ -4685,11 +4692,20 @@
     if ($('create-disguise-m')) $('create-disguise-m').checked = !!d.disguiseM;
     const og = $('origin-grid');
     if (og && window.QianWorld) {
-      og.innerHTML = window.QianWorld.ORIGINS.map((o) =>
-        '<button type="button" class="chip-card' + (d.origin === o.id ? ' active' : '') + '" data-origin="' + o.id + '">' +
-        '<strong>' + o.name + '</strong><span>' + o.desc + '</span></button>'
-      ).join('');
-      og.dataset.ready = 'v45';
+      const ORIGIN_ART = {
+        farm: 'origin_farm', gentry: 'origin_gentry', merchant: 'origin_merchant',
+        soldier: 'origin_military', tradoc: 'origin_medic', guest: 'origin_guest',
+        exile: 'origin_guest', artisan: 'origin_farm', clerk: 'origin_gentry',
+        shaman: 'origin_medic', fallennoble: 'origin_gentry', outlaw: 'origin_military',
+        steppe: 'origin_guest'
+      };
+      og.innerHTML = window.QianWorld.ORIGINS.map((o) => {
+        const art = ORIGIN_ART[o.id] || 'origin_tradoc';
+        return '<button type="button" class="chip-card origin-chip' + (d.origin === o.id ? ' active' : '') + '" data-origin="' + o.id + '">' +
+        '<img class="origin-thumb" src="assets/' + art + '.webp' + ASSET_V + '" alt="" width="40" height="40" decoding="async">' +
+        '<span class="origin-copy"><strong>' + o.name + '</strong><span>' + o.desc + '</span></span></button>';
+      }).join('');
+      og.dataset.ready = 'v46';
       og.querySelectorAll('[data-origin]').forEach((b) => {
         b.addEventListener('click', (ev) => {
           tapFeel(b, ev);
@@ -4727,8 +4743,8 @@
     const strip = [
       ['farmer_m','農夫'],['doctor','醫者'],['merchant','商賈'],['soldier','武卒'],
       ['scholar','書生'],['craftsman','工匠'],['hunter','獵戶'],['ranger','遊俠'],
-      ['scholar','書吏'],['ranger','驛使'],['craftsman','鐵匠'],['ranger','細作'],
-      ['soldier','津卒'],['hunter','採藥'],['scholar','卜者']
+      ['scribe','書吏'],['courier','驛使'],['smith','鐵匠'],['agent','細作'],
+      ['boatman','津卒'],['herbalist','採藥'],['diviner','卜者']
     ].map(function (pair) {
       return '<figure><img src="assets/char_' + pair[0] + '.webp' + ASSET_V + '" alt=""><figcaption>' + pair[1] + '</figcaption></figure>';
     }).join('');
